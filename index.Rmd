@@ -123,6 +123,15 @@ Class will consist of both lectures on statistical methdology and practice, as w
 |---|---|---|---|---|
 
 
+### Projects
+
+| Project  |  Assigned Date  |  Due Date | Link  |  Description |
+|---|---|---|---|---|
+| Project 1 | 2015-08-31  | 2015-09-14 | [Project 1]() | Project Description |
+|---|---|---|---|---|
+
+
+
 ### Miscellaneous
 
 Feel free to submit typos/errors/etc via the github repository associated with the class: 
