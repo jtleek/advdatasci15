@@ -1,22 +1,23 @@
 ---
+title: 140.711 Advanced Data Science I 
 output:
   html_document:
+    toc: true
     theme: cosmo
 ---
 
-## 140.711 Advanced Data Science I 
 
-**Instructors:** 
+### Instructors
 
   * [Jeff Leek](http://www.jtleek.com/)
   * [Elizabeth Colantuoni](http://www.biostat.jhsph.edu/~ejohnson/)
   * [Yates Coley](https://twitter.com/yayyyates)
 
-** TAs ** 
+### TAs
 
   * [John Muschelli](http://biostat.jhsph.edu/~jmuschel/)
 
-**Class Information:**
+### Class Information
 
 * Time: MW 1:30-2:20
 * Location: W2009
@@ -29,24 +30,26 @@ output:
 	* http://jtleek.github.io/jhsph753/ (2013)
 	* https://github.com/jtleek/jhsph753and4 (2014)
 
-**Resources:**
+### Resources
 
-* [Rstudio](http://www.rstudio.com/), 
+* [Rstudio](http://www.rstudio.com/) 
 * [R project](http://www.r-project.org/)
 * [Bioconductor](http://bioconductor.org/)
 * [Rstudio's cheatsheets](http://www.rstudio.com/resources/cheatsheets/) 
+* [swirl](http://swirlstats.com/)
+* [DataCamp](https://www.datacamp.com/)
 
-**Books:**
+### Books
 
 * [Elements of Data Analytic Style](https://leanpub.com/datastyle)
 * [Advanced Data Analysis from an Elementary Point of View](http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/)
 * [Elements of Statistical Learning](statweb.stanford.edu/~tibs/ElemStatLearn/)
 
-** Course Description ** 
+### Course Description 
 
 Provides an intensive introduction to applied statistics and data analysis. Trains students to become data scientists capable of both applied data analysis and critical evaluation of the next generation next generation of statistical methods. Since both data analysis and methods development require substantial hands-on experience, focuses on hands-on data analysis.
 
-** Course Objectives ** 
+### Course Objectives
 Upon successfully completing this course, students will be able to:
 
 1. Obtain, clean, transform, and process raw data into usable formats
@@ -54,15 +57,15 @@ Upon successfully completing this course, students will be able to:
 3. Organize and perform a complete data analysis, from exploration, to analysis, to synthesis, to communication
 4. Apply a range of statistical methods for inference and prediction
 
-** Evaluation and feedback ** 
+### Evaluation and feedback
 
-* 55%  =  Data analysis (instructor graded)
-* 20%  =  Data analysis review (completion)
+* 55%  =  Data analysis assignments (instructor graded)
+* 20%  =  Data analysis reviews (completion)
 * 25%  =  Final Project (graded by instructor)
 
 Our goal is to return feedback to you on projects within 1 week of submission. This is an intensive process because it requires individualized feedback so we hope you can bear with us if there are minor delays. 
 
-** Grading philosophy ** 
+### Grading philosophy
 
 
 I believe the purpose of graduate education is to train you to be able to think for yourself and initiate and complete your own projects. I am super excited to talk to you about ideas, work out solutions with you, and help you to figure out statistical methods and/or data analysis. I don't think that graduate school grades are important for this purpose. This means that I don't care very much about graduate student grades. 
@@ -75,7 +78,7 @@ That being said, I have to give you a grade, so I will use grades to help commun
 
 If you receive A's and B's you would have passed our old qualifying exam on this project and are doing acceptable data analyses. If you receive C's that is my way of letting you know that your work would not pass on the qualifying exam and probably isn't up to speed. I don't feel comfortable assigning percentages to data analyses, but to be able to calculate grades at the completion of the course I will use the following percentages: A = 100%, B = 85%, C = 75% of available points. This will be based on the rubric for data analyses. 
 
-** Data analysis assignments ** 
+### Data analysis assignments
 
 (For more on my project philosophy see: http://bit.ly/wQT5uI)
 
@@ -93,60 +96,37 @@ All documents should be submitted electronically. The grades will be broken down
 
 Keep in mind that this is a data science class In some cases standard methodology will be sufficient to answer the question of interest, in some cases you will need to go beyond the course, and in general the goal is to _answer the question and provide an estimate of uncertainty_. You may speak to your fellow students about specific statistical questions related to the projects, but the overall idea, analysis, and write-up should be your own individual work. You should cite any help you get from fellow students/TAs in your report in standard citation format. 
 
-** Data analysis reviews ** 
+### Data analysis reviews 
 
 After each data analysis is turned in, they will be randomly assigned to another student for review. Your review will be due one week after it is assigned. Your comments should have the format of a typical peer review. You can find a template and instructions for these reviews here https://github.com/jtleek/reviews. You should include a summary of the analyses and conclusions in the project you are reviewing, any major revisions, and any minor revisions. We will also evaluate each data analysis independently to assign a grade.  
 
-** Final Project ** 
+### Final Project 
 
 
 The final project will have the same format as the data analyses. It will be slightly longer than the weekly projects in terms of space and more in depth in terms of analysis. You will have an opportunity to submit this analysis, get feedback from the instructors, and re-analyze the data on this project. . 
 
 We will give you an option of a final project, but you may also propose a different project to the instructor and as long as it is approved you can do that project. The project should involve data/code that you can obtain, process, analyze, and synthesize yourself. Keep in mind that [real scientists make their own data](http://seanjtaylor.com/post/41463778912/real-scientists-make-their-own-data). You may use any of the methods you learn during the course, or any other methods you know/look up etc. 
 
-** Structure of Class Time ** 
+### Structure of Class Time 
 
 
 Class will consist of both lectures on statistical methdology and practice, as well as hands activities. The hands on practice will be assigned in advance of each lecture and will give you time to look it over and come up with questions. The plan will be for students to work on the problem and ask questions, followed by the instructor or a chosen student presenting their solution. 
 
 
 
-**Schedule**
+### Schedule
 
 
 | Day  | Date  |  Session | Resources  |  Description |
 |---|---|---|---|---|
-| 0  | 2015-07-08  | Background  | [Try R](http://tryr.codeschool.com/)  | Really simple intro to R online  |
-| 0  | 2015-07-08  | Background | [swirl](http://swirlstats.com/)  | More tutorials on R, in R  |
-|1 | 2015-07-08 | 1:30PM - 3:00PM | | Experimental Design |
-|1 | --- | 3:00PM - 3:30PM | Break | --- |
-|1 | 2015-07-08 | 3:30PM - 5:00PM | | Hypothesis testing |
+| M1  | 2015-08-31  | Introduction | [Lecture]() |  |
 |---|---|---|---|---|
-|2 | 2015-07-09 | 8:30AM - 10:00AM | [html slides](https://slides.com/jeffleek/sisg-m6-d2) [pdf](https://dl.dropbox.com/s/38lqdzetv6bggmq/sisg-m6-d2.pdf)| Statistical foundations |
-|2 | --- | 10:00AM - 10:30AM | Break | --- |
-|2 | 2015-07-09 | 10:30AM - 12:00PM |[html slides](https://slides.com/jeffleek/sisg-m6-d2) [pdf](https://dl.dropbox.com/s/38lqdzetv6bggmq/sisg-m6-d2.pdf) | Normalization |
-|2 | 2015-07-09 | 1:30PM - 3:00PM | |  Lab session – qvalue, PCA|
-|2 | 2015-07-09 | 3:00PM - 3:30PM | Break | Break |
-|2 | --- | 3:30PM - 5:00PM | | Lab session – SNM, edgeR|
-|---|---|---|---|---|
-|3 | 2015-07-09 | 8:30AM - 10:00AM | [pdf](https://www.dropbox.com/s/3lrr3nor98778dl/sisg-md-d3.pdf?dl=0) | RNASeq |
-|3 | --- | 10:00AM - 10:30AM | Break | --- |
-|3 | 2015-07-09 | 10:30AM - 12:00PM |[pdf](https://www.dropbox.com/s/3lrr3nor98778dl/sisg-md-d3.pdf?dl=0)| RNASeq |
-|3 | 2015-07-09 | 1:30PM - 3:00PM | [bioc](https://github.com/genomicsclass/labs/blob/42e539a33a22a90c1caa92ae9598a65c354d4f1c/course4/storage/basic_Bioconductor_infrastructure.Rmd) [i/granges](https://github.com/genomicsclass/labs/blob/42e539a33a22a90c1caa92ae9598a65c354d4f1c/course4/iranges_granges.Rmd) [count based](http://www.bioconductor.org/help/workflows/rnaseqGene/) [ballgown](http://bioconductor.org/packages/release/bioc/vignettes/ballgown/inst/doc/ballgown.html) [derfinder](http://bioconductor.org/packages/release/bioc/vignettes/derfinder/inst/doc/derfinder.html)| Labs/tutorials|
-|3 | 2015-07-09 | 3:00PM - 3:30PM | Break | Break |
-|3 | --- | 3:30PM - 5:00PM | | eQTL|
 
 
-<!-- Add links to the rest of the material as we go
-
-
-
--->
-
-**Miscellaneous**
+### Miscellaneous
 
 Feel free to submit typos/errors/etc via the github repository associated with the class: 
-https://github.com/jtleek/sisg
+https://github.com/jtleek/advdatasci
 
 This web-page is modified from Andrew Jaffe's [Summer 2015 R course](http://www.aejaffe.com/summerR_2015/), which also has great material if you want to learn R. 
 
