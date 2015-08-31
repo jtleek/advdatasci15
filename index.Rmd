@@ -43,7 +43,7 @@ output:
 
 * [Elements of Data Analytic Style](https://leanpub.com/datastyle)
 * [Advanced Data Analysis from an Elementary Point of View](http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/)
-* [Elements of Statistical Learning](statweb.stanford.edu/~tibs/ElemStatLearn/)
+* [Elements of Statistical Learning](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
 
 ### Course Description 
 
