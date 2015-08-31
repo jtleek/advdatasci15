@@ -8,3 +8,5 @@
 
 
 *.sqlite
+
+.DS_Store
