@@ -117,10 +117,11 @@ Class will consist of both lectures on statistical methdology and practice, as w
 ### Schedule
 
 
-| Day  | Date  |  Session | Resources  |  Description |
-|---|---|---|---|---|
-| M1  | 2015-08-31  | Introduction | [Lecture]() |  |
-|---|---|---|---|---|
+| Day  | Date  |  Slides | Resources  | 
+|---|---|---|---|
+| M1  | 2015-08-31  |  [Introduction, Google Slides](https://docs.google.com/presentation/d/1uTRfF-9ANaueR20jknvxR64kWOtxi-zQAv9GDGNFVTQ/edit?usp=sharing) [Introduction, pdf](lecture_notes/Course_Introduction_and_Motivation.pdf) | [day_1.R](code/day_1.R)|
+| M1 | 2015-08-31 | [Organizing, Google Slides](https://docs.google.com/presentation/d/1skLbqJ3qkH-lTs5ylyjvdMXMUR4cSJj4Icw6v4g69dg/edit?usp=sharing) [Organizing, pdf](lecture_notes/Organize thyself.pdf) | 
+|---|---|---|---|
 
 
 ### Projects
