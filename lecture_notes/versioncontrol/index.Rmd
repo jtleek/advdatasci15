@@ -1,0 +1,173 @@
+---
+title: "Version control"
+author: "Jeff Leek"
+date: "September 2, 2015"
+output: ioslides_presentation
+---
+
+## An exciting result
+
+<img class=center src=./potti.png height=450>
+
+http://www.nature.com/nm/journal/v12/n11/full/nm1491.html
+
+
+## An exciting result
+
+<img class=center src=./baggerly.png height=450>
+
+https://projecteuclid.org/euclid.aoas/1267453942
+
+## A timeline of events
+
+<img class=center src=./timeline.png height=450>
+
+http://www.nature.com/news/2011/110111/full/469139a/box/1.html
+
+## Major fallout
+
+<img class=center src=./lawsuit.png height=450>
+
+http://dig.abclocal.go.com/wtvd/docs/Duke_lawsuit_090811.pdf
+http://www.dukechronicle.com/articles/2015/05/03/duke-lawsuit-involving-cancer-patients-linked-anil-potti-settled
+
+## An interesting talk
+
+<img class=center src=./baggerly-talk.png height=450>
+
+http://www.birs.ca/events/2013/5-day-workshops/13w5083/videos/watch/201308141121-Baggerly.mp4
+
+## R markdown
+
+<img class=center src=./rmarkdown.png height=450>
+
+http://www.rstudio.com/ide/docs/authoring/using_markdown
+
+## Paths
+
+Do this: 
+```{r,eval=FALSE}
+setwd("../data")
+setwd("./files")
+
+setwd("..\tmp")
+```
+
+Don't do this:
+```{r,eval=FALSE}
+setwd("/Users/jtleek/data")
+setwd("~/Desktop/files/data")
+
+setwd("C:\\Users\\Andrew\\Downloads")
+```
+
+## Data via the web
+
+```{r,eval=FALSE}
+if(!file.exists("data")){
+  dir.create("data")
+}
+
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/
+rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl,
+    destfile="./data/cameras.csv",
+    method="curl")
+list.files("./data")
+dateDownloaded <- date()
+```
+
+
+## Things you need to be careful with
+
+* Setting seeds for reproducible research `set.seed(1)`
+* Version numbers `devtools::session_info()`, [packrat](https://rstudio.github.io/packrat/), 
+* Caching and removing the cache 
+* Big analyses [BiocParallel](http://bioconductor.org/packages/release/bioc/html/BiocParallel.html)
+
+
+## Averge trustworthiness
+
+<img class=center src=./trustworthy.png height=150>
+
+## Just no
+
+<img class=center src=http://www.phdcomics.com/comics/archive/phd101212s.gif height=450>
+
+http://www.phdcomics.com/comics/archive/phd101212s.gif
+
+## Just no
+
+<img class=center src=https://imgs.xkcd.com/comics/documents.png height=450>
+
+https://imgs.xkcd.com/comics/documents.png
+
+## An unfortunate truth
+
+<img class=center src=./madmen.png height=250>
+
+https://twitter.com/mtrc/status/617075570761965568
+
+## Another unfortunate truth
+
+"Your closest collaborator is you six months ago, but you don't reply to emails."
+
+http://kbroman.org/Tools4RR/assets/lectures/06_org_eda_withnotes.pdf
+
+
+## And one more unfortunate truth
+
+"Could you just re-run all that code with the [latest/different/best] parameters?"
+
+--Every collaborator ever
+
+http://kbroman.org/Tools4RR/assets/lectures/06_org_eda_withnotes.pdf
+
+
+## Installing Git/Github
+
+http://r-pkgs.had.co.nz/git.html#git-init
+
+## Git
+
+<img class=center src=./git.png height=450>
+
+http://git-scm.com/downloads
+
+## Github
+
+<img class=center src=./github.png height=450>
+
+https://github.com/
+
+## Github tour
+
+https://github.com/jtleek/datasharing
+
+## Pushing and pulling
+
+<img class=center src=./scheme.png height=450>
+
+http://gitready.com/beginner/2009/01/21/pushing-and-pulling.html
+
+## Git on the command line practice
+
+https://try.github.io/levels/1/challenges/1
+
+## Git in Rstudio
+
+<img class=center src=./inr2.png height=450>
+
+
+## Git in Rstudio
+
+<img class=center src=./inr3.png height=450>
+
+
+## Git in Rstudio
+
+<img class=center src=./inr4.png height=450>
+
+## Git/Github practice
+
+http://bit.ly/1H0qcwB
