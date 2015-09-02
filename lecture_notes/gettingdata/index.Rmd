@@ -1,0 +1,183 @@
+---
+title: "Getting data"
+author: "Jeff Leek"
+date: "September 2, 2015"
+output: ioslides_presentation
+---
+
+## Reading data the normal way
+
+```{r, eval=F}
+read.table
+read.csv
+library(readr)
+read_csv
+```
+
+## Most common file format
+
+
+<img class=center src=./excel.png height=450>
+
+http://office.microsoft.com/en-us/excel/
+
+
+## readxl
+
+```{r, eval=F}
+install.packages("readxl")
+cameras = read_excel("./data/cameras.xlsx",
+                        sheet=1)
+```
+
+## xlsx
+
+```{r, eval=F}
+install.packages("xlsx")
+library(xlsx)
+colIndex = 2:3
+rowIndex = 1:4
+
+cameras = read.xlsx("./data/cameras.xlsx",
+                        sheetIndex=1,
+                        header=TRUE,
+                        colIndex= colIndex,
+                        rowIndex = rowIndex)
+
+```
+
+
+
+## Google sheets
+
+<img class=center src=./googlesheets.png height=450>
+
+http://google.com/sheets
+
+## Why googlesheets?
+
+<img class=center src=./whysheets.png height=450>
+
+Slide from: https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015
+
+## Make sure you publish to the web
+
+
+<img class=center src=./publiconweb.png height=450>
+
+
+## Google sheets package
+
+```{r eval=FALSE}
+library(devtools)
+install_github("jennybc/cellranger")
+install_github("jennybc/googlesheets")
+library(googlesheets)
+?gs_read
+?"cell-specification"
+```
+
+
+## Our example
+
+```{r eval=FALSE}
+library(gplots)
+library(googlesheets)
+my_url = "https://docs.google.com/spreadsheets/d/1El48mUK2FVPt_i6WlsvukFoYF1uCU00MqqLeY7W46LE/pubhtml"
+my_gs = gs_url(my_url)
+dat = gs_read(my_gs)
+
+
+### plot
+
+library(RSkittleBrewer)
+trop = RSkittleBrewer("tropical")
+colramp = colorRampPalette(c(trop[3],"white",trop[2]))(9)
+palette(trop)
+
+dat = as.matrix(dat)
+dat[is.na(dat)]= 0
+
+par(mar=c(5,5,5,5))
+heatmap.2(as.matrix(dat),col=colramp,Rowv=NA,Colv=NA,
+          dendrogram="none", scale="none",
+          trace="none",margins=c(10,2))
+```
+
+
+## Our example
+
+<img class=center src=./self-reported-knowledge.png height=450>
+
+
+## JSON
+
+<img class=center src=./json.png height=450>
+
+https://en.wikipedia.org/wiki/JSON
+
+
+## Twitter API
+
+<img class=center src=./twitter-api.png height=450>
+
+https://developer.github.com/v3/search/
+
+## Reading JSON
+
+```{r}
+github_url = "https://api.github.com/users/jtleek/repos"
+library(jsonlite)
+jsonData <- fromJSON(github_url)
+dim(jsonData)
+```
+
+## What you get
+
+```{r}
+table(sapply(jsonData,class))
+dim(jsonData$owner)
+names(jsonData$owner)
+```
+
+## Getting data from HTML
+
+This is data
+
+<img class=center src=./recount.png height=450>
+
+## View the source
+
+<img class=center src=./viewsource.png height=450>
+
+## What the computer sees
+
+<img class=center src=./computersees.png height=450>
+
+
+## Inspect element
+
+<img class=center src=./inspectelement.png height=450>
+
+## Copy Xpath
+
+<img class=center src=./copyxpath.png height=450>
+
+## rvest package
+
+```{r}
+recount_url = "http://bowtie-bio.sourceforge.net/recount/"
+library(rvest)
+htmlfile = html(recount_url)
+
+nds = html_nodes(htmlfile,
+                   xpath='//*[@id="recounttab"]/table')
+dat = html_table(nds)
+dat = as.data.frame(dat)
+```
+
+
+## APIs: Application programming interfaces
+
+
+
