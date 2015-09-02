@@ -1,0 +1,12 @@
+base
+boot
+datasets
+graphics
+grDevices
+kernlab
+knitr
+makeslides
+methods
+slidify
+stats
+utils

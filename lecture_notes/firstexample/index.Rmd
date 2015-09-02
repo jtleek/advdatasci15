@@ -1,0 +1,485 @@
+---
+title: "First Example"
+author: "Jeff Leek"
+date: "September 2, 2015"
+output: ioslides_presentation
+---
+
+## Inference
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/01_DataScientistToolbox/infcentraldogma.png height=450>
+
+[http://www.gs.washington.edu/academics/courses/akey/56008/lecture/lecture2.pdf](http://www.gs.washington.edu/academics/courses/akey/56008/lecture/lecture2.pdf)
+
+
+## Prediction
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/centraldogma.png height=450>
+
+
+## Question type
+
+<img class=center src=http://www.statschat.org.nz/wp-content/uploads/2015/02/F1.large_.jpg height=450>
+
+http://www.sciencemag.org/content/347/6228/1314
+
+## Structure of a data analysis
+
+* Define the question
+* Define the ideal data set
+* Determine what data you can access
+* Obtain the data
+* Clean the data
+* Exploratory data analysis
+* Statistical prediction/modeling
+* Interpret results
+* Challenge results
+* Synthesize/write up results
+* Create reproducible code
+
+
+
+## Defining a question
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/stat-projects.jpg height=400 />
+
+1. Statistical methods development
+2. [Danger zone!!!](http://www.drewconway.com/zia/?p=2378)
+3. Proper data analysis 
+
+
+
+
+## An example
+
+__Start with a general question__
+
+Can I automatically detect emails that are SPAM that are not?
+
+__Make it concrete__
+
+Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?
+
+
+
+## Define the ideal data set
+
+* The data set may depend on your goal
+  * Descriptive - a whole population
+  * Exploratory - a random sample with many variables measured
+  * Inferential - the right population, randomly sampled
+  * Predictive - a training and test data set from the same population
+  * Causal - data from a randomized study
+  * Mechanistic - data about all components of the system
+  
+
+
+
+## Our example
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/datacenter.png height='400' />
+[http://www.google.com/about/datacenters/inside/](http://www.google.com/about/datacenters/inside/)
+
+
+
+
+## Determine what data you can access
+
+* Sometimes you can find data free on the web
+* Other times you may need to buy the data
+* Be sure to respect the terms of use
+* If the data don't exist, you may need to generate it yourself
+
+
+
+
+## Back to our example
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/security.png height='400' />
+
+
+
+
+## A possible solution
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/uci.png height='400' />
+
+[http://archive.ics.uci.edu/ml/datasets/Spambase](http://archive.ics.uci.edu/ml/datasets/Spambase)
+
+
+
+
+## Obtain the data
+
+* Try to obtain the raw data
+* Be sure to reference the source
+* Polite emails go a long way
+* If you will load the data from an internet source, record the url and time accessed
+
+
+
+## Our data set
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/spamR.png height='400' />
+
+[http://search.r-project.org/library/kernlab/html/spam.html](http://search.r-project.org/library/kernlab/html/spam.html)
+
+
+
+
+
+## Clean the data
+
+* Raw data often needs to be processed
+* If it is pre-processed, make sure you understand how
+* Understand the source of the data (census, sample, convenience sample, etc.)
+* May need reformating, subsampling - record these steps
+* __Determine if the data are good enough__ - if not, quit or change data
+
+
+
+## Our cleaned data set
+
+```{r}
+# If it isn't installed, install the kernlab package with install.packages()
+library(kernlab)
+data(spam)
+str(spam[, 1:5])
+```
+
+[http://search.r-project.org/library/kernlab/html/spam.html](http://search.r-project.org/library/kernlab/html/spam.html)
+
+
+ 
+
+## Subsampling our data set
+We need to generate a test and training set (prediction)
+```{r,message=FALSE}
+# If it isn't installed, install the kernlab package
+library(kernlab)
+data(spam)
+# Perform the subsampling
+set.seed(3435)
+trainIndicator = rbinom(4601,size=1,prob=0.5)
+table(trainIndicator)
+trainSpam = spam[trainIndicator==1,]
+testSpam = spam[trainIndicator==0,]
+```
+
+
+
+## Exploratory data analysis
+
+* Look at summaries of the data
+* Check for missing data
+* Create exploratory plots
+* Perform exploratory analyses (e.g. clustering)
+
+
+
+## Names
+```{r}
+names(trainSpam)
+```
+
+
+
+
+## Head
+```{r}
+head(trainSpam)
+```
+
+
+
+## Summaries
+```{r}
+table(trainSpam$type)
+```
+
+
+
+## Plots
+```{r,fig.height=5,fig.width=5}
+plot(trainSpam$capitalAve ~ trainSpam$type)
+```
+
+
+
+## Plots 
+```{r, fig.height=5,fig.width=5}
+plot(log10(trainSpam$capitalAve + 1) ~ trainSpam$type)
+```
+
+
+
+## Relationships between predictors
+```{r, fig.height=5,fig.width=5}
+plot(log10(trainSpam[,1:4]+1))
+```
+
+
+
+## Clustering
+```{r,echo=FALSE}
+par(mar=c(0,0,0,0))
+
+```
+
+```{r, fig.height=6,fig.width=7}
+hCluster = hclust(dist(t(trainSpam[,1:57])))
+plot(hCluster)
+```
+
+
+## New clustering
+```{r, fig.height=6,fig.width=7}
+hClusterUpdated = hclust(dist(t(log10(trainSpam[,1:55]+1))))
+plot(hClusterUpdated)
+```
+
+
+## Statistical prediction/modeling
+
+* Should be informed by the results of your exploratory analysis
+* Exact methods depend on the question of interest
+* Transformations/processing should be accounted for when necessary
+* Measures of uncertainty should be reported
+
+
+## Statistical prediction/modeling
+```{r,warning=FALSE,cache=TRUE}
+trainSpam$numType = as.numeric(trainSpam$type)-1
+costFunction = function(x,y) sum(x!=(y > 0.5)) 
+cvError = rep(NA,55)
+library(boot)
+for(i in 1:55){
+  lmFormula = reformulate(names(trainSpam)[i], response = "numType")
+  glmFit = glm(lmFormula,family="binomial",data=trainSpam)
+  cvError[i] = cv.glm(trainSpam,glmFit,costFunction,2)$delta[2]
+}
+
+## Which predictor has minimum cross-validated error?
+names(trainSpam)[which.min(cvError)]
+```
+
+
+
+## Get a measure of uncertainty
+```{r,warning=FALSE}
+## Use the best model from the group
+predictionModel = glm(numType ~ charDollar,family="binomial",data=trainSpam)
+
+## Get predictions on the test set
+predictionTest = predict(predictionModel,testSpam)
+predictedSpam = rep("nonspam",dim(testSpam)[1])
+
+## Classify as `spam' for those with prob > 0.5
+predictedSpam[predictionModel$fitted > 0.5] = "spam"
+```
+
+
+
+## Get a measure of uncertainty
+
+```{r}
+## Classification table
+table(predictedSpam,testSpam$type)
+
+## Error rate
+(61+458)/(1346+458 + 61 + 449)
+```
+
+
+
+## Interpret results
+
+* Use the appropriate language
+  * describes 
+  * correlates with/associated with
+  * leads to/causes
+  * predicts
+* Give an explanation
+* Interpret coefficients
+* Interpret measures of uncertainty
+
+
+
+## Our example
+
+* The fraction of charcters that are dollar signs can be used to predict if an email is Spam
+* Anything with more than 6.6% dollar signs is classified as Spam
+* More dollar signs always means more Spam under our prediction
+* Our test set error rate was 22.4% 
+
+
+
+## Challenge results
+
+* Challenge all steps:
+  * Question
+  * Data source
+  * Processing 
+  * Analysis 
+  * Conclusions
+* Challenge measures of uncertainty
+* Challenge choices of terms to include in models
+* Think of potential alternative analyses 
+
+
+
+## Synthesize/write-up results
+
+* Lead with the question
+* Summarize the analyses into the story 
+* Don't include every analysis, include it
+  * If it is needed for the story
+  * If it is needed to address a challenge
+* Order analyses according to the story, rather than chronologically
+* Include "pretty" figures that contribute to the story 
+
+
+
+## In our example
+
+* Lead with the question
+  * Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?
+* Describe the approach
+  * Collected data from UCI -> created training/test sets
+  * Explored relationships
+  * Choose logistic model on training set by cross validation
+  * Applied to test, 78% test set accuracy
+* Interpret results
+  * Number of dollar signs seems reasonable, e.g. "Make money with Viagra \\$ \\$ \\$ \\$!"
+* Challenge results
+  * 78% isn't that great
+  * I could use more variables
+  * Why logistic regression?
+
+
+
+
+## Create reproducible code
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/rmarkdown.png height='400' />
+
+
+
+
+## Data analysis files
+
+* Data
+  * Raw data
+  * Processed data
+* Figures
+  * Exploratory figures
+  * Final figures
+* R code
+  * Raw / unused scripts
+  * Final scripts
+  * R Markdown files
+* Text
+  * README files
+  * Text of analysis / report
+
+
+
+
+## Raw Data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/medicalrecord.png height='400'/>
+
+* Should be stored in your analysis folder
+* If accessed from the web, include url, description, and date accessed in README
+
+
+
+## Processed data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/excel.png height='400'/>
+* Processed data should be named so it is easy to see which script generated the data. 
+* The processing script - processed data mapping should occur in the README
+* Processed data should be [tidy](http://vita.had.co.nz/papers/tidy-data.pdf)
+
+
+
+## Exploratory figures
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/example10.png height='400'/>
+
+* Figures made during the course of your analysis, not necessarily part of your final report.
+* They do not need to be "pretty"
+
+
+
+## Final Figures
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/figure1final.png height='400'/>
+
+* Usually a small subset of the original figures
+* Axes/colors set to make the figure clear
+* Possibly multiple panels
+
+
+
+## Raw scripts
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/rawcode.png height='350'/>
+
+* May be less commented (but comments help you!)
+* May be multiple versions
+* May include analyses that are later discarded
+
+
+
+## Final scripts
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/finalscript2.png height='300'/>
+
+* Clearly commented
+  * Small comments liberally - what, when, why, how
+  * Bigger commented blocks for whole sections
+* Include processing details
+* Only analyses that appear in the final write-up
+
+
+
+## R markdown files
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/rmd.png height='400'/>
+
+* [R markdown](http://www.rstudio.com/ide/docs/authoring/using_markdown) files can be used to generate reproducible reports
+* Text and R code are integrated
+* Very easy to create in [Rstudio](http://www.rstudio.com/)
+
+
+
+## Readme files
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/readme.png height='400'/>
+
+* Not necessary if you use R markdown
+* Should contain step-by-step instructions for analysis
+* Here is an example [https://github.com/jtleek/swfdr/blob/master/README](https://github.com/jtleek/swfdr/blob/master/README)
+
+
+
+## Text of the document
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/swfdr.png height='350'/>
+
+* It should include a title, introduction (motivation), methods (statistics you used), results (including measures of uncertainty), and conclusions (including potential problems)
+* It should tell a story
+* _It should not include every analysis you performed_
+* References should be included for statistical methods
+
+## Some checklists
+
+### Old qual checklist
+
+https://docs.google.com/document/d/10z0Y69EfYRohTfw7qwNPqVSEH6hbewm4_q3Gsaxq93w/edit?usp=sharing
+
+### Data analysis rubric
+
+https://docs.google.com/document/d/1HpC9rffzKTKO7ltg_d5Agugiv8XTKvD7rr3UueeGzzo/edit?usp=sharing

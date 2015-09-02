@@ -15,5 +15,7 @@ palette(trop)
 dat = as.matrix(dat)
 dat[is.na(dat)]= 0
 
+par(mar=c(5,5,5,5))
 heatmap.2(as.matrix(dat),col=colramp,Rowv=NA,Colv=NA,
-          dendrogram="none", scale="none",trace="none")
+          dendrogram="none", scale="none",
+          trace="none",margins=c(10,2))
