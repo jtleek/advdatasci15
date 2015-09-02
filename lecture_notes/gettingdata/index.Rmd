@@ -47,6 +47,11 @@ cameras = read.xlsx("./data/cameras.xlsx",
 ```
 
 
+## One thing to remember
+
+<img class=center src=./stringsasfactors.png height=450>
+
+http://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/
 
 ## Google sheets
 
@@ -177,7 +182,27 @@ dat = as.data.frame(dat)
 ```
 
 
+
 ## APIs: Application programming interfaces
 
+<img class=center src=./api.png height=450>
 
+https://developers.facebook.com/
+
+
+## ropensci
+
+<img class=center src=./ropensci.png height=450>
+
+https://ropensci.org/
+
+## Github api
+
+<img class=center src=./githubapi.png height=450>
+
+https://developer.github.com/v3/search/
+
+## Continue here for a moment
+
+http://slides.com/jeffleek/sisbid-m1-d1#/15/7
 

@@ -124,6 +124,12 @@ cameras = read.xlsx(&quot;./data/cameras.xlsx&quot;,
                         colIndex= colIndex,
                         rowIndex = rowIndex)</pre>
 
+</article></slide><slide class=''><hgroup><h2>One thing to remember</h2></hgroup><article  id="one-thing-to-remember">
+
+<p><img class=center src=./stringsasfactors.png height=450></p>
+
+<p><a href='http://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/' title=''>http://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/</a></p>
+
 </article></slide><slide class=''><hgroup><h2>Google sheets</h2></hgroup><article  id="google-sheets">
 
 <p><img class=center src=./googlesheets.png height=450></p>
@@ -249,7 +255,38 @@ dim(jsonData)</pre>
 
 <p><img class=center src=./copyxpath.png height=450></p>
 
-</article></slide><slide class=''><hgroup><h2>rvest package</h2></hgroup><article  id="rvest-package"></article></slide>
+</article></slide><slide class=''><hgroup><h2>rvest package</h2></hgroup><article  id="rvest-package">
+
+<pre class = 'prettyprint lang-r'>recount_url = &quot;http://bowtie-bio.sourceforge.net/recount/&quot;
+library(rvest)
+htmlfile = html(recount_url)
+
+nds = html_nodes(htmlfile,
+                   xpath=&#39;//*[@id=&quot;recounttab&quot;]/table&#39;)
+dat = html_table(nds)
+dat = as.data.frame(dat)</pre>
+
+</article></slide><slide class=''><hgroup><h2>APIs: Application programming interfaces</h2></hgroup><article  id="apis-application-programming-interfaces">
+
+<p><img class=center src=./api.png height=450></p>
+
+<p><a href='https://developers.facebook.com/' title=''>https://developers.facebook.com/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>ropensci</h2></hgroup><article  id="ropensci">
+
+<p><img class=center src=./ropensci.png height=450></p>
+
+<p><a href='https://ropensci.org/' title=''>https://ropensci.org/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Github api</h2></hgroup><article  id="github-api">
+
+<p><img class=center src=./githubapi.png height=450></p>
+
+<p><a href='https://developer.github.com/v3/search/' title=''>https://developer.github.com/v3/search/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Continue here for a moment</h2></hgroup><article  id="continue-here-for-a-moment">
+
+<p><a href='http://slides.com/jeffleek/sisbid-m1-d1#/15/7' title=''>http://slides.com/jeffleek/sisbid-m1-d1#/15/7</a></p></article></slide>
 
 
   <slide class="backdrop"></slide>
