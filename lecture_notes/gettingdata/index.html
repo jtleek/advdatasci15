@@ -88,16 +88,135 @@
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
       <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
       <p data-config-presenter><!-- populated from slide_config.json --></p>
-            <p style="margin-top: 6px; margin-left: -2px;">September 2, 2015</p>
+            <p style="margin-top: 6px; margin-left: -2px;">September 9, 2015</p>
           </hgroup>
   </slide>
 
-<slide class=''><hgroup><h2>Reading data the normal way</h2></hgroup><article  id="reading-data-the-normal-way">
+<slide class=''><hgroup><h2>Raw versus processed data</h2></hgroup><article  id="raw-versus-processed-data">
+
+<p><strong>Raw data</strong> * The original source of the data * Often hard to use for data analyses * Data analysis <em>includes</em> processing * Raw data may only need to be processed once</p>
+
+<p><a href='http://en.wikipedia.org/wiki/Raw_data' title=''><a href='http://en.wikipedia.org/wiki/Raw_data' title=''>http://en.wikipedia.org/wiki/Raw_data</a></a></p>
+
+<p><strong>Processed data</strong> * Data that is ready for analysis * Processing can include merging, subsetting, transforming, etc. * There may be standards for processing * All steps should be recorded</p>
+
+<p><a href='http://en.wikipedia.org/wiki/Computer_data_processing' title=''><a href='http://en.wikipedia.org/wiki/Computer_data_processing' title=''>http://en.wikipedia.org/wiki/Computer_data_processing</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>An example of a processing pipeline</h2></hgroup><article  id="an-example-of-a-processing-pipeline">
+
+<p><img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/hiseq.jpeg height=450/></p>
+
+<p><a href='http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp' title=''><a href='http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp' title=''>http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>An example of a processing pipeline</h2></hgroup><article  id="an-example-of-a-processing-pipeline-1">
+
+<p><img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/processing.png height=400 /></p>
+
+<p><a href='http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf' title=''><a href='http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf' title=''>http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>Tidy data</h2></hgroup><article  id="tidy-data">
+
+<ol>
+<li>Each variable you measure should be in one column</li>
+<li>Each different observation of that variable should be in a different row</li>
+<li>There should be one table for each &quot;kind&quot; of variable</li>
+<li>If you have multiple tables, they should include a column in the table that allows them to be linked</li>
+</ol>
+
+<p><em>Some other important tips</em></p>
+
+<ul>
+<li>Include a row at the top of each file with variable names.</li>
+<li>Make variable names human readable AgeAtDiagnosis instead of AgeDx</li>
+<li>In general data should be saved in one file per table.</li>
+</ul>
+
+<p><a href='https://github.com/jtleek/datasharing' title=''><a href='https://github.com/jtleek/datasharing' title=''>https://github.com/jtleek/datasharing</a></a> <a href='http://www.jstatsoft.org/v59/i10/paper' title=''>Tidy data</a></p>
+
+</article></slide><slide class=''><hgroup><h2>The four things you should have</h2></hgroup><article  id="the-four-things-you-should-have">
+
+<ol>
+<li>The raw data.</li>
+<li>A tidy data set</li>
+<li>A code book describing each variable and its values in the tidy data set.</li>
+<li>An explicit and exact recipe you used to go from 1 -&gt; 2,3.</li>
+</ol>
+
+</article></slide><slide class=''><hgroup><h2>Raw data</h2></hgroup><article  id="raw-data">
+
+<p><img class=center src=./dsp1.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Tidy data</h2></hgroup><article  id="tidy-data-1">
+
+<p><img class=center src=./dsp2.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Code book</h2></hgroup><article  id="code-book">
+
+<p><img class=center src=./dsp3.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Recipe</h2></hgroup><article  id="recipe">
+
+<p><img class=center src=./dsp4.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Recipe ok</h2></hgroup><article  id="recipe-ok">
+
+<p><img class=center src=./dsp5.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Recipe baadddd</h2></hgroup><article  id="recipe-baadddd">
+
+<p><img class=center src=./dsp6.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>This is hard</h2></hgroup><article  id="this-is-hard">
+
+<p><img class=center src=./broman-repro-hard.png height=450></p>
+
+<p><a href='https://kbroman.wordpress.com/2015/09/09/reproducibility-is-hard/' title=''>https://kbroman.wordpress.com/2015/09/09/reproducibility-is-hard/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Downloading data</h2></hgroup><article  id="downloading-data">
+
+<pre class = 'prettyprint lang-r'>if(!file.exists(&quot;data&quot;)){
+  dir.create(&quot;data&quot;)
+}
+list.files(&quot;data&quot;)</pre>
+
+<pre >## [1] &quot;cameras.csv&quot; &quot;movies.txt&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Downloading data</h2></hgroup><article  id="downloading-data-1">
+
+<pre class = 'prettyprint lang-r'>fileUrl &lt;- &quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD&quot;
+library(downloader)
+download(fileUrl,
+    destfile=&quot;./data/cameras.csv&quot;)
+list.files(&quot;./data&quot;)</pre>
+
+<pre >## [1] &quot;cameras.csv&quot; &quot;movies.txt&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>dateDownloaded &lt;- date()
+dateDownloaded</pre>
+
+<pre >## [1] &quot;Wed Sep  9 13:13:52 2015&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Reading data the normal way</h2></hgroup><article  id="reading-data-the-normal-way">
 
 <pre class = 'prettyprint lang-r'>read.table
 read.csv
-library(readr)
 read_csv</pre>
+
+</article></slide><slide class=''><hgroup><h2>Quick comparison</h2></hgroup><article  id="quick-comparison">
+
+<pre class = 'prettyprint lang-r'>library(readr)
+dat = matrix(rnorm(100*1000),
+                nrow=1000)
+write.csv(dat,file=&quot;dat.csv&quot;)
+system.time(read.csv(&quot;dat.csv&quot;))</pre>
+
+<pre >##    user  system elapsed 
+##   0.467   0.006   0.474</pre>
+
+<pre class = 'prettyprint lang-r'>system.time(read_csv(&quot;dat.csv&quot;))</pre>
+
+<pre >##    user  system elapsed 
+##   0.027   0.001   0.028</pre>
 
 </article></slide><slide class=''><hgroup><h2>Most common file format</h2></hgroup><article  id="most-common-file-format">
 
@@ -272,21 +391,551 @@ dat = as.data.frame(dat)</pre>
 
 <p><a href='https://developers.facebook.com/' title=''>https://developers.facebook.com/</a></p>
 
-</article></slide><slide class=''><hgroup><h2>ropensci</h2></hgroup><article  id="ropensci">
+</article></slide><slide class=''><hgroup><h2>First see if it is already done</h2></hgroup><article  id="first-see-if-it-is-already-done">
 
 <p><img class=center src=./ropensci.png height=450></p>
 
 <p><a href='https://ropensci.org/' title=''>https://ropensci.org/</a></p>
 
-</article></slide><slide class=''><hgroup><h2>Github api</h2></hgroup><article  id="github-api">
+</article></slide><slide class=''><hgroup><h2>Do it yourself</h2></hgroup><article  id="do-it-yourself">
 
 <p><img class=center src=./githubapi.png height=450></p>
 
 <p><a href='https://developer.github.com/v3/search/' title=''>https://developer.github.com/v3/search/</a></p>
 
-</article></slide><slide class=''><hgroup><h2>Continue here for a moment</h2></hgroup><article  id="continue-here-for-a-moment">
+</article></slide><slide class=''><hgroup><h2>Read the docs</h2></hgroup><article  id="read-the-docs">
 
-<p><a href='http://slides.com/jeffleek/sisbid-m1-d1#/15/7' title=''>http://slides.com/jeffleek/sisbid-m1-d1#/15/7</a></p></article></slide>
+<p><img class=center src=./apis1.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Rate limits (important!)</h2></hgroup><article  id="rate-limits-important">
+
+<p><img class=center src=./apis2.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Examples (useful!)</h2></hgroup><article  id="examples-useful">
+
+<p><img class=center src=./apis3.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>A dissected example</h2></hgroup><article  id="a-dissected-example">
+
+<p><img class=center src=./apis4.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>The base url</h2></hgroup><article  id="the-base-url">
+
+<p><img class=center src=./apis5.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Search repositories</h2></hgroup><article  id="search-repositories">
+
+<p><img class=center src=./apis6.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Create a query</h2></hgroup><article  id="create-a-query">
+
+<p><img class=center src=./apis7.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Date the repo was created</h2></hgroup><article  id="date-the-repo-was-created">
+
+<p><img class=center src=./apis8.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Language of the repo</h2></hgroup><article  id="language-of-the-repo">
+
+<p><img class=center src=./apis9.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>Ignore repos from CRAN</h2></hgroup><article  id="ignore-repos-from-cran">
+
+<p><img class=center src=./apis10.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>httr package</h2></hgroup><article  id="httr-package">
+
+<pre class = 'prettyprint lang-r'>query_url = &quot;https://api.github.com/search/repositories?q=created:2014-08-13+language:r+-user:cran&quot;
+library(httr)
+req = GET(query_url)
+names(content(req))</pre>
+
+<pre >## [1] &quot;total_count&quot;        &quot;incomplete_results&quot; &quot;items&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>content(req)$items[[1]]</pre>
+
+<pre >## $id
+## [1] 22932100
+## 
+## $name
+## [1] &quot;rstackdeque_examples&quot;
+## 
+## $full_name
+## [1] &quot;oneilsh/rstackdeque_examples&quot;
+## 
+## $owner
+## $owner$login
+## [1] &quot;oneilsh&quot;
+## 
+## $owner$id
+## [1] 77859
+## 
+## $owner$avatar_url
+## [1] &quot;https://avatars.githubusercontent.com/u/77859?v=3&quot;
+## 
+## $owner$gravatar_id
+## [1] &quot;&quot;
+## 
+## $owner$url
+## [1] &quot;https://api.github.com/users/oneilsh&quot;
+## 
+## $owner$html_url
+## [1] &quot;https://github.com/oneilsh&quot;
+## 
+## $owner$followers_url
+## [1] &quot;https://api.github.com/users/oneilsh/followers&quot;
+## 
+## $owner$following_url
+## [1] &quot;https://api.github.com/users/oneilsh/following{/other_user}&quot;
+## 
+## $owner$gists_url
+## [1] &quot;https://api.github.com/users/oneilsh/gists{/gist_id}&quot;
+## 
+## $owner$starred_url
+## [1] &quot;https://api.github.com/users/oneilsh/starred{/owner}{/repo}&quot;
+## 
+## $owner$subscriptions_url
+## [1] &quot;https://api.github.com/users/oneilsh/subscriptions&quot;
+## 
+## $owner$organizations_url
+## [1] &quot;https://api.github.com/users/oneilsh/orgs&quot;
+## 
+## $owner$repos_url
+## [1] &quot;https://api.github.com/users/oneilsh/repos&quot;
+## 
+## $owner$events_url
+## [1] &quot;https://api.github.com/users/oneilsh/events{/privacy}&quot;
+## 
+## $owner$received_events_url
+## [1] &quot;https://api.github.com/users/oneilsh/received_events&quot;
+## 
+## $owner$type
+## [1] &quot;User&quot;
+## 
+## $owner$site_admin
+## [1] FALSE
+## 
+## 
+## $private
+## [1] FALSE
+## 
+## $html_url
+## [1] &quot;https://github.com/oneilsh/rstackdeque_examples&quot;
+## 
+## $description
+## [1] &quot;Examples and timing tests for the rstackdeque R package.&quot;
+## 
+## $fork
+## [1] FALSE
+## 
+## $url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples&quot;
+## 
+## $forks_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/forks&quot;
+## 
+## $keys_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/keys{/key_id}&quot;
+## 
+## $collaborators_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/collaborators{/collaborator}&quot;
+## 
+## $teams_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/teams&quot;
+## 
+## $hooks_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/hooks&quot;
+## 
+## $issue_events_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/issues/events{/number}&quot;
+## 
+## $events_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/events&quot;
+## 
+## $assignees_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/assignees{/user}&quot;
+## 
+## $branches_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/branches{/branch}&quot;
+## 
+## $tags_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/tags&quot;
+## 
+## $blobs_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/git/blobs{/sha}&quot;
+## 
+## $git_tags_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/git/tags{/sha}&quot;
+## 
+## $git_refs_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/git/refs{/sha}&quot;
+## 
+## $trees_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/git/trees{/sha}&quot;
+## 
+## $statuses_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/statuses/{sha}&quot;
+## 
+## $languages_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/languages&quot;
+## 
+## $stargazers_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/stargazers&quot;
+## 
+## $contributors_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/contributors&quot;
+## 
+## $subscribers_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/subscribers&quot;
+## 
+## $subscription_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/subscription&quot;
+## 
+## $commits_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/commits{/sha}&quot;
+## 
+## $git_commits_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/git/commits{/sha}&quot;
+## 
+## $comments_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/comments{/number}&quot;
+## 
+## $issue_comment_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/issues/comments{/number}&quot;
+## 
+## $contents_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/contents/{+path}&quot;
+## 
+## $compare_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/compare/{base}...{head}&quot;
+## 
+## $merges_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/merges&quot;
+## 
+## $archive_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/{archive_format}{/ref}&quot;
+## 
+## $downloads_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/downloads&quot;
+## 
+## $issues_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/issues{/number}&quot;
+## 
+## $pulls_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/pulls{/number}&quot;
+## 
+## $milestones_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/milestones{/number}&quot;
+## 
+## $notifications_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/notifications{?since,all,participating}&quot;
+## 
+## $labels_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/labels{/name}&quot;
+## 
+## $releases_url
+## [1] &quot;https://api.github.com/repos/oneilsh/rstackdeque_examples/releases{/id}&quot;
+## 
+## $created_at
+## [1] &quot;2014-08-13T21:37:22Z&quot;
+## 
+## $updated_at
+## [1] &quot;2015-07-27T04:18:12Z&quot;
+## 
+## $pushed_at
+## [1] &quot;2015-04-13T17:27:31Z&quot;
+## 
+## $git_url
+## [1] &quot;git://github.com/oneilsh/rstackdeque_examples.git&quot;
+## 
+## $ssh_url
+## [1] &quot;git@github.com:oneilsh/rstackdeque_examples.git&quot;
+## 
+## $clone_url
+## [1] &quot;https://github.com/oneilsh/rstackdeque_examples.git&quot;
+## 
+## $svn_url
+## [1] &quot;https://github.com/oneilsh/rstackdeque_examples&quot;
+## 
+## $homepage
+## NULL
+## 
+## $size
+## [1] 14588
+## 
+## $stargazers_count
+## [1] 3
+## 
+## $watchers_count
+## [1] 3
+## 
+## $language
+## [1] &quot;R&quot;
+## 
+## $has_issues
+## [1] TRUE
+## 
+## $has_downloads
+## [1] TRUE
+## 
+## $has_wiki
+## [1] TRUE
+## 
+## $has_pages
+## [1] FALSE
+## 
+## $forks_count
+## [1] 0
+## 
+## $mirror_url
+## NULL
+## 
+## $open_issues_count
+## [1] 0
+## 
+## $forks
+## [1] 0
+## 
+## $open_issues
+## [1] 0
+## 
+## $watchers
+## [1] 3
+## 
+## $default_branch
+## [1] &quot;master&quot;
+## 
+## $score
+## [1] 1</pre>
+
+</article></slide><slide class=''><hgroup><h2>Not all APIs are &quot;open&quot;</h2></hgroup><article  id="not-all-apis-are-open">
+
+<p><img class=center src=./twitterapi.png height=450></p>
+
+<p><a href='https://dev.twitter.com/apps' title=''>https://dev.twitter.com/apps</a></p>
+
+</article></slide><slide class=''><hgroup><h2>You can still get the data!</h2></hgroup><article  id="you-can-still-get-the-data">
+
+<pre class = 'prettyprint lang-r'>myapp = oauth_app(&quot;twitter&quot;,
+                   key=&quot;yourConsumerKeyHere&quot;,secret=&quot;yourConsumerSecretHere&quot;)
+sig = sign_oauth1.0(myapp,
+                     token = &quot;yourTokenHere&quot;,
+                      token_secret = &quot;yourTokenSecretHere&quot;)
+homeTL = GET(&quot;https://api.twitter.com/1.1/statuses/home_timeline.json&quot;, sig)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Like for real you can get the data</h2></hgroup><article  id="like-for-real-you-can-get-the-data">
+
+<p><img class=center src=http://simplystatistics.org/wp-content/uploads/2015/01/sunday.png height=450></p>
+
+<p><a href='http://simplystatistics.org/2015/01/07/beast-mode-parenting-as-shown-by-my-fitbit-data/' title=''>http://simplystatistics.org/2015/01/07/beast-mode-parenting-as-shown-by-my-fitbit-data/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Sometimes this is a bit tricky</h2></hgroup><article  id="sometimes-this-is-a-bit-tricky">
+
+<p><img class=center src=./osf.png height=450></p>
+
+</article></slide><slide class=''><hgroup><h2>But you can usually figure it out</h2></hgroup><article  id="but-you-can-usually-figure-it-out">
+
+<pre class = 'prettyprint lang-r'>download(&quot;https://osf.io/fgjvw/?action=download&quot;,
+         destfile=&quot;../data/rpp_data.csv&quot;)
+download(&quot;https://osf.io/bhcsf/?action=download&quot;,
+         destfile=&quot;../data/rpp_data_codebook.csv&quot;)
+date_downloaded = date()
+date()</pre>
+
+</article></slide><slide class=''><hgroup><h2>mySQL/SQLite</h2></hgroup><article  id="mysqlsqlite">
+
+<ul>
+<li>Free and widely used open source database software</li>
+<li>Widely used in internet based applications</li>
+<li>Data are structured in</li>
+<li>Databases</li>
+<li>Tables within databases</li>
+<li>Fields within tables</li>
+<li>Each row is called a record</li>
+</ul>
+
+<p><a href='http://en.wikipedia.org/wiki/MySQL' title=''><a href='http://en.wikipedia.org/wiki/MySQL' title=''>http://en.wikipedia.org/wiki/MySQL</a></a> <a href='http://www.mysql.com/' title=''><a href='http://www.mysql.com/' title=''>http://www.mysql.com/</a></a> <a href='https://www.sqlite.org/' title=''><a href='https://www.sqlite.org/' title=''>https://www.sqlite.org/</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>Example structure</h2></hgroup><article  id="example-structure">
+
+<p><img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/database-schema.png height=450></p>
+
+<p><a href='http://dev.mysql.com/doc/employee/en/sakila-structure.html' title=''><a href='http://dev.mysql.com/doc/employee/en/sakila-structure.html' title=''>http://dev.mysql.com/doc/employee/en/sakila-structure.html</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>Example reading</h2></hgroup><article  id="example-reading">
+
+<p><img class=center src=https://raw.githubusercontent.com/DataScienceSpecialization/courses/master/assets/img/03_ObtainingData/ucscmysql.png height=450></p>
+
+<p><a href='http://genome.ucsc.edu/goldenPath/help/mysql.html' title=''>http://genome.ucsc.edu/goldenPath/help/mysql.html</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Connecting and listing databases</h2></hgroup><article  id="connecting-and-listing-databases">
+
+<pre class = 'prettyprint lang-r'>library(RMySQL)
+ucscDb &lt;- dbConnect(MySQL(),user=&quot;genome&quot;, 
+                    host=&quot;genome-mysql.cse.ucsc.edu&quot;)
+result &lt;- dbGetQuery(ucscDb,&quot;show databases;&quot;); dbDisconnect(ucscDb);
+result</pre>
+
+</article></slide><slide class=''><hgroup><h2>Conecting to hg19 and listing tables</h2></hgroup><article  id="conecting-to-hg19-and-listing-tables">
+
+<pre class = 'prettyprint lang-r'>hg19 &lt;- dbConnect(MySQL(),user=&quot;genome&quot;, db=&quot;hg19&quot;,
+                    host=&quot;genome-mysql.cse.ucsc.edu&quot;)
+allTables &lt;- dbListTables(hg19)
+length(allTables)
+allTables[1:5]</pre>
+
+</article></slide><slide class=''><hgroup><h2>Get dimensions of a table</h2></hgroup><article  id="get-dimensions-of-a-table">
+
+<pre class = 'prettyprint lang-r'>dbListFields(hg19,&quot;affyU133Plus2&quot;)
+dbGetQuery(hg19, &quot;select count(*) from affyU133Plus2&quot;)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Read from the table</h2></hgroup><article  id="read-from-the-table">
+
+<pre class = 'prettyprint lang-r'>affyData &lt;- dbReadTable(hg19, &quot;affyU133Plus2&quot;)
+head(affyData)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Query on a subset</h2></hgroup><article  id="query-on-a-subset">
+
+<pre class = 'prettyprint lang-r'>query &lt;- dbSendQuery(hg19, &quot;select * from affyU133Plus2 where misMatches between 1 and 3&quot;)
+affyMis &lt;- fetch(query); quantile(affyMis$misMatches)
+affyMisSmall &lt;- fetch(query,n=10); dbClearResult(query);
+dim(affyMisSmall)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Don&#39;t forget to close the connection!</h2></hgroup><article  id="dont-forget-to-close-the-connection">
+
+<pre class = 'prettyprint lang-r'>dbDisconnect(hg19)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Using dplyr</h2></hgroup><article  id="using-dplyr">
+
+<p><code>dplyr</code> is now the best way to do this for the most part. You can use it with sql, postgres, and other database schema</p>
+
+<pre class = 'prettyprint lang-r'>library(dplyr)</pre>
+
+<pre >## Warning: package &#39;dplyr&#39; was built under R version 3.2.2</pre>
+
+<pre >## 
+## Attaching package: &#39;dplyr&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</pre>
+
+<pre class = 'prettyprint lang-r'>library(nycflights13)
+my_db &lt;- src_sqlite(&quot;my_db.sqlite3&quot;, create = T)
+flights_sqlite &lt;- copy_to(my_db, flights, temporary = FALSE, indexes = list(
+  c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), &quot;carrier&quot;, &quot;tailnum&quot;))</pre>
+
+</article></slide><slide class=''><hgroup><h2>Using the dplyr verbs</h2></hgroup><article  id="using-the-dplyr-verbs">
+
+<pre class = 'prettyprint lang-r'>select(flights_sqlite, year:day, dep_delay, arr_delay)</pre>
+
+<pre >## Source: sqlite 3.8.6 [my_db.sqlite3]
+## From: flights [336,776 x 5]
+## 
+##     year month   day dep_delay arr_delay
+##    (int) (int) (int)     (dbl)     (dbl)
+## 1   2013     1     1         2        11
+## 2   2013     1     1         4        20
+## 3   2013     1     1         2        33
+## 4   2013     1     1        -1       -18
+## 5   2013     1     1        -6       -25
+## 6   2013     1     1        -4        12
+## 7   2013     1     1        -5        19
+## 8   2013     1     1        -3       -14
+## 9   2013     1     1        -3        -8
+## 10  2013     1     1        -2         8
+## ..   ...   ...   ...       ...       ...</pre>
+
+</article></slide><slide class=''><hgroup><h2>dplyr doesn&#39;t touch the database till it has to</h2></hgroup><article  id="dplyr-doesnt-touch-the-database-till-it-has-to">
+
+<pre class = 'prettyprint lang-r'>c1 &lt;- filter(flights_sqlite, year == 2013, month == 1, day == 1)
+c2 &lt;- select(c1, year, month, day, carrier, dep_delay, air_time, distance)
+c3 &lt;- mutate(c2, speed = distance / air_time * 60)
+c4 &lt;- arrange(c3, year, month, day, carrier)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Now it gets the data</h2></hgroup><article  id="now-it-gets-the-data">
+
+<pre class = 'prettyprint lang-r'>c4</pre>
+
+<pre >## Source: sqlite 3.8.6 [my_db.sqlite3]
+## From: flights [842 x 8]
+## Filter: year == 2013, month == 1, day == 1 
+## Arrange: year, month, day, carrier 
+## 
+##     year month   day carrier dep_delay air_time distance    speed
+##    (int) (int) (int)   (chr)     (dbl)    (dbl)    (dbl)    (dbl)
+## 1   2013     1     1      9E         0      189     1029 326.6667
+## 2   2013     1     1      9E        -9       57      228 240.0000
+## 3   2013     1     1      9E        -3       68      301 265.5882
+## 4   2013     1     1      9E        -6       57      209 220.0000
+## 5   2013     1     1      9E        -8       66      264 240.0000
+## 6   2013     1     1      9E         0       40      184 276.0000
+## 7   2013     1     1      9E         6      146      740 304.1096
+## 8   2013     1     1      9E         0      139      665 287.0504
+## 9   2013     1     1      9E        -8      150      765 306.0000
+## 10  2013     1     1      9E        -6       41      187 273.6585
+## ..   ...   ...   ...     ...       ...      ...      ...      ...</pre>
+
+</article></slide><slide class=''><hgroup><h2>Translating to SQL</h2></hgroup><article  id="translating-to-sql">
+
+<pre class = 'prettyprint lang-r'>translate_sql(x == 1 &amp;&amp; (y &lt; 2 || z &gt; 3))</pre>
+
+<pre >## &lt;SQL&gt; &quot;x&quot; = 1.0 AND (&quot;y&quot; &lt; 2.0 OR &quot;z&quot; &gt; 3.0)</pre>
+
+<pre class = 'prettyprint lang-r'>translate_sql(x ^ 2 &lt; 10)</pre>
+
+<pre >## &lt;SQL&gt; POWER(&quot;x&quot;, 2.0) &lt; 10.0</pre>
+
+</article></slide><slide class=''><hgroup><h2>Reading other data</h2></hgroup><article  id="reading-other-data">
+
+<p>There is a package for that</p>
+
+<p><img class=center src=./rpackage.png height=450></p>
+
+<p><a href='https://www.youtube.com/watch?v=yhTerzNFLbo' title=''>https://www.youtube.com/watch?v=yhTerzNFLbo</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Reading images</h2></hgroup><article  id="reading-images">
+
+<ul>
+<li>jpeg - <a href='http://cran.r-project.org/web/packages/jpeg/index.html' title=''>http://cran.r-project.org/web/packages/jpeg/index.html</a></li>
+<li>readbitmap - <a href='http://cran.r-project.org/web/packages/readbitmap/index.html' title=''>http://cran.r-project.org/web/packages/readbitmap/index.html</a></li>
+<li>png - <a href='http://cran.r-project.org/web/packages/png/index.html' title=''>http://cran.r-project.org/web/packages/png/index.html</a></li>
+<li>EBImage (Bioconductor) - <a href='http://www.bioconductor.org/packages/2.13/bioc/html/EBImage.html' title=''>http://www.bioconductor.org/packages/2.13/bioc/html/EBImage.html</a></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Reading GIS data</h2></hgroup><article  id="reading-gis-data">
+
+<ul>
+<li>rgdal - <a href='http://cran.r-project.org/web/packages/rgdal/index.html' title=''>http://cran.r-project.org/web/packages/rgdal/index.html</a></li>
+<li>rgeos - <a href='http://cran.r-project.org/web/packages/rgeos/index.html' title=''>http://cran.r-project.org/web/packages/rgeos/index.html</a></li>
+<li>raster - <a href='http://cran.r-project.org/web/packages/raster/index.html' title=''>http://cran.r-project.org/web/packages/raster/index.html</a></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Reading package data</h2></hgroup><article  id="reading-package-data">
+
+<ul>
+<li>tuneR - <a href='http://cran.r-project.org/web/packages/tuneR/' title=''>http://cran.r-project.org/web/packages/tuneR/</a></li>
+<li>seewave - <a href='http://rug.mnhn.fr/seewave/' title=''>http://rug.mnhn.fr/seewave/</a></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>foreign package</h2></hgroup><article  id="foreign-package">
+
+<ul>
+<li>Loads data from Minitab, S, SAS, SPSS, Stata,Systat</li>
+<li>Basic functions read.foo</li>
+<li>read.arff (Weka)</li>
+<li>read.dta (Stata)</li>
+<li>read.mtp (Minitab)</li>
+<li>read.octave (Octave)</li>
+<li>read.spss (SPSS)</li>
+<li>read.xport (SAS)</li>
+</ul>
+
+<p>See the help page for more details <a href='http://cran.r-project.org/web/packages/foreign/foreign.pdf' title=''>http://cran.r-project.org/web/packages/foreign/foreign.pdf</a></p></article></slide>
 
 
   <slide class="backdrop"></slide>

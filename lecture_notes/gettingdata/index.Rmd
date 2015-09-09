@@ -1,18 +1,158 @@
 ---
 title: "Getting data"
 author: "Jeff Leek"
-date: "September 2, 2015"
+date: "September 9, 2015"
 output: ioslides_presentation
 ---
+
+
+## Raw versus processed data
+
+__Raw data__
+* The original source of the data
+* Often hard to use for data analyses
+* Data analysis _includes_ processing
+* Raw data may only need to be processed once
+
+[http://en.wikipedia.org/wiki/Raw_data](http://en.wikipedia.org/wiki/Raw_data)
+
+__Processed data__
+* Data that is ready for analysis
+* Processing can include merging, subsetting, transforming, etc.
+* There may be standards for processing
+* All steps should be recorded 
+
+[http://en.wikipedia.org/wiki/Computer_data_processing](http://en.wikipedia.org/wiki/Computer_data_processing)
+
+
+
+## An example of a processing pipeline
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/hiseq.jpeg height=450/>
+
+[http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp](http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp)
+
+
+
+
+## An example of a processing pipeline
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/processing.png height=400 />
+
+[http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf](http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf)
+
+
+## Tidy data
+
+1. Each variable you measure should be in one column
+2. Each different observation of that variable should be in a different row
+3. There should be one table for each "kind" of variable
+4. If you have multiple tables, they should include a column in the table that allows them to be linked
+
+_Some other important tips_
+
+* Include a row at the top of each file with variable names. 
+* Make variable names human readable AgeAtDiagnosis instead of AgeDx
+* In general data should be saved in one file per table.
+
+[https://github.com/jtleek/datasharing](https://github.com/jtleek/datasharing)
+[Tidy data](http://www.jstatsoft.org/v59/i10/paper)
+
+
+## The four things you should have
+
+1. The raw data.
+2. A tidy data set
+3. A code book describing each variable and its values in the tidy data set.
+4. An explicit and exact recipe you used to go from 1 -> 2,3.
+
+
+## Raw data
+
+
+<img class=center src=./dsp1.png height=450>
+
+
+## Tidy data
+
+
+<img class=center src=./dsp2.png height=450>
+
+
+## Code book
+
+
+<img class=center src=./dsp3.png height=450>
+
+
+
+## Recipe
+
+
+<img class=center src=./dsp4.png height=450>
+
+
+
+## Recipe ok
+
+
+<img class=center src=./dsp5.png height=450>
+
+## Recipe baadddd
+
+
+<img class=center src=./dsp6.png height=450>
+
+
+## This is hard
+
+<img class=center src=./broman-repro-hard.png height=450>
+
+https://kbroman.wordpress.com/2015/09/09/reproducibility-is-hard/
+
+
+## Downloading data
+
+```{r}
+if(!file.exists("data")){
+  dir.create("data")
+}
+list.files("data")
+```
+
+## Downloading data
+
+```{r}
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+library(downloader)
+download(fileUrl,
+    destfile="./data/cameras.csv")
+list.files("./data")
+dateDownloaded <- date()
+dateDownloaded
+```
+
+
 
 ## Reading data the normal way
 
 ```{r, eval=F}
 read.table
 read.csv
-library(readr)
 read_csv
 ```
+
+## Quick comparison
+
+```{r}
+library(readr)
+dat = matrix(rnorm(100*1000),
+                nrow=1000)
+write.csv(dat,file="dat.csv")
+system.time(read.csv("dat.csv"))
+system.time(read_csv("dat.csv"))
+```
+
 
 ## Most common file format
 
@@ -190,19 +330,265 @@ dat = as.data.frame(dat)
 https://developers.facebook.com/
 
 
-## ropensci
+## First see if it is already done
 
 <img class=center src=./ropensci.png height=450>
 
 https://ropensci.org/
 
-## Github api
+## Do it yourself
 
 <img class=center src=./githubapi.png height=450>
 
 https://developer.github.com/v3/search/
 
-## Continue here for a moment
+## Read the docs
 
-http://slides.com/jeffleek/sisbid-m1-d1#/15/7
+<img class=center src=./apis1.png height=450>
+
+## Rate limits (important!)
+
+<img class=center src=./apis2.png height=450>
+
+## Examples (useful!)
+
+<img class=center src=./apis3.png height=450>
+
+## A dissected example
+
+<img class=center src=./apis4.png height=450>
+
+
+## The base url
+
+<img class=center src=./apis5.png height=450>
+
+## Search repositories
+
+<img class=center src=./apis6.png height=450>
+
+## Create a query
+
+<img class=center src=./apis7.png height=450>
+
+## Date the repo was created
+
+<img class=center src=./apis8.png height=450>
+
+## Language of the repo
+
+<img class=center src=./apis9.png height=450>
+
+## Ignore repos from CRAN
+
+<img class=center src=./apis10.png height=450>
+
+## httr package
+
+```{r}
+query_url = "https://api.github.com/search/repositories?q=created:2014-08-13+language:r+-user:cran"
+library(httr)
+req = GET(query_url)
+names(content(req))
+content(req)$items[[1]]
+```
+
+## Not all APIs are "open"
+
+<img class=center src=./twitterapi.png height=450>
+
+https://dev.twitter.com/apps
+
+## You can still get the data!
+
+```{r, eval=FALSE}
+myapp = oauth_app("twitter",
+                   key="yourConsumerKeyHere",secret="yourConsumerSecretHere")
+sig = sign_oauth1.0(myapp,
+                     token = "yourTokenHere",
+                      token_secret = "yourTokenSecretHere")
+homeTL = GET("https://api.twitter.com/1.1/statuses/home_timeline.json", sig)
+```
+
+## Like for real you can get the data 
+
+<img class=center src=http://simplystatistics.org/wp-content/uploads/2015/01/sunday.png height=450> 
+
+http://simplystatistics.org/2015/01/07/beast-mode-parenting-as-shown-by-my-fitbit-data/
+
+## Sometimes this is a bit tricky
+
+<img class=center src=./osf.png height=450> 
+
+## But you can usually figure it out
+
+```{r, eval=FALSE}
+download("https://osf.io/fgjvw/?action=download",
+         destfile="../data/rpp_data.csv")
+download("https://osf.io/bhcsf/?action=download",
+         destfile="../data/rpp_data_codebook.csv")
+date_downloaded = date()
+date()
+```
+
+
+## mySQL/SQLite
+
+* Free and widely used open source database software
+* Widely used in internet based applications
+* Data are structured in 
+  * Databases
+  * Tables within databases
+  * Fields within tables
+* Each row is called a record
+
+[http://en.wikipedia.org/wiki/MySQL](http://en.wikipedia.org/wiki/MySQL)
+[http://www.mysql.com/](http://www.mysql.com/)
+[https://www.sqlite.org/](https://www.sqlite.org/)
+
+## Example structure
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/03_ObtainingData/database-schema.png height=450>
+
+
+[http://dev.mysql.com/doc/employee/en/sakila-structure.html](http://dev.mysql.com/doc/employee/en/sakila-structure.html)
+
+## Example reading
+
+<img class=center src=https://raw.githubusercontent.com/DataScienceSpecialization/courses/master/assets/img/03_ObtainingData/ucscmysql.png height=450> 
+
+http://genome.ucsc.edu/goldenPath/help/mysql.html
+
+## Connecting and listing databases
+
+```{r, eval=F}
+library(RMySQL)
+ucscDb <- dbConnect(MySQL(),user="genome", 
+                    host="genome-mysql.cse.ucsc.edu")
+result <- dbGetQuery(ucscDb,"show databases;"); dbDisconnect(ucscDb);
+result
+```
+
+## Conecting to hg19 and listing tables
+
+```{r, eval=F}
+hg19 <- dbConnect(MySQL(),user="genome", db="hg19",
+                    host="genome-mysql.cse.ucsc.edu")
+allTables <- dbListTables(hg19)
+length(allTables)
+allTables[1:5]
+```
+
+## Get dimensions of a table
+
+```{r, eval=F}
+dbListFields(hg19,"affyU133Plus2")
+dbGetQuery(hg19, "select count(*) from affyU133Plus2")
+```
+
+## Read from the table
+
+```{r,eval=F, warning=FALSE}
+affyData <- dbReadTable(hg19, "affyU133Plus2")
+head(affyData)
+```
+
+## Query on a subset
+
+```{r,eval=F, warning=FALSE}
+query <- dbSendQuery(hg19, "select * from affyU133Plus2 where misMatches between 1 and 3")
+affyMis <- fetch(query); quantile(affyMis$misMatches)
+affyMisSmall <- fetch(query,n=10); dbClearResult(query);
+dim(affyMisSmall)
+```
+
+## Don't forget to close the connection!
+
+```{r, eval=F}
+dbDisconnect(hg19)
+```
+
+
+## Using dplyr
+
+`dplyr` is now the best way to do this for the most part. You can use it with sql, postgres, and other database schema
+```{r}
+library(dplyr)
+library(nycflights13)
+my_db <- src_sqlite("my_db.sqlite3", create = T)
+flights_sqlite <- copy_to(my_db, flights, temporary = FALSE, indexes = list(
+  c("year", "month", "day"), "carrier", "tailnum"))
+```
+
+## Using the dplyr verbs
+
+
+```{r}
+select(flights_sqlite, year:day, dep_delay, arr_delay)
+```
+
+
+## dplyr doesn't touch the database till it has to
+
+```{r}
+c1 <- filter(flights_sqlite, year == 2013, month == 1, day == 1)
+c2 <- select(c1, year, month, day, carrier, dep_delay, air_time, distance)
+c3 <- mutate(c2, speed = distance / air_time * 60)
+c4 <- arrange(c3, year, month, day, carrier)
+```
+
+## Now it gets the data
+
+```{r}
+c4
+```
+
+## Translating to SQL
+
+```{r}
+translate_sql(x == 1 && (y < 2 || z > 3))
+translate_sql(x ^ 2 < 10)
+```
+
+
+## Reading other data
+
+There is a package for that
+
+<img class=center src=./rpackage.png height=450> 
+
+
+https://www.youtube.com/watch?v=yhTerzNFLbo
+
+## Reading images
+
+* jpeg - http://cran.r-project.org/web/packages/jpeg/index.html
+* readbitmap - http://cran.r-project.org/web/packages/readbitmap/index.html
+* png - http://cran.r-project.org/web/packages/png/index.html
+* EBImage (Bioconductor) - http://www.bioconductor.org/packages/2.13/bioc/html/EBImage.html
+
+## Reading GIS data
+
+* rgdal - http://cran.r-project.org/web/packages/rgdal/index.html
+* rgeos - http://cran.r-project.org/web/packages/rgeos/index.html
+* raster - http://cran.r-project.org/web/packages/raster/index.html
+
+## Reading package data
+
+* tuneR - http://cran.r-project.org/web/packages/tuneR/
+* seewave - http://rug.mnhn.fr/seewave/
+
+
+## foreign package
+
+* Loads data from Minitab, S, SAS, SPSS, Stata,Systat
+* Basic functions read.foo
+  * read.arff (Weka)
+  * read.dta (Stata)
+  * read.mtp (Minitab)
+  * read.octave (Octave)
+  * read.spss (SPSS)
+  * read.xport (SAS)
+  
+See the help page for more details http://cran.r-project.org/web/packages/foreign/foreign.pdf
 
