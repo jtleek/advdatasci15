@@ -1,0 +1,54 @@
+---
+title: "Resources and Feedback for Project 1"
+author: "Jeff Leek"
+date: "September 8, 2015"
+output: html_document:
+  toc: true
+  theme: cosmo
+---
+
+Here are some general feedback and data sets collected from your pre-proprosals. 
+
+## General feedback
+
+1. Think about how the data you are collecting will generalize across populations - if you analyze data from a specific country how can you say something about what happens in other countries. 
+
+2. This is an incredibly well studied problem in the sense that lots of people have been thinking about it for a long time. It will make your report much stronger if you briefly review what has been done and explain how you are doing something different. 
+
+3. Make sure you pay attention to a few of the details of the data you are collecting
+  * Homicide rates versus homicide totals
+  * If you are measuring multiple units (states, countries, etc.) over time, account for dependence
+  * What are potential confounders that might make it hard to get the relationship (e.g. poverty, other crime, etc.)
+
+4. Do legally reported gun ownership rates actually reflect the real rate of gun ownership in a place? 
+
+5. Is all cause homicide the real outcome you want to consider? Is there a rate of homicide regardless of weapon and how would this influence the outcome? 
+
+6. Be careful about the ecological fallacy when aggregating over big units (states, countries, etc. ) here are a couple of papers that might be useful
+  * http://scholar.harvard.edu/files/aglynn/files/alleviatingecobiasjimcrow_0.pdf
+  * http://faculty.washington.edu/jonno/papers/glynnetalRSSA.pdf
+  
+7. When you combine multiple data sets make sure to match units/sampling frames. 
+
+
+## Data sets 
+
+These are data sets that one of you mentioned. I wanted to make sure everyone had access to lots of potential
+data sets. 
+
+* Web-based injury statistics query and reporting system: http://www.cdc.gov/injury/wisqars/ (Menglu)
+* Australian crime statistics: http://www.aic.gov.au/statistics.html, population level data http://www.abs.gov.au/ausstats/abs@.nsf/cat/4510.0
+* BRFSS (http://www.cdc.gov/brfss/)
+* Fatal injury reports (http://webappa.cdc.gov/sasweb/ncipc/mortrate10_us.html)
+* Gun Violence Archive (http://www.gunviolencearchive.org)
+* Wonder database: http://wonder.cdc.gov/
+* United Nations data on crime: https://data.unodc.org/
+* Small arms survey: http://www.smallarmssurvey.org/
+* World development indicators: http://databank.worldbank.org/data/reports.aspx?source=2&type=metadata&series=VC.IHR.PSRC.P5
+* CDC homicide data: https://data.cdc.gov/Health-Statistics/Selected-Trend-Table-from-Health-United-States-201/vp9c-m6nq?q=homicide
+* World firearm and gun ownership: https://docs.google.com/spreadsheet/ccc?key=0AonYZs4MzlZbdExSbktqRWpLMjNUMkFGVk5VODRyTnc#gid=0
+* FBI crime in the united states (https://www.fbi.gov/about-us/cjis/ucr/crime-in-the-u.s/2013/crime-in-the-u.s.-2013/violent-crime/murder-topic-page/)
+* NRA gunlaws: https://www.nraila.org/gun-laws/state-gun-laws
+* Iowa state community indicators: http://www.icip.iastate.edu/tables/population/urban-pct-states
+* Gaurdian data: http://www.theguardian.com/news/datablog/2012/jul/22/gun-homicides-ownership-world-list
+
