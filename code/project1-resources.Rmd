@@ -2,9 +2,7 @@
 title: "Resources and Feedback for Project 1"
 author: "Jeff Leek"
 date: "September 8, 2015"
-output: html_document:
-  toc: true
-  theme: cosmo
+output: html_document
 ---
 
 Here are some general feedback and data sets collected from your pre-proprosals. 

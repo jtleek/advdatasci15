@@ -131,7 +131,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 
 | Project  |  Assigned Date  |  Due Date | Link  |  Description |
 |---|---|---|---|---|
-| Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link |
+| Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link, [feedback](http://jtleek.com/advdatasci/code/project1-resources.html) |
 |---|---|---|---|---|
 
 
