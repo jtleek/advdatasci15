@@ -194,7 +194,7 @@ list.files(&quot;./data&quot;)</pre>
 <pre class = 'prettyprint lang-r'>dateDownloaded &lt;- date()
 dateDownloaded</pre>
 
-<pre >## [1] &quot;Wed Sep  9 13:13:52 2015&quot;</pre>
+<pre >## [1] &quot;Wed Sep  9 13:18:11 2015&quot;</pre>
 
 </article></slide><slide class=''><hgroup><h2>Reading data the normal way</h2></hgroup><article  id="reading-data-the-normal-way">
 
@@ -211,18 +211,24 @@ write.csv(dat,file=&quot;dat.csv&quot;)
 system.time(read.csv(&quot;dat.csv&quot;))</pre>
 
 <pre >##    user  system elapsed 
-##   0.467   0.006   0.474</pre>
+##   0.418   0.005   0.424</pre>
 
 <pre class = 'prettyprint lang-r'>system.time(read_csv(&quot;dat.csv&quot;))</pre>
 
 <pre >##    user  system elapsed 
-##   0.027   0.001   0.028</pre>
+##   0.025   0.000   0.026</pre>
 
 </article></slide><slide class=''><hgroup><h2>Most common file format</h2></hgroup><article  id="most-common-file-format">
 
 <p><img class=center src=./excel.png height=450></p>
 
 <p><a href='http://office.microsoft.com/en-us/excel/' title=''>http://office.microsoft.com/en-us/excel/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Spreadsheet game</h2></hgroup><article  id="spreadsheet-game">
+
+<p><img class=center src=./spreadsheets.png height=450></p>
+
+<p><a href='http://xlgame.perfectxl.nl/' title=''>http://xlgame.perfectxl.nl/</a></p>
 
 </article></slide><slide class=''><hgroup><h2>readxl</h2></hgroup><article  id="readxl">
 

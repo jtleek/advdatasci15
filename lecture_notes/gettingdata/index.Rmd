@@ -162,6 +162,13 @@ system.time(read_csv("dat.csv"))
 http://office.microsoft.com/en-us/excel/
 
 
+## Spreadsheet game
+
+<img class=center src=./spreadsheets.png height=450>
+
+http://xlgame.perfectxl.nl/
+
+
 ## readxl
 
 ```{r, eval=F}
