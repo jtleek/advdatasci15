@@ -234,6 +234,158 @@ gtbl %>% group_by(continent) %>%
 ## Common summarize options
 
 
-
 <img class=center src=./summarize.png height=350>
+
+## Passing to another argument
+
+```{r}
+x = rep(c(1,5),each=5)
+z = x %>% rnorm(10,mean=.)
+plot(z,pch=19,col="dodgerblue")
+```
+
+## Gotta be in the "Hadley mindset"
+
+```{r, eval=FALSE}
+sesmat = dst %>% group_by(coursera_user_id) %>% arrange(coursera_user_id,session_date) %>% 
+  summarize(first_session = min(session_num),
+            ses1 = c(1) %in% (session_num - first_session + 1),
+            ses2 = c(2) %in% (session_num - first_session + 1),
+            ses3 = c(3) %in% (session_num - first_session + 1),
+            ses4 = c(4) %in% (session_num - first_session + 1),
+            ses5 = c(5) %in% (session_num - first_session + 1),
+            ses6 = c(6) %in% (session_num - first_session + 1),
+            ses7 = c(7) %in% (session_num - first_session + 1),
+            ses8 = c(8) %in% (session_num - first_session + 1),
+            ses9 = c(9) %in% (session_num - first_session + 1),
+            ses10 = c(10) %in% (session_num - first_session + 1),
+            ses11 = c(11) %in% (session_num - first_session + 1),
+            ses12 = c(12) %in% (session_num - first_session + 1))
+```
+
+
+## Merging data sets
+
+The worst and most common task. 
+
+```{r}
+library(readxl)
+kg_s4 = read_excel("1000genomes.xlsx",
+                    sheet=4,skip=1)
+
+kg_s1 = read_excel("1000genomes.xlsx",
+                    sheet=1)
+head(kg_s4,n=1)
+head(kg_s1,n=1)
+```
+
+## names
+
+```{r}
+names(kg_s1)
+names(kg_s4)
+```
+
+## merge
+
+```{r}
+kg_new = merge(kg_s4,kg_s1)
+dim(kg_new)
+names(kg_new)
+```
+
+## More on types of joins
+
+<img class=center src=./sql-joins.jpg height=400>
+
+https://stat545-ubc.github.io/bit001_dplyr-cheatsheet.html
+
+## Superhero example
+
+```{r}
+superheroes <-
+  c("    name, alignment, gender,         publisher",
+    " Magneto,       bad,   male,            Marvel",
+    "   Storm,      good, female,            Marvel",
+    "Mystique,       bad, female,            Marvel",
+    "  Batman,      good,   male,                DC",
+    "   Joker,       bad,   male,                DC",
+    "Catwoman,       bad, female,                DC",
+    " Hellboy,      good,   male, Dark Horse Comics")
+
+superheroes <- read.csv(text = superheroes, strip.white = TRUE)
+```
+
+https://stat545-ubc.github.io/bit001_dplyr-cheatsheet.html
+
+## Superheroes example
+
+```{r}
+publishers <- 
+  c("publisher, yr_founded",
+    "       DC,       1934",
+    "   Marvel,       1939",
+    "    Image,       1992")
+publishers <- read.csv(text = publishers, strip.white = TRUE)
+```
+
+## Inner join
+
+```{r}
+ijsp = inner_join(superheroes, publishers)
+ijsp
+```
+
+## Comparison
+
+<img class=center src=./innerjoin.png height=200>
+
+## Left join
+
+```{r}
+ljsp = left_join(superheroes, publishers)
+ljsp
+```
+
+## Comparison
+
+<img class=center src=./leftjoin.png height=200>
+
+## Outer join (using merge)
+
+```{r}
+ojsp = merge(superheroes, publishers, all = TRUE)
+ojsp
+```
+
+## Merging different names
+
+```{r}
+superheroes = mutate(superheroes,
+                jefflikes = (publisher=="Marvel"))
+publishers = mutate(publishers,
+                    jeff = (publisher == "Marvel"))
+ij2 = inner_join(superheroes,publishers)
+ij2
+```
+
+
+## Merging different names
+
+```{r}
+ij2 = inner_join(superheroes,publishers,
+                    by=c("publisher"="publisher",
+                            "jefflikes"="jeff"))
+
+ij2
+```
+
+## Matching variables
+
+```{r}
+match(superheroes$publisher,publishers$publisher)
+match(publishers$publisher,superheroes$publisher)
+matchIndex = match(superheroes$publisher,publishers$publisher)
+publishers[matchIndex,]
+```
 

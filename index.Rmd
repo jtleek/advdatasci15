@@ -127,7 +127,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W2 | 2015-09-07 | [Introduction](https://docs.google.com/presentation/d/1Ly3WbSL-XGqwM9B9rO3zGj5iOTpwb1Alsda-l9dnU_U/edit?usp=sharing)|| 
 | W2 | 2015-09-07 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)| [web + api lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/web-api-lab.Rmd) | 
 | M3| 2015-09-14 | [Introduction](https://docs.google.com/presentation/d/1URHrfsTU8VPwZrJ4UR1rUnJVWIUckil0q7VcNW81GKQ/edit?usp=sharing)||
-| M3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)| [dplyr lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd)|
+| M3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)| [dplyr lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd) [merging lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/merging-lab.Rmd)|
 |---|---|---|---|
 
 
