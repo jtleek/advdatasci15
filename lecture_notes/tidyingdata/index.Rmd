@@ -1,0 +1,239 @@
+---
+title: "Tidying data"
+author: "Jeff Leek"
+date: "September 9, 2015"
+output: ioslides_presentation
+---
+
+## A funny quote
+
+> "Herein lies the dirty secret about most data scientists' work -- it's more data munging than deep learning. The best minds of my generation are deleting commas from log files, and that makes me sad. A Ph.D. is a terrible thing to waste."
+
+http://adage.com/article/digitalnext/dear-madison-avenue-set-data-scientists-free/298676/
+
+## Raw versus processed data
+
+__Raw data__
+* The original source of the data
+* Often hard to use for data analyses
+* Data analysis _includes_ processing
+* Raw data may only need to be processed once
+
+[http://en.wikipedia.org/wiki/Raw_data](http://en.wikipedia.org/wiki/Raw_data)
+
+__Processed data__
+* Data that is ready for analysis
+* Processing can include merging, subsetting, transforming, etc.
+* There may be standards for processing
+* All steps should be recorded 
+
+[http://en.wikipedia.org/wiki/Computer_data_processing](http://en.wikipedia.org/wiki/Computer_data_processing)
+
+
+## 1,000 genomes example
+
+```{r, cache=TRUE}
+fileUrl = "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130606_sample_info/20130606_sample_info.xlsx"
+library(downloader)
+library(readr)
+download(fileUrl,destfile="1000genomes.xlsx")
+
+library(readxl)
+# Have to skip one row because 
+# there is an extra header
+kg = read_excel("1000genomes.xlsx",
+                    sheet=4,skip=1)
+```
+
+
+## Variable names
+
+```{r}
+head(kg,n=1)
+head(kg$`Total Sequence`)
+```
+
+
+
+## strsplit
+
+```{r}
+strsplit(names(kg)," ")
+strsplit(names(kg)[6]," ")
+```
+
+## gsub
+
+```{r}
+gsub(" ", "", names(kg))
+```
+
+## substr
+
+```{r}
+x = gsub(" ", "", names(kg))
+substr(x,1,10)
+```
+
+## grep
+
+```{r}
+grep("Center",names(kg))
+grepl("Center",names(kg))
+```
+
+## tolower and toupper
+
+```{r}
+tolower(names(kg))[1:5]
+toupper(names(kg))[1:5]
+```
+
+
+## dplyr
+
+<img class=center src=./dplyr.png height=350>
+
+
+## Basically this whole part of the lecture from
+
+<img class=center src=./stat545.png height=350>
+
+
+https://stat545-ubc.github.io/block009_dplyr-intro.html
+
+
+
+## gapminder example
+
+```{r test1,warning=FALSE}
+suppressPackageStartupMessages({library(dplyr)})
+gd_url <- "http://www.stat.ubc.ca/~jenny/notOcto/STAT545A/examples/gapminder/data/gapminderDataFiveYear.txt"
+gdf <- read.table(file = gd_url,sep="\t",header=T)
+head(gdf)
+str(gdf)
+```
+
+## tbl_df
+
+```{r}
+gtbl <- tbl_df(gdf)
+gtbl
+```
+
+## glimpse
+
+```{r}
+glimpse(gtbl)
+```
+
+## filter
+
+```{r}
+filter(gtbl, lifeExp < 29)
+filter(gtbl, country == "Rwanda")
+```
+
+## select
+
+```{r}
+select(gtbl,country,pop,continent)
+```
+
+## arrange
+
+```{r}
+arrange(gtbl,pop)
+```
+
+
+## desc
+
+```{r}
+arrange(gtbl,desc(pop))
+```
+
+## mutate
+
+```{r}
+gtbl = mutate(gtbl,newVar = (lifeExp / gdpPercap))
+select(gtbl,lifeExp,gdpPercap,newVar)
+```
+
+## distinct
+
+```{r}
+distinct(gtbl)
+```
+
+## Key principle
+
+<img class=center src=./bigsmall1.png height=350>
+
+https://twitter.com/elliemcdonagh/status/469184554549248000
+
+## Key principle
+
+<img class=center src=./bigsmall2.png height=350>
+
+https://twitter.com/elliemcdonagh/status/469184554549248000
+
+## sample_n / sample_frac
+
+```{r}
+sample_n(gtbl,3)
+```
+
+## pipes
+
+<img class=center src=./pipes.png height=350>
+
+
+http://cran.r-project.org/web/packages/magrittr/index.html
+
+## What does pipe do?
+
+```{r}
+gtbl %>% head
+```
+
+## What does pipe do? 
+
+```{r}
+gtbl %>% head(3)
+```
+
+## Example
+
+Show me a random sample of the data for Asian countries with life expectancy < 65.
+
+```{r}
+gtbl1 = gtbl[gtbl$continent=="Asia",]
+gtbl2 = gtbl1[gtbl1$lifeExp < 65,]
+gtbl3 = gtbl2[sample(1:dim(gtbl2)[1],size=10),]
+gtbl3
+```
+
+## w/pipes
+
+```{r}
+gtbl %>% filter(continent == "Asia") %>% 
+         filter(lifeExp < 65) %>%
+         sample_n(10)
+```
+
+## Another example
+
+What is the average life expectancy by continent?
+
+```{r}
+gtbl %>% group_by(continent) %>% 
+         summarize(aveLife = mean(lifeExp))
+```
+
+## Common summarize options
+
+
+
+<img class=center src=./summarize.png height=350>
+

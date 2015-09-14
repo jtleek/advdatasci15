@@ -123,9 +123,11 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M1 | 2015-08-31 | [Organizing](http://jtleek.com/advdatasci/lecture_notes/firstexample/#1)| [example project](https://www.dropbox.com/sh/jyd8fmsgofgdaw1/AABjMq1i7t0irrwbgy3c1wlAa?dl=0)|
 | W1 | 2015-09-02 | [Introduction, Google Slides](https://docs.google.com/presentation/d/16GqCWSiGclOpus_E2UTQ9SgNNdYpNzDf7rwUHndcj2M/edit?usp=sharing)||
 | W1 | 2015-09-02 | [Version control](http://jtleek.com/advdatasci/lecture_notes/versioncontrol/#1)| [rmarkdown lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/rmarkdown-lab.Rmd)|
-| W1 | 2015-09-02 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)||
-| W2 | 2015-09-02 | [Introduction](https://docs.google.com/presentation/d/1Ly3WbSL-XGqwM9B9rO3zGj5iOTpwb1Alsda-l9dnU_U/edit?usp=sharing)|| 
-| W2 | 2015-09-02 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)| [web + api lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/web-api-lab.Rmd) | 
+| W1 | 2015-09-07 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)||
+| W2 | 2015-09-07 | [Introduction](https://docs.google.com/presentation/d/1Ly3WbSL-XGqwM9B9rO3zGj5iOTpwb1Alsda-l9dnU_U/edit?usp=sharing)|| 
+| W2 | 2015-09-07 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)| [web + api lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/web-api-lab.Rmd) | 
+| M3| 2015-09-14 | [Introduction](https://docs.google.com/presentation/d/1URHrfsTU8VPwZrJ4UR1rUnJVWIUckil0q7VcNW81GKQ/edit?usp=sharing)||
+| M3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)| [dplyr lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd)|
 |---|---|---|---|
 
 
