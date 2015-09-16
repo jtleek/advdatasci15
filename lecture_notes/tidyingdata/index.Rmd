@@ -389,3 +389,417 @@ matchIndex = match(superheroes$publisher,publishers$publisher)
 publishers[matchIndex,]
 ```
 
+
+## Regular expressions
+
+- Regular expressions can be thought of as a combination of literals and _metacharacters_
+- To draw an analogy with natural language, think of literal text forming the words of this language, and the metacharacters defining its grammar
+- Regular expressions have a rich set of metacharacters
+
+
+## Regular expressions
+
+Find all "BGI"
+```{r}
+library(readxl)
+kg = read_excel("1000genomes.xlsx",sheet=4,skip=1)
+table(kg$Center)
+```
+
+## grep
+
+```{r}
+grep("BCM",kg$Center)[1:10]
+grepl("BCM",kg$Center)[1:10]
+```
+
+## stringr
+
+```{r}
+library(stringr)
+str_detect(kg$Center,"BCM")[1:40]
+str_subset(kg$Center,"BCM")[64:73]
+```
+
+https://github.com/hadley/stringr/blob/master/vignettes/stringr.Rmd
+https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html
+
+## A few string operations I use a lot
+
+```{r}
+str_trim("Jeff      ")
+paste0("Jeffrey","Leek")
+nchar("Jeffrey Leek")
+```
+
+
+## Literals: nuclear
+
+<img class=center src=./nuclear.png height=400>
+
+
+## Literals: Obama
+
+<img class=center src=./obama.png height=400>
+
+
+## But text is more complicated
+
+We need a way to express
+- whitespace word boundaries
+- sets of literals
+- the beginning and end of a line
+- alternatives (“war” or “peace”) 
+
+## Beginning of line with \^
+
+```{r}
+x = c("i think we all rule for participating",
+"i think i have been outed",
+"i think this will be quite fun actually",
+"it will be fun, i think")
+
+str_detect(x, "^i think")
+```
+
+## End of line with \$
+
+```{r}
+x = c("well they had something this morning",
+"then had to catch a tram home in the morning",
+"dog obedience school in the morning",
+"this morning I'll go for a run")
+
+str_detect(x, "morning$")
+```
+
+## Character lists with []
+
+```{r}
+x = c('Name the worst thing about Bush!',
+'I saw a green bush',
+'BBQ and bushwalking at Molonglo Gorge',
+'BUSH!!')
+
+str_detect(x,"[Bb][Uu][Ss][Hh]")
+```
+
+## Sets of letters or numbers
+
+```{r}
+x = c('7th inning stretch',
+'2nd half soon to begin. OSU did just win.',
+'3am - cant sleep - too hot still.. :(',
+'5ft 7 sent from heaven')
+
+str_detect(x,"^[0-9][a-zA-Z]")
+```
+
+
+## Negative classes
+
+```{r}
+x = c('are you there?',
+'2nd half soon to begin. OSU did just win.',
+'6 and 9',
+'dont worry... we all die anyway!')
+
+str_detect(x,"[^?.]$")
+```
+
+## . means anything
+
+```{r}
+x = c('its stupid the post 9-11 rules',
+'NetBios: scanning ip 203.169.114.66',
+'Front Door 9:11:46 AM',
+'Sings: 0118999881999119725...3 !')
+
+str_detect(x,"9.11")
+```
+
+## | means or
+
+```{r}
+x = c('Not a whole lot of hurricanes.',
+'We do have floods nearly every day', 
+'hurricanes swirl in the other direction',
+'coldfire is STRAIGHT!')
+
+str_detect(x,"flood|earthquake|hurricane|coldfire")
+```
+
+## More Metacharacters: ( and )
+
+Subexpressions are often contained in parentheses to constrain the alternatives
+
+```markdown
+^([Gg]ood|[Bb]ad)
+```
+
+will match the lines
+
+```markdown
+bad habbit
+bad coordination today
+good, becuase there is nothing worse than a man in kinky underwear
+Badcop, its because people want to use drugs
+Good Monday Holiday
+Good riddance to Limey
+```
+
+## More Metacharacters: ?
+
+The question mark indicates that the indicated expression is optional
+
+```markdown
+[Gg]eorge( [Ww]\.)? [Bb]ush
+```
+
+will match the lines
+
+```markdown
+i bet i can spell better than you and george bush combined
+BBC reported that President George W. Bush claimed God told him to invade I
+a bird in the hand is worth two george bushes
+```
+
+
+## One thing to note...
+
+In the following
+
+```markdown
+[Gg]eorge( [Ww]\.)? [Bb]ush
+```
+
+we wanted to match a “.” as a literal period; to do that, we had to “escape” the metacharacter, preceding it with a backslash In general, we have to do this for any metacharacter we want to include in our match
+
+
+## More metacharacters: * and +
+
+The * and + signs are metacharacters used to indicate repetition; * means “any number, including none, of the item” and + means “at least one of the item”
+
+```markdown
+(.*)
+```
+
+will match the lines
+
+```markdown
+anyone wanna chat? (24, m, germany)
+hello, 20.m here... ( east area + drives + webcam )
+(he means older men)
+()
+```
+
+
+## More metacharacters: * and +
+
+The * and + signs are metacharacters used to indicate repetition; * means “any number, including none, of the item” and + means “at least one of the item”
+
+```markdown
+[0-9]+ (.*)[0-9]+
+```
+
+will match the lines
+
+```markdown
+working as MP here 720 MP battallion, 42nd birgade
+so say 2 or 3 years at colleage and 4 at uni makes us 23 when and if we fin
+it went down on several occasions for like, 3 or 4 *days*
+Mmmm its time 4 me 2 go 2 bed
+```
+
+## More metacharacters: { and }
+
+{ and } are referred to as interval quantifiers; the let us specify the minimum and maximum number of matches of an expression
+
+```markdown
+[Bb]ush( +[^ ]+ +){1,5} debate
+```
+
+will match the lines
+
+```markdown
+Bush has historically won all major debates he’s done.
+in my view, Bush doesn’t need these debates..
+bush doesn’t need the debates? maybe you are right
+That’s what Bush supporters are doing about the debate.
+Felix, I don’t disagree that Bush was poorly prepared for the debate.
+indeed, but still, Bush should have taken the debate more seriously.
+Keep repeating that Bush smirked and scowled during the debate
+```
+
+
+## More metacharacters: and
+
+- m,n means at least m but not more than n matches 
+- m means exactly m matches
+- m, means at least m matches
+
+## More metacharacters: ( and ) revisited
+
+- In most implementations of regular expressions, the parentheses not only limit the scope of alternatives divided by a “|”, but also can be used to “remember” text matched by the subexpression enclosed
+- We refer to the matched text with \1, \2, etc.
+
+
+## More metacharacters: ( and ) revisited
+
+So the expression
+
+```markdown
++([a-zA-Z]+) +\1 +
+```
+
+will match the lines
+
+```markdown
+time for bed, night night twitter!
+blah blah blah blah
+my tattoo is so so itchy today
+i was standing all all alone against the world outside...
+hi anybody anybody at home
+estudiando css css css css.... que desastritooooo
+```
+
+
+## detecting phone numbers
+
+```{r}
+x = c('206-555-1122','206-332','4545','test')
+
+phone = "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+
+str_detect(x,phone)
+
+```
+
+
+## Can this get ridiculous?
+
+_You bet!_
+
+<img class=center src=./regexgolf.png height=350>
+
+https://regex.alf.nu/
+
+
+## Like really ridiculous
+
+
+<img class=center src=./regexgolf.png height=350>
+
+https://xkcd.com/1313/
+
+
+
+## A nice tutorial
+
+<img class=center src=./stat545-regex.png height=350>
+
+http://stat545-ubc.github.io/block022_regular-expression.html
+
+## Important points about text in data sets
+
+* Names of variables should be 
+  * All lower case when possible
+  * Descriptive (Diagnosis versus Dx)
+  * Not duplicated
+  * Not have underscores or dots or white spaces
+* Variables with character values
+  * Should usually be made into factor variables (depends on application)
+  * Should be descriptive (use TRUE/FALSE instead of 0/1 and Male/Female versus 0/1 or M/F)
+
+## Starting simple
+
+```{r}
+d1 = date()
+d1
+class(d1)
+```
+
+## Date class
+
+```{r sysDate}
+d2 = Sys.Date()
+d2
+class(d2)
+```
+
+
+## Formatting dates
+
+`%d` = day as number (0-31), `%a` = abbreviated weekday,`%A` = unabbreviated weekday, `%m` = month (00-12), `%b` = abbreviated month,
+`%B` = unabbrevidated month, `%y` = 2 digit year, `%Y` = four digit year
+
+```{r ,dependson="sysDate"}
+format(d2,"%a %b %d")
+```
+
+## Creating dates
+
+```{r}
+x = c("1jan1960", "2jan1960", "31mar1960", "30jul1960"); z = as.Date(x, "%d%b%Y")
+z
+z[1] - z[2]
+as.numeric(z[1]-z[2])
+```
+
+
+## Converting to Julian 
+
+```{r,dependson="sysDate"}
+weekdays(d2)
+months(d2)
+julian(d2)
+```
+
+
+
+## Lubridate 
+
+```{r lub}
+library(lubridate); ymd("20140108")
+mdy("08/04/2013")
+dmy("03-04-2013")
+```
+
+[http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/](http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/)
+
+
+## Dealing with times
+
+```{r ,dependson="lub"}
+ymd_hms("2011-08-03 10:15:03")
+ymd_hms("2011-08-03 10:15:03",tz="Pacific/Auckland")
+?Sys.timezone
+```
+
+[http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/](http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/)
+
+
+## Some functions have slightly different syntax
+
+```{r, dependson="lub"}
+x = dmy(c("1jan2013", "2jan2013", "31mar2013", "30jul2013"))
+wday(x[1])
+wday(x[1],label=TRUE)
+```
+
+
+## Notes and further resources
+
+* More information in this nice lubridate tutorial [http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/](http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/)
+* The lubridate vignette is the same content [http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html](http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html)
+* Ultimately you want your dates and times as class "Date" or the classes "POSIXct", "POSIXlt". For more information type `?POSIXlt`
+
+
+## Lab time
+
+* [dplyr](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd)
+* [regex](https://github.com/SISBID/Module1/blob/gh-pages/labs/regex-lab.Rmd)
+* [merging](https://github.com/SISBID/Module1/blob/gh-pages/labs/merging-lab.Rmd)
+* [final](https://github.com/SISBID/Module1/blob/gh-pages/labs/final-lab.Rmd)
+
+

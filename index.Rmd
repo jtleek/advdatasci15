@@ -128,6 +128,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W2 | 2015-09-07 | [Getting data](http://jtleek.com/advdatasci/lecture_notes/gettingdata/#1)| [web + api lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/web-api-lab.Rmd) | 
 | M3| 2015-09-14 | [Introduction](https://docs.google.com/presentation/d/1URHrfsTU8VPwZrJ4UR1rUnJVWIUckil0q7VcNW81GKQ/edit?usp=sharing)||
 | M3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)| [dplyr lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd) [merging lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/merging-lab.Rmd)|
+| W3 | 2015-09-16 | [Introduction](https://docs.google.com/presentation/d/14OUqCAGcfM-xrz0j9DD_Z1BNP1I_bezC3Exjuo4qjKE/edit?usp=sharing)||
+| W3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)|[regex lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/regex-lab.Rmd) [final lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/final-lab.Rmd)|
 |---|---|---|---|
 
 
@@ -136,6 +138,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | Project  |  Assigned Date  |  Due Date | Link  |  Description |
 |---|---|---|---|---|
 | Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link, [feedback](http://jtleek.com/advdatasci/code/project1-resources.html) |
+| Project 2 | 2015-09-16 | 2015-09-27 | [Project 2](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1395) | Fitbit activity, email for link|
 |---|---|---|---|---|
 
 

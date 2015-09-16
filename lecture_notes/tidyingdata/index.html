@@ -1234,7 +1234,431 @@ publishers[matchIndex,]</pre>
 ## 1          DC       1934 FALSE
 ## 1.1        DC       1934 FALSE
 ## 1.2        DC       1934 FALSE
-## NA       &lt;NA&gt;         NA    NA</pre></article></slide>
+## NA       &lt;NA&gt;         NA    NA</pre>
+
+</article></slide><slide class=''><hgroup><h2>Regular expressions</h2></hgroup><article  id="regular-expressions">
+
+<ul>
+<li>Regular expressions can be thought of as a combination of literals and <em>metacharacters</em></li>
+<li>To draw an analogy with natural language, think of literal text forming the words of this language, and the metacharacters defining its grammar</li>
+<li>Regular expressions have a rich set of metacharacters</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Regular expressions</h2></hgroup><article  id="regular-expressions-1">
+
+<p>Find all &quot;BGI&quot;</p>
+
+<pre class = 'prettyprint lang-r'>library(readxl)
+kg = read_excel(&quot;1000genomes.xlsx&quot;,sheet=4,skip=1)
+table(kg$Center)</pre>
+
+<pre >## 
+##            BCM        BCM,BGI         BCM,BI         BCM,SC      BCM,WUGSC 
+##            159              1              8              6              3 
+##            BGI             BI       BI,MPIMG       Illumina       ILLUMINA 
+##            626            578              1              1            104 
+## ILLUMINA,WUGSC          MPIMG             SC          WUGSC 
+##              2             95            739            365</pre>
+
+</article></slide><slide class=''><hgroup><h2>grep</h2></hgroup><article  id="grep-1">
+
+<pre class = 'prettyprint lang-r'>grep(&quot;BCM&quot;,kg$Center)[1:10]</pre>
+
+<pre >##  [1]   2   4   9  33  34  35  86  87 174 175</pre>
+
+<pre class = 'prettyprint lang-r'>grepl(&quot;BCM&quot;,kg$Center)[1:10]</pre>
+
+<pre >##  [1] FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE</pre>
+
+</article></slide><slide class=''><hgroup><h2>stringr</h2></hgroup><article  id="stringr">
+
+<pre class = 'prettyprint lang-r'>library(stringr)
+str_detect(kg$Center,&quot;BCM&quot;)[1:40]</pre>
+
+<pre >##  [1] FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+## [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [23] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## [34]  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE</pre>
+
+<pre class = 'prettyprint lang-r'>str_subset(kg$Center,&quot;BCM&quot;)[64:73]</pre>
+
+<pre >##  [1] &quot;BCM&quot;       &quot;BCM&quot;       &quot;BCM,BGI&quot;   &quot;BCM,SC&quot;    &quot;BCM&quot;      
+##  [6] &quot;BCM,BI&quot;    &quot;BCM,BI&quot;    &quot;BCM,WUGSC&quot; &quot;BCM,BI&quot;    &quot;BCM,SC&quot;</pre>
+
+<p><a href='https://github.com/hadley/stringr/blob/master/vignettes/stringr.Rmd' title=''>https://github.com/hadley/stringr/blob/master/vignettes/stringr.Rmd</a> <a href='https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html' title=''>https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html</a></p>
+
+</article></slide><slide class=''><hgroup><h2>A few string operations I use a lot</h2></hgroup><article  id="a-few-string-operations-i-use-a-lot">
+
+<pre class = 'prettyprint lang-r'>str_trim(&quot;Jeff      &quot;)</pre>
+
+<pre >## [1] &quot;Jeff&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>paste0(&quot;Jeffrey&quot;,&quot;Leek&quot;)</pre>
+
+<pre >## [1] &quot;JeffreyLeek&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>nchar(&quot;Jeffrey Leek&quot;)</pre>
+
+<pre >## [1] 12</pre>
+
+</article></slide><slide class=''><hgroup><h2>Literals: nuclear</h2></hgroup><article  id="literals-nuclear">
+
+<p><img class=center src=./nuclear.png height=400></p>
+
+</article></slide><slide class=''><hgroup><h2>Literals: Obama</h2></hgroup><article  id="literals-obama">
+
+<p><img class=center src=./obama.png height=400></p>
+
+</article></slide><slide class=''><hgroup><h2>But text is more complicated</h2></hgroup><article  id="but-text-is-more-complicated">
+
+<p>We need a way to express - whitespace word boundaries - sets of literals - the beginning and end of a line - alternatives (“war” or “peace”)</p>
+
+</article></slide><slide class=''><hgroup><h2>Beginning of line with ^</h2></hgroup><article  id="beginning-of-line-with">
+
+<pre class = 'prettyprint lang-r'>x = c(&quot;i think we all rule for participating&quot;,
+&quot;i think i have been outed&quot;,
+&quot;i think this will be quite fun actually&quot;,
+&quot;it will be fun, i think&quot;)
+
+str_detect(x, &quot;^i think&quot;)</pre>
+
+<pre >## [1]  TRUE  TRUE  TRUE FALSE</pre>
+
+</article></slide><slide class=''><hgroup><h2>End of line with $</h2></hgroup><article  id="end-of-line-with">
+
+<pre class = 'prettyprint lang-r'>x = c(&quot;well they had something this morning&quot;,
+&quot;then had to catch a tram home in the morning&quot;,
+&quot;dog obedience school in the morning&quot;,
+&quot;this morning I&#39;ll go for a run&quot;)
+
+str_detect(x, &quot;morning$&quot;)</pre>
+
+<pre >## [1]  TRUE  TRUE  TRUE FALSE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Character lists with []</h2></hgroup><article  id="character-lists-with">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;Name the worst thing about Bush!&#39;,
+&#39;I saw a green bush&#39;,
+&#39;BBQ and bushwalking at Molonglo Gorge&#39;,
+&#39;BUSH!!&#39;)
+
+str_detect(x,&quot;[Bb][Uu][Ss][Hh]&quot;)</pre>
+
+<pre >## [1] TRUE TRUE TRUE TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Sets of letters or numbers</h2></hgroup><article  id="sets-of-letters-or-numbers">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;7th inning stretch&#39;,
+&#39;2nd half soon to begin. OSU did just win.&#39;,
+&#39;3am - cant sleep - too hot still.. :(&#39;,
+&#39;5ft 7 sent from heaven&#39;)
+
+str_detect(x,&quot;^[0-9][a-zA-Z]&quot;)</pre>
+
+<pre >## [1] TRUE TRUE TRUE TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Negative classes</h2></hgroup><article  id="negative-classes">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;are you there?&#39;,
+&#39;2nd half soon to begin. OSU did just win.&#39;,
+&#39;6 and 9&#39;,
+&#39;dont worry... we all die anyway!&#39;)
+
+str_detect(x,&quot;[^?.]$&quot;)</pre>
+
+<pre >## [1] FALSE FALSE  TRUE  TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2>. means anything</h2></hgroup><article  id="means-anything">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;its stupid the post 9-11 rules&#39;,
+&#39;NetBios: scanning ip 203.169.114.66&#39;,
+&#39;Front Door 9:11:46 AM&#39;,
+&#39;Sings: 0118999881999119725...3 !&#39;)
+
+str_detect(x,&quot;9.11&quot;)</pre>
+
+<pre >## [1] TRUE TRUE TRUE TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2><h3> means or</h3></hgroup><article  id="means-or">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;Not a whole lot of hurricanes.&#39;,
+&#39;We do have floods nearly every day&#39;, 
+&#39;hurricanes swirl in the other direction&#39;,
+&#39;coldfire is STRAIGHT!&#39;)
+
+str_detect(x,&quot;flood|earthquake|hurricane|coldfire&quot;)</pre>
+
+<pre >## [1] TRUE TRUE TRUE TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2>More Metacharacters: ( and )</h2></hgroup><article  id="more-metacharacters-and">
+
+<p>Subexpressions are often contained in parentheses to constrain the alternatives</p>
+
+<pre class = 'prettyprint lang-markdown'>^([Gg]ood|[Bb]ad)</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>bad habbit
+bad coordination today
+good, becuase there is nothing worse than a man in kinky underwear
+Badcop, its because people want to use drugs
+Good Monday Holiday
+Good riddance to Limey</pre>
+
+</article></slide><slide class=''><hgroup><h2>More Metacharacters: ?</h2></hgroup><article  id="more-metacharacters">
+
+<p>The question mark indicates that the indicated expression is optional</p>
+
+<pre class = 'prettyprint lang-markdown'>[Gg]eorge( [Ww]\.)? [Bb]ush</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>i bet i can spell better than you and george bush combined
+BBC reported that President George W. Bush claimed God told him to invade I
+a bird in the hand is worth two george bushes</pre>
+
+</article></slide><slide class=''><hgroup><h2>One thing to note&#8230;</h2></hgroup><article  id="one-thing-to-note...">
+
+<p>In the following</p>
+
+<pre class = 'prettyprint lang-markdown'>[Gg]eorge( [Ww]\.)? [Bb]ush</pre>
+
+<p>we wanted to match a “.” as a literal period; to do that, we had to “escape” the metacharacter, preceding it with a backslash In general, we have to do this for any metacharacter we want to include in our match</p>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: * and +</h2></hgroup><article  id="more-metacharacters-and-1">
+
+<p>The * and + signs are metacharacters used to indicate repetition; * means “any number, including none, of the item” and + means “at least one of the item”</p>
+
+<pre class = 'prettyprint lang-markdown'>(.*)</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>anyone wanna chat? (24, m, germany)
+hello, 20.m here... ( east area + drives + webcam )
+(he means older men)
+()</pre>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: * and +</h2></hgroup><article  id="more-metacharacters-and-2">
+
+<p>The * and + signs are metacharacters used to indicate repetition; * means “any number, including none, of the item” and + means “at least one of the item”</p>
+
+<pre class = 'prettyprint lang-markdown'>[0-9]+ (.*)[0-9]+</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>working as MP here 720 MP battallion, 42nd birgade
+so say 2 or 3 years at colleage and 4 at uni makes us 23 when and if we fin
+it went down on several occasions for like, 3 or 4 *days*
+Mmmm its time 4 me 2 go 2 bed</pre>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: { and }</h2></hgroup><article  id="more-metacharacters-and-3">
+
+<p>{ and } are referred to as interval quantifiers; the let us specify the minimum and maximum number of matches of an expression</p>
+
+<pre class = 'prettyprint lang-markdown'>[Bb]ush( +[^ ]+ +){1,5} debate</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>Bush has historically won all major debates he’s done.
+in my view, Bush doesn’t need these debates..
+bush doesn’t need the debates? maybe you are right
+That’s what Bush supporters are doing about the debate.
+Felix, I don’t disagree that Bush was poorly prepared for the debate.
+indeed, but still, Bush should have taken the debate more seriously.
+Keep repeating that Bush smirked and scowled during the debate</pre>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: and</h2></hgroup><article  id="more-metacharacters-and-4">
+
+<ul>
+<li>m,n means at least m but not more than n matches</li>
+<li>m means exactly m matches</li>
+<li>m, means at least m matches</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: ( and ) revisited</h2></hgroup><article  id="more-metacharacters-and-revisited">
+
+<ul>
+<li>In most implementations of regular expressions, the parentheses not only limit the scope of alternatives divided by a “|”, but also can be used to “remember” text matched by the subexpression enclosed</li>
+<li>We refer to the matched text with , , etc.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>More metacharacters: ( and ) revisited</h2></hgroup><article  id="more-metacharacters-and-revisited-1">
+
+<p>So the expression</p>
+
+<pre class = 'prettyprint lang-markdown'>+([a-zA-Z]+) +\1 +</pre>
+
+<p>will match the lines</p>
+
+<pre class = 'prettyprint lang-markdown'>time for bed, night night twitter!
+blah blah blah blah
+my tattoo is so so itchy today
+i was standing all all alone against the world outside...
+hi anybody anybody at home
+estudiando css css css css.... que desastritooooo</pre>
+
+</article></slide><slide class=''><hgroup><h2>detecting phone numbers</h2></hgroup><article  id="detecting-phone-numbers">
+
+<pre class = 'prettyprint lang-r'>x = c(&#39;206-555-1122&#39;,&#39;206-332&#39;,&#39;4545&#39;,&#39;test&#39;)
+
+phone = &quot;([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})&quot;
+
+str_detect(x,phone)</pre>
+
+<pre >## [1]  TRUE FALSE FALSE FALSE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Can this get ridiculous?</h2></hgroup><article  id="can-this-get-ridiculous">
+
+<p><em>You bet!</em></p>
+
+<p><img class=center src=./regexgolf.png height=350></p>
+
+<p><a href='https://regex.alf.nu/' title=''>https://regex.alf.nu/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Like really ridiculous</h2></hgroup><article  id="like-really-ridiculous">
+
+<p><img class=center src=./regexgolf.png height=350></p>
+
+<p><a href='https://xkcd.com/1313/' title=''>https://xkcd.com/1313/</a></p>
+
+</article></slide><slide class=''><hgroup><h2>A nice tutorial</h2></hgroup><article  id="a-nice-tutorial">
+
+<p><img class=center src=./stat545-regex.png height=350></p>
+
+<p><a href='http://stat545-ubc.github.io/block022_regular-expression.html' title=''>http://stat545-ubc.github.io/block022_regular-expression.html</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Important points about text in data sets</h2></hgroup><article  id="important-points-about-text-in-data-sets">
+
+<ul>
+<li>Names of variables should be</li>
+<li>All lower case when possible</li>
+<li>Descriptive (Diagnosis versus Dx)</li>
+<li>Not duplicated</li>
+<li>Not have underscores or dots or white spaces</li>
+<li>Variables with character values</li>
+<li>Should usually be made into factor variables (depends on application)</li>
+<li>Should be descriptive (use TRUE/FALSE instead of 0/1 and Male/Female versus 0/1 or M/F)</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Starting simple</h2></hgroup><article  id="starting-simple">
+
+<pre class = 'prettyprint lang-r'>d1 = date()
+d1</pre>
+
+<pre >## [1] &quot;Wed Sep 16 12:43:40 2015&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>class(d1)</pre>
+
+<pre >## [1] &quot;character&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Date class</h2></hgroup><article  id="date-class">
+
+<pre class = 'prettyprint lang-r'>d2 = Sys.Date()
+d2</pre>
+
+<pre >## [1] &quot;2015-09-16&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>class(d2)</pre>
+
+<pre >## [1] &quot;Date&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Formatting dates</h2></hgroup><article  id="formatting-dates">
+
+<p><code>%d</code> = day as number (0-31), <code>%a</code> = abbreviated weekday,<code>%A</code> = unabbreviated weekday, <code>%m</code> = month (00-12), <code>%b</code> = abbreviated month, <code>%B</code> = unabbrevidated month, <code>%y</code> = 2 digit year, <code>%Y</code> = four digit year</p>
+
+<pre class = 'prettyprint lang-r'>format(d2,&quot;%a %b %d&quot;)</pre>
+
+<pre >## [1] &quot;Wed Sep 16&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Creating dates</h2></hgroup><article  id="creating-dates">
+
+<pre class = 'prettyprint lang-r'>x = c(&quot;1jan1960&quot;, &quot;2jan1960&quot;, &quot;31mar1960&quot;, &quot;30jul1960&quot;); z = as.Date(x, &quot;%d%b%Y&quot;)
+z</pre>
+
+<pre >## [1] &quot;1960-01-01&quot; &quot;1960-01-02&quot; &quot;1960-03-31&quot; &quot;1960-07-30&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>z[1] - z[2]</pre>
+
+<pre >## Time difference of -1 days</pre>
+
+<pre class = 'prettyprint lang-r'>as.numeric(z[1]-z[2])</pre>
+
+<pre >## [1] -1</pre>
+
+</article></slide><slide class=''><hgroup><h2>Converting to Julian</h2></hgroup><article  id="converting-to-julian">
+
+<pre class = 'prettyprint lang-r'>weekdays(d2)</pre>
+
+<pre >## [1] &quot;Wednesday&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>months(d2)</pre>
+
+<pre >## [1] &quot;September&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>julian(d2)</pre>
+
+<pre >## [1] 16694
+## attr(,&quot;origin&quot;)
+## [1] &quot;1970-01-01&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Lubridate</h2></hgroup><article  id="lubridate">
+
+<pre class = 'prettyprint lang-r'>library(lubridate); ymd(&quot;20140108&quot;)</pre>
+
+<pre >## [1] &quot;2014-01-08 UTC&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>mdy(&quot;08/04/2013&quot;)</pre>
+
+<pre >## [1] &quot;2013-08-04 UTC&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>dmy(&quot;03-04-2013&quot;)</pre>
+
+<pre >## [1] &quot;2013-04-03 UTC&quot;</pre>
+
+<p><a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''><a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''>http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>Dealing with times</h2></hgroup><article  id="dealing-with-times">
+
+<pre class = 'prettyprint lang-r'>ymd_hms(&quot;2011-08-03 10:15:03&quot;)</pre>
+
+<pre >## [1] &quot;2011-08-03 10:15:03 UTC&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>ymd_hms(&quot;2011-08-03 10:15:03&quot;,tz=&quot;Pacific/Auckland&quot;)</pre>
+
+<pre >## [1] &quot;2011-08-03 10:15:03 NZST&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>?Sys.timezone</pre>
+
+<p><a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''><a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''>http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/</a></a></p>
+
+</article></slide><slide class=''><hgroup><h2>Some functions have slightly different syntax</h2></hgroup><article  id="some-functions-have-slightly-different-syntax">
+
+<pre class = 'prettyprint lang-r'>x = dmy(c(&quot;1jan2013&quot;, &quot;2jan2013&quot;, &quot;31mar2013&quot;, &quot;30jul2013&quot;))
+wday(x[1])</pre>
+
+<pre >## [1] 3</pre>
+
+<pre class = 'prettyprint lang-r'>wday(x[1],label=TRUE)</pre>
+
+<pre >## [1] Tues
+## Levels: Sun &lt; Mon &lt; Tues &lt; Wed &lt; Thurs &lt; Fri &lt; Sat</pre>
+
+</article></slide><slide class=''><hgroup><h2>Notes and further resources</h2></hgroup><article  id="notes-and-further-resources">
+
+<ul>
+<li>More information in this nice lubridate tutorial <a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''><a href='http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/' title=''>http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/</a></a></li>
+<li>The lubridate vignette is the same content <a href='http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html' title=''><a href='http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html' title=''>http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html</a></a></li>
+<li>Ultimately you want your dates and times as class &quot;Date&quot; or the classes &quot;POSIXct&quot;, &quot;POSIXlt&quot;. For more information type <code>?POSIXlt</code></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Lab time</h2></hgroup><article  id="lab-time">
+
+<ul>
+<li><a href='https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd' title=''>dplyr</a></li>
+<li><a href='https://github.com/SISBID/Module1/blob/gh-pages/labs/regex-lab.Rmd' title=''>regex</a></li>
+<li><a href='https://github.com/SISBID/Module1/blob/gh-pages/labs/merging-lab.Rmd' title=''>merging</a></li>
+<li><a href='https://github.com/SISBID/Module1/blob/gh-pages/labs/final-lab.Rmd' title=''>final</a></li>
+</ul></article></slide>
 
 
   <slide class="backdrop"></slide>
