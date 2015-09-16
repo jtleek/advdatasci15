@@ -231,6 +231,16 @@ gtbl %>% group_by(continent) %>%
          summarize(aveLife = mean(lifeExp))
 ```
 
+## The old-fashioned way
+
+```{r}
+tapply(gtbl$lifeExp,gtbl$continent,mean)
+sapply(gtbl$continent,function(x){substr(x,1,3)})[1:10]
+splitlife= split(gtbl$lifeExp,gtbl$continent)  
+lapply(splitlife,mean)
+```
+
+
 ## Common summarize options
 
 
