@@ -130,6 +130,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)| [dplyr lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/dplyr-lab.Rmd) [merging lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/merging-lab.Rmd)|
 | W3 | 2015-09-16 | [Introduction](https://docs.google.com/presentation/d/14OUqCAGcfM-xrz0j9DD_Z1BNP1I_bezC3Exjuo4qjKE/edit?usp=sharing)||
 | W3| 2015-09-14 | [Tidying data](http://jtleek.com/advdatasci/lecture_notes/tidyingdata/#1)|[regex lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/regex-lab.Rmd) [final lab](https://github.com/SISBID/Module1/blob/gh-pages/labs/final-lab.Rmd)|
+| W4 | 2015-09-23 | [Introduction](https://docs.google.com/presentation/d/1H3beXOXTrfIFK2hNFOpT-bdexmQiNkeuJqCJOwNxT5s/edit?usp=sharing) || 
+| W4 | 2015-09-23 | [Exploratory graphs](http://jtleek.com/advdatasci/lecture_notes/exploratory/#1) || 
 |---|---|---|---|
 
 
