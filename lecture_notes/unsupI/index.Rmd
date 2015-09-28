@@ -1,0 +1,1179 @@
+---
+title: "Unsupervised analysis I"
+author: "Jeff Leek"
+date: "September 28, 2015"
+output: ioslides_presentation
+---
+
+
+## A rough dichomotomy of data analysis
+
+In approximate order of difficulty
+
+* __Descriptive__
+* __Exploratory__
+* _Inferential_
+* _Predictive_
+* _Causal_
+* _Mechanistic_
+
+__Unsupervised__
+_Supervised_
+
+
+
+## Supervised versus unsupervised
+
+__Supervised__
+
+* You have an outcome $Y$ and some covariates $X$
+* You typically want to solve something like 
+$argmin_f E\left[(Y-f(X))^2\right]$
+
+__Unsupervised__
+
+* You have a bunch of observations $X$ and you want to understand the relationships between them. 
+* You are usually trying to understand patterns in $X$ or group the variables in $X$ in some way
+
+## Semi-supervised
+
+* Things like "deep learning" - http://en.wikipedia.org/wiki/Deep_learning
+
+* Two cool examples: [Cat recognizer from Youtube videos](http://static.googleusercontent.com/media/research.google.com/en/us/archive/unsupervised_icml2012.pdf), [Learning to sing like a bird](http://people.csail.mit.edu/mhcoen/Papers/birdsong.pdf)
+
+* I liked this guide [Neural networks and deep learning](http://neuralnetworksanddeeplearning.com/)
+
+## A few techniques for unsupervised analysis
+
+* Kernel density estimation
+* Clustering
+* Principal components analysis/svd
+* Factor analysis
+* MDS/ICA/MFPCA/...
+
+
+
+## Estimating a univariate density
+
+You have some data
+
+```{r stampData}
+library(bootstrap)
+data(stamp)
+str(stamp)
+thick = stamp$Thickness
+```
+
+You want to know what this distribution looks like. 
+
+
+
+## You could calculate summary statistics
+
+
+```{r ,dependson="stampData",fig.height=4.5,fig.width=4.5}
+boxplot(thick)
+stripchart(thick,add=T,vertical=T,jitter=0.1,method="jitter",pch=19,col=rgb(0,0,1,0.25))
+```
+
+
+
+
+## Binning
+
+$X_1,\ldots,X_n \sim F$ with density $f(\cdot)$ and you want an estimator $\hat{f}$
+
+First idea - bin the data. In math this is what this looks like:
+
+$$I_j = (x_0 + j\times h,x_0+(j+1)\times h],j=-1,0,1,\ldots$$
+
+Calculate counts in bins
+
+$$C_j = \sum_{i=1}^n I(x_i \in I_j)$$
+
+Parameters are $x_0$, $h$.
+
+
+
+## You've seen this
+
+```{r ,dependson="stampData",fig.height=4.5,fig.width=9}
+par(mfrow=c(1,2))
+hist(thick,col="blue"); hist(thick,breaks=100,col="blue")
+```
+
+
+
+## Estimating the density
+
+Suppose you want an actual estimate of $f(\cdot)$, then we need to estimate probability of being in a bin. 
+
+$$\hat{f}(x) = \frac{1}{2hn} \#\{i; X_i \in (x-h,x+h]\}$$
+
+You can think of this as an approximation to this representation of the density:
+
+$$f(x) = \lim_{h \rightarrow 0} \frac{1}{2h} \mathbb{P}[x-h < X \leq x+h]$$
+
+This should look familiar, we are just replacing limits/expectations/etc with their empirical counterparts. 
+
+
+
+
+## The kernel density estimator 
+
+$$\hat{f}(x) = \frac{1}{2hn} \#\{i; X_i \in (x-h,x+h]\}$$
+
+can be written as
+
+$$ \hat{f}(x) = \frac{1}{nh} \sum_{i=1}^n w \left(\frac{x-X_i}{h}\right)$$
+
+$$ w(x) = \left\{ \begin{array}{lr} 1/2 & if |x| < 1 \\ 0 & else\end{array}\right.$$
+
+In general you can can write a kernel smoother as: 
+
+$$ \hat{f}(x) = \frac{1}{nh} \sum_{i=1}^n K\left(\frac{x-X_i}{h}\right)$$
+
+where $\int K(x) dx =1$ (this guarantees that $\int \hat{f}(x) dx = 1$) and $h$ is the bandwidth.  
+
+
+
+## About the kernel and bandwidth
+
+* The bandwidth can be chosen in a large number of ways
+* Typically it is automatically chosen (e.g. in statistical software)
+* Popular kernels add more weight to nearby points:
+  * $K_{\lambda}(x_0,x_i) = D\left(\frac{|x_0 -x_i|}{\lambda}\right)$; $D(t) = (2\pi)^{-1/2}e^{-t^2/2}$ (Gaussian)
+  * $K_{\lambda}(x_0,x_i) = D\left(\frac{|x_0 -x_i|}{\lambda}\right)$;  $D(t) = (1-t^2)^2$ if $t \leq 1$ (Tukey Biweight)
+
+
+http://longor.public.iastate.edu/Stat516S13/slides/04.smoothing1.pdf
+
+
+
+## The kernel density estimator 
+
+```{r density,dependson="stampData",fig.height=4.5,fig.width=4.5}
+dens = density(thick); 
+plot(dens,col="blue",lwd=3); 
+```
+
+
+
+## Create our own KDE 
+
+```{r ,dependson="density",fig.height=4,fig.width=4}
+dvals = rep(0,length(dens$x))
+for(i in 1:length(thick)){
+  dvals = dvals + dnorm(dens$x,mean=thick[i],sd=dens$bw)/length(thick)
+}
+plot(dens,col="red",lwd=3); points(dens$x,dvals,col="blue",pch=19,cex=0.5)
+```
+
+
+
+
+## Bias variance tradeoff 
+
+We often care about things like MSE:
+
+$$ MSE(x) = \mathbb{E}\left[\left(\hat{f}(x) - f(x)\right)^2\right]$$
+
+$$=\left(\mathbb{E}[\hat{f}(x)] - f(x)\right)^2 + {\rm Var}(\hat{f}(x))$$
+
+
+* The bias of $\hat{f}$ increases and the variance of $\hat{f}$ decreases as $h$ increases. 
+* This is the "bias variance" tradeoff in smoothing 
+
+
+
+
+
+## You can do this with supervised learning too
+
+$$E_{\hat{F}}[Y|X=x_0] = {\rm a.v.e.} \{ y_i; x_i = x_0\}$$
+
+* If the values of $x_i$ are categorical we can estimate this directly. 
+
+* If not we need to "borrow strength"
+* You've seen this before for linear regression
+
+Define $\{W_i(x)\}_{i=1}^{n}$ for each $x$ and let
+
+$$s(x) = \sum_{i=1}^n W_i(x) y_i$$
+
+http://www.biostat.jhsph.edu/~ririzarr/Teaching/754/
+
+
+
+## Why this works (intuitively)
+
+
+$$ E[ Y | X ] = \int y f_{X,Y}(x,y) \, dy / f_X(x)$$
+
+$$s(x) = \frac{ n^{-1}\sum_{i=1}^n K\left( \frac{x - x_i}{h} \right) y_i }
+  { n^{-1}\sum_{i=1}^n K\left   ( \frac{ x - x_i }{h} \right)}$$
+
+Again we are basically just taking integrals and replacing them with sums. Noticing a theme here? Write down the theoretical parameter you are trying to estimate and then substitute empirical analogs. 
+
+http://www.biostat.jhsph.edu/~ririzarr/Teaching/754/
+
+
+
+## Back to univariate smoothing for the moment
+
+
+$$Bias(x) = \int K(z) (f(x-hz) - f(z))dz$$
+
+$$Var(x) = n^{-1} \int \frac{1}{h^2} K\left(\frac{x-y}{h}\right)^2 f(y)dy - n^{-1} \left(\int \frac{1}{h}K\left(\frac{x-y}{h}\right)f(y)dy \right)^2$$
+
+Assume $h = h_n \rightarrow 0$ with $nh_n \rightarrow 0$. If this is true then bias/variance go to zero as $n\rightarrow \infty$.
+
+You can asymptotically minimize $MSE(X)$ by solving $\frac{\partial}{\partial h} MSE(x) = 0$ 
+
+You get something like this:
+
+$$h_{opt} = n^{-1/5} \left(\frac{f(x)\int K^2(z)dz}{(f''(x)^2 (\int z^2 K(z)dz)^2)}\right)^{1/5}$$
+
+Derivation: http://stat.ethz.ch/education/semesters/SS_2006/CompStat/sk-ch2.pdf
+
+
+
+## Class exercises
+
+1. What are some cases where density estimation might give you trouble? 
+2. How would we estimate the number of modes in a density estimate as a function of $h$? 
+
+
+
+
+## Answer to question 2
+
+```{r,eval=FALSE}
+nmodes <- function(y){
+       x <- diff(y)
+       n <- length(x)
+       sum(x[2:n] < 0  & x[1:(n-1)] >  0)
+}
+```
+
+
+
+## In higher dimensions
+
+$X_1, \ldots, X_n \sim f(x_1,\ldots,x_d)$
+
+We can estimate a multivariate smoother
+
+$$ \hat{f}(x) = \frac{1}{nh^d} \sum_{i=1}^n K\left(\frac{x_i-X_i}{h}\right)$$
+
+wher the kernel $K(\cdot)$ is now a function on a d-dimensional vector satisfying
+
+$K(u) \geq 0$, $\int_{\mathbb{R}^d} K(u)du = 1$, $\int_{\mathbb{R}^d}uK(u)du = 0$ and 
+$\int_{\mathbb{R}^d} uu^T K(u)du = I_d$
+
+Usually you use a product kernel like $K(u) = \prod_{j=1}^d k(u_j)$. 
+
+
+
+## Curse of dimensionality
+
+Best possible MSE rate is $O(n^{-4/(4+d)})$
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/cursedim.png" height=450>
+
+[http://statweb.stanford.edu/~tibs/ElemStatLearn/](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
+
+
+
+## Clustering
+
+Clustering organizes things that are __close__ into groups
+
+
+* How do we define close?
+* How do we group things?
+* How do we visualize the grouping? 
+* How do we interpret the grouping? 
+
+
+
+## Hugely important/impactful
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/cluster.png height=450>
+
+[http://scholar.google.com/scholar?hl=en&q=cluster+analysis&btnG=&as_sdt=1%2C21&as_sdtp=](http://scholar.google.com/scholar?hl=en&q=cluster+analysis&btnG=&as_sdt=1%2C21&as_sdtp=)
+
+
+
+## Hierarchical clustering
+
+* An agglomerative approach
+  * Find closest two things
+  * Put them together
+  * Find next closest
+* Requires
+  * A defined distance
+  * A merging approach
+* Produces
+  * A tree showing how close things are to each other
+
+
+
+
+
+## How do we define close?
+
+* Most important step
+  * Garbage in -> garbage out
+* Distance or similarity
+  * Continuous - euclidean distance
+  * Continuous - correlation similarity
+  * Binary - manhattan distance
+* Pick a distance/similarity that makes sense for your problem
+  
+  
+
+
+
+## Example distances - Euclidean
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/distance.png height=450>
+
+[http://rafalab.jhsph.edu/688/lec/lecture5-clustering.pdf](http://rafalab.jhsph.edu/688/lec/lecture5-clustering.pdf)
+
+
+
+
+## Example distances - Euclidean
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/distance2.png height=300>
+
+In general:
+
+$$\sqrt{(A_1-A_2)^2 + (B_1-B_2)^2 + \ldots + (Z_1-Z_2)^2}$$
+[http://rafalab.jhsph.edu/688/lec/lecture5-clustering.pdf](http://rafalab.jhsph.edu/688/lec/lecture5-clustering.pdf)
+
+
+
+
+
+## Example distances - Manhattan
+
+<img class=center src=./manhattan.png height=300>
+
+In general:
+
+$$|A_1-A_2| + |B_1-B_2| + \ldots + |Z_1-Z_2|$$
+
+[http://en.wikipedia.org/wiki/Taxicab_geometry](http://en.wikipedia.org/wiki/Taxicab_geometry)
+
+
+
+
+
+## Hierarchical clustering - example
+
+```{r createData, fig.height=3.5,fig.width=3.5}
+set.seed(1234); par(mar=c(0,0,0,0))
+x <- rnorm(12,mean=rep(1:3,each=4),sd=0.2)
+y <- rnorm(12,mean=rep(c(1,2,1),each=4),sd=0.2)
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+```
+
+
+
+
+## Hierarchical clustering - `dist`
+
+* Important parameters: _x_,_method_
+```{r dependson="createData",fig.height=4,fig.width=4}
+dataFrame <- data.frame(x=x,y=y)
+dist(dataFrame)
+```
+
+
+
+## Hierarchical clustering - #1
+
+```{r dependson="createData",echo=FALSE, fig.height=4,fig.width=8}
+suppressMessages(library(fields))
+dataFrame <- data.frame(x=x,y=y)
+rdistxy <- rdist(dataFrame)
+diag(rdistxy) <- diag(rdistxy) + 1e5
+
+# Find the index of the points with minimum distance
+ind <- which(rdistxy == min(rdistxy),arr.ind=TRUE)
+par(mfrow=c(1,2),mar=rep(0.2,4))
+# Plot the points with the minimum overlayed
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+points(x[ind[1,]],y[ind[1,]],col="orange",pch=19,cex=2)
+
+# Make a cluster and cut it at the right height
+distxy <- dist(dataFrame)
+hcluster <- hclust(distxy)
+dendro <- as.dendrogram(hcluster)
+cutDendro <- cut(dendro,h=(hcluster$height[1]+0.00001) )
+plot(cutDendro$lower[[11]],yaxt="n")
+```
+
+
+
+
+
+## Hierarchical clustering - #2
+
+```{r dependson="createData",echo=FALSE}
+library(fields)
+dataFrame <- data.frame(x=x,y=y)
+rdistxy <- rdist(dataFrame)
+diag(rdistxy) <- diag(rdistxy) + 1e5
+
+# Find the index of the points with minimum distance
+ind <- which(rdistxy == min(rdistxy),arr.ind=TRUE)
+par(mar=rep(0.2,4))
+# Plot the points with the minimum overlayed
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+points(x[ind[1,]],y[ind[1,]],col="orange",pch=19,cex=2)
+points(mean(x[ind[1,]]),mean(y[ind[1,]]),col="black",cex=3,lwd=3,pch=3)
+points(mean(x[ind[1,]]),mean(y[ind[1,]]),col="orange",cex=5,lwd=3,pch=1)
+
+
+```
+
+
+
+
+
+## Hierarchical clustering - #3
+
+```{r dependson="createData",echo=FALSE, fig.height=5,fig.width=14}
+library(fields)
+dataFrame <- data.frame(x=x,y=y)
+rdistxy <- rdist(dataFrame)
+diag(rdistxy) <- diag(rdistxy) + 1e5
+
+# Find the index of the points with minimum distance
+ind <- which(rdistxy == rdistxy[order(rdistxy)][3],arr.ind=TRUE)
+par(mfrow=c(1,3),mar=rep(0.2,4))
+# Plot the points with the minimum overlayed
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+points(x[c(5,6)],y[c(5,6)],col="orange",pch=19,cex=2)
+points(x[ind[1,]],y[ind[1,]],col="red",pch=19,cex=2)
+
+# Make dendogram plots
+distxy <- dist(dataFrame)
+hcluster <- hclust(distxy)
+dendro <- as.dendrogram(hcluster)
+cutDendro <- cut(dendro,h=(hcluster$height[2]) )
+plot(cutDendro$lower[[10]],yaxt="n")
+plot(cutDendro$lower[[5]],yaxt="n")
+
+```
+
+
+
+
+
+## Hierarchical clustering - hclust
+
+```{r, dependson="createData", fig.height=4,fig.width=4}
+dataFrame <- data.frame(x=x,y=y)
+distxy <- dist(dataFrame)
+hClustering <- hclust(distxy)
+plot(hClustering)
+```
+
+
+
+
+## Prettier dendrograms
+
+```{r plclust,size="small"}
+myplclust <- function( hclust, 
+                       lab=hclust$labels,
+                       lab.col=rep(1,length(hclust$labels)),
+                       hang=0.1,...){
+  y <- rep(hclust$height,2); x <- as.numeric(hclust$merge)
+  y <- y[which(x<0)]; x <- x[which(x<0)]; x <- abs(x)
+  y <- y[order(x)]; x <- x[order(x)]
+  plot( hclust, labels=FALSE, hang=hang, ... )
+  text( x=x, y=y[hclust$order]-(max(hclust$height)*hang),
+        labels=lab[hclust$order], col=lab.col[hclust$order], 
+        srt=90, adj=c(1,0.5), xpd=NA, ... )
+}
+
+```
+
+
+
+
+## Pretty dendrograms
+
+```{r, dependson="createData", fig.height=4,fig.width=4}
+dataFrame <- data.frame(x=x,y=y)
+distxy <- dist(dataFrame)
+hClustering <- hclust(distxy)
+myplclust(hClustering,lab=rep(1:3,each=4),lab.col=rep(1:3,each=4))
+```
+
+
+
+## Even Prettier dendrograms
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/prettydendro.png height=450>
+
+
+[http://gallery.r-enthusiasts.com/RGraphGallery.php?graph=79](http://gallery.r-enthusiasts.com/RGraphGallery.php?graph=79)
+
+
+
+
+## Merging points - complete
+
+```{r,echo=FALSE,dependson="createData",fig.height=4,fig.width=4}
+dataFrame <- data.frame(x=x,y=y)
+par(mar=rep(0.1,4))
+plot(x,y,col="blue",pch=19,cex=2)
+points(x[8],y[8],col="orange",pch=3,lwd=3,cex=3)
+points(x[1],y[1],col="orange",pch=3,lwd=3,cex=3)
+segments(x[8],y[8],x[1],y[1],lwd=3,col="orange")
+```
+
+
+
+
+
+## Merging points - average
+
+```{r,echo=FALSE,dependson="createData",fig.height=4,fig.width=4}
+dataFrame <- data.frame(x=x,y=y)
+par(mar=rep(0.1,4))
+plot(x,y,col="blue",pch=19,cex=2)
+points(mean(x[1:4]),mean(y[1:4]),col="orange",pch=3,lwd=3,cex=3)
+points(mean(x[5:8]),mean(y[5:8]),col="orange",pch=3,lwd=3,cex=3)
+segments(mean(x[1:4]),mean(y[1:4]),mean(x[5:8]),mean(y[5:8]),lwd=3,col="orange")
+
+```
+
+
+
+
+## `heatmap()`
+
+```{r,dependson="createData",fig.height=4,fig.width=6}
+dataFrame <- data.frame(x=x,y=y)
+set.seed(143)
+dataMatrix <- as.matrix(dataFrame)[sample(1:12),]
+heatmap(dataMatrix)
+```
+
+
+
+
+## K-means clustering
+
+* A partioning approach
+    - Fix a number of clusters
+    - Get "centroids" of each cluster
+    - Assign things to closest centroid
+    - Reclaculate centroids
+* Requires
+    - A defined distance metric
+    - A number of clusters
+    - An initial guess as to cluster centroids
+* Produces
+    - Final estimate of cluster centroids
+    - An assignment of each point to clusters
+  
+
+## K-means clustering -  example
+
+
+```{r createDataK, fig.height=3.5,fig.width=3.5}
+set.seed(1234); par(mar=c(0,0,0,0))
+x <- rnorm(12,mean=rep(1:3,each=4),sd=0.2)
+y <- rnorm(12,mean=rep(c(1,2,1),each=4),sd=0.2)
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+```
+
+
+
+
+## K-means clustering -  starting centroids
+
+
+```{r,dependson="createDataK",echo=FALSE,fig.height=5,fig.width=5}
+par(mar=rep(0.2,4))
+plot(x,y,col="blue",pch=19,cex=2)
+text(x+0.05,y+0.05,labels=as.character(1:12))
+cx <- c(1,1.8,2.5)
+cy <- c(2,1,1.5)
+points(cx,cy,col=c("red","orange","purple"),pch=3,cex=2,lwd=2)
+```
+
+
+
+## K-means clustering -  assign to closest centroid
+
+```{r,dependson="createDataK",echo=FALSE,fig.height=5,fig.width=5}
+par(mar=rep(0.2,4))
+plot(x,y,col="blue",pch=19,cex=2)
+cols1 <- c("red","orange","purple")
+text(x+0.05,y+0.05,labels=as.character(1:12))
+cx <- c(1,1.8,2.5)
+cy <- c(2,1,1.5)
+points(cx,cy,col=cols1,pch=3,cex=2,lwd=2)
+
+## Find the closest centroid
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-cx[1])^2 + (y-cy[1])^2
+distTmp[2,] <- (x-cx[2])^2 + (y-cy[2])^2
+distTmp[3,] <- (x-cx[3])^2 + (y-cy[3])^2
+newClust <- apply(distTmp,2,which.min)
+points(x,y,pch=19,cex=2,col=cols1[newClust])
+```
+
+
+
+## K-means clustering -  recalculate centroids
+
+```{r,dependson="createDataK",echo=FALSE,fig.height=5,fig.width=5}
+par(mar=rep(0.2,4))
+plot(x,y,col="blue",pch=19,cex=2)
+cols1 <- c("red","orange","purple")
+text(x+0.05,y+0.05,labels=as.character(1:12))
+
+## Find the closest centroid
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-cx[1])^2 + (y-cy[1])^2
+distTmp[2,] <- (x-cx[2])^2 + (y-cy[2])^2
+distTmp[3,] <- (x-cx[3])^2 + (y-cy[3])^2
+newClust <- apply(distTmp,2,which.min)
+points(x,y,pch=19,cex=2,col=cols1[newClust])
+newCx <- tapply(x,newClust,mean)
+newCy <- tapply(y,newClust,mean)
+
+## Old centroids
+
+cx <- c(1,1.8,2.5)
+cy <- c(2,1,1.5)
+
+points(newCx,newCy,col=cols1,pch=3,cex=2,lwd=2)
+
+```
+
+
+
+
+## K-means clustering -  reassign values
+
+```{r,dependson="createDataK",echo=FALSE,fig.height=5,fig.width=5}
+par(mar=rep(0.2,4))
+plot(x,y,col="blue",pch=19,cex=2)
+cols1 <- c("red","orange","purple")
+text(x+0.05,y+0.05,labels=as.character(1:12))
+
+
+cx <- c(1,1.8,2.5)
+cy <- c(2,1,1.5)
+
+
+## Find the closest centroid
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-cx[1])^2 + (y-cy[1])^2
+distTmp[2,] <- (x-cx[2])^2 + (y-cy[2])^2
+distTmp[3,] <- (x-cx[3])^2 + (y-cy[3])^2
+newClust <- apply(distTmp,2,which.min)
+newCx <- tapply(x,newClust,mean)
+newCy <- tapply(y,newClust,mean)
+
+## Old centroids
+
+points(newCx,newCy,col=cols1,pch=3,cex=2,lwd=2)
+
+
+## Iteration 2
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-newCx[1])^2 + (y-newCy[1])^2
+distTmp[2,] <- (x-newCx[2])^2 + (y-newCy[2])^2
+distTmp[3,] <- (x-newCx[3])^2 + (y-newCy[3])^2
+newClust2 <- apply(distTmp,2,which.min)
+
+points(x,y,pch=19,cex=2,col=cols1[newClust2])
+
+```
+
+
+
+
+
+## K-means clustering -  update centroids
+
+```{r,dependson="createDataK",echo=FALSE,fig.height=5,fig.width=5}
+par(mar=rep(0.2,4))
+plot(x,y,col="blue",pch=19,cex=2)
+cols1 <- c("red","orange","purple")
+text(x+0.05,y+0.05,labels=as.character(1:12))
+
+
+cx <- c(1,1.8,2.5)
+cy <- c(2,1,1.5)
+
+## Find the closest centroid
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-cx[1])^2 + (y-cy[1])^2
+distTmp[2,] <- (x-cx[2])^2 + (y-cy[2])^2
+distTmp[3,] <- (x-cx[3])^2 + (y-cy[3])^2
+newClust <- apply(distTmp,2,which.min)
+newCx <- tapply(x,newClust,mean)
+newCy <- tapply(y,newClust,mean)
+
+
+
+## Iteration 2
+distTmp <- matrix(NA,nrow=3,ncol=12)
+distTmp[1,] <- (x-newCx[1])^2 + (y-newCy[1])^2
+distTmp[2,] <- (x-newCx[2])^2 + (y-newCy[2])^2
+distTmp[3,] <- (x-newCx[3])^2 + (y-newCy[3])^2
+finalClust <- apply(distTmp,2,which.min)
+
+
+## Final centroids
+finalCx <- tapply(x,finalClust,mean)
+finalCy <- tapply(y,finalClust,mean)
+points(finalCx,finalCy,col=cols1,pch=3,cex=2,lwd=2)
+
+
+
+points(x,y,pch=19,cex=2,col=cols1[finalClust])
+
+```
+
+
+
+
+## `kmeans()`
+
+* Important parameters: _x_, _centers_, _iter.max_, _nstart_
+
+```{r kmeans,dependson="createDataK"}
+dataFrame <- data.frame(x,y)
+kmeansObj <- kmeans(dataFrame,centers=3)
+names(kmeansObj)
+kmeansObj$cluster
+```
+
+
+
+## `kmeans()`
+
+```{r, dependson="kmeans",fig.height=4,fig.width=4}
+par(mar=rep(0.2,4))
+plot(x,y,col=kmeansObj$cluster,pch=19,cex=2)
+points(kmeansObj$centers,col=1:3,pch=3,cex=3,lwd=3)
+```
+
+
+
+## Heatmaps
+
+```{r, dependson="kmeans",fig.height=4,fig.width=8}
+set.seed(1234)
+dataMatrix <- as.matrix(dataFrame)[sample(1:12),]
+kmeansObj2 <- kmeans(dataMatrix,centers=3)
+par(mfrow=c(1,2), mar = c(2, 4, 0.1, 0.1))
+image(t(dataMatrix)[,nrow(dataMatrix):1],yaxt="n")
+image(t(dataMatrix)[,order(kmeansObj$cluster)],yaxt="n")
+```
+
+
+
+
+## H-clustering aglomeration choices
+
+Single 
+
+$$d_{SL}(G,H) = \min_{i\in G, i' \in H} d_{ii'}$$
+
+Complete
+
+$$d_{SL}(G,H) = \max_{i\in G, i' \in H} d_{ii'}$$
+
+Average
+
+$$d_{GA}(G,H) = \frac{1}{N_G N_H} \sum_{i \in G} \sum_{i' \in H} d_{ii'}$$
+
+
+
+## What this looks like on real data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/hclusttypes.png height=450>
+
+https://statistics.stanford.edu/~tibs/ElemStatLearn
+
+
+
+## Consistency
+
+Assuming that the data vector $X_p \sim p_k(x)$ for some $k=1,\ldots,K$
+then as $N \rightarrow \infty$
+
+$$d_{SL}(G,H) \rightarrow 0$$ 
+$$d_{CL}(G,H) \rightarrow \infty$$
+$$d_{GA}(G,H) \rightarrow \int \int d(x,x')p_{G}(x)p_{H}(x')dxdx'$$
+
+
+
+## Another way to view clustering
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/clustertree.png height=300>
+
+* Can use plug-in estimate of the tree
+* Piecewise constant in low dimensions
+* Trouble with curse of dimensionality in large dimensions
+
+http://www.stat.cmu.edu/~rnugent/teaching/CMU729/Lectures/NPClust.pdf
+
+
+
+## K-means 
+
+Given initial clusters $m^{(1)}_1,\ldots,m^{(1)}_k$ we iterate between:
+
+__Assign each point to a cluster__
+
+$$S_i^{(t)} = \left\{x_p: ||x_p - m_i^{(t)}||^2 \leq ||x_p - m_j^{(t)}||^2, \forall j\right\}$$
+
+__Update means__
+
+$$m_{i}^{(t+1)}=\frac{1}{|S_i^{(t)}|} \sum_{x_j \in S_i^{(t)}} x_j$$
+
+Stop when the $m_i$ have converged to local modes. 
+
+Similar to an [EM algorithm](http://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm).
+
+
+
+## K-means is matrix factorization
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/kmeansmat1.png height=450>
+
+https://dl.dropboxusercontent.com/u/7710864/jhsph753/lectures/vadim.pdf
+
+
+
+## K-means is matrix factorization
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/kmeansmat2.png height=250>
+
+Let $X_{m \times n}$ be the data matrix $B_{n \times k}$ be the matrix of weights and $A_{k \times n}$ be the assignment matrix. Then
+
+$$XBA = MA$$ 
+
+realizes the assignment
+
+$x_i \rightarrow m_j$, where $m_j = X b_j$.
+
+https://dl.dropboxusercontent.com/u/7710864/jhsph753/lectures/vadim.pdf
+
+
+
+## K-means final details
+
+* K-means is trying to solve the constrained optimization problem
+  * $E = \min_{B,A} ||X-XBA||^2$
+  * where $B$ is stochastic and $A$ is binary
+* You can write this down in a model based way
+  * Gaussian assumption $\rightarrow$ EM algorithm solution
+* Finding an optimal k-means partitioning of the data is [NP hard](http://en.wikipedia.org/wiki/NP-hard) in general. 
+* You will get different answers with different starting points!
+* Usually start with multiple starting points and average ([bagging](http://en.wikipedia.org/wiki/Bootstrap_aggregating), more on this later)
+
+
+https://dl.dropboxusercontent.com/u/7710864/jhsph753/lectures/vadim.pdf
+
+
+
+## Model based clustering
+
+Assume the data are drawn from a distribution:
+
+$$f(x | \pi,\mu,\Sigma) = \sum_{g=1}^G \pi_g \phi(X | \mu_g,\Sigma_g)$$
+
+where $\pi_g$ is the probability a point belongs to group $g$ and $\phi(x|\mu_g,\Sigma_g$) is the multivariate Guassian density. 
+
+* You can do this with other densities but you usually have to "roll your own"
+* Gaussian densities are surprisingly flexible in many cases
+* Nice summary in [Fraley and Raftery 1998 The Computer Journal](http://ftp.stat.washington.edu/raftery/Research/PDF/fraley1998.pdf)
+
+
+
+## Estimating parameters
+
+$$\pi_{ik}^{(s)} = \frac{\pi_k^{s-1} \phi(x_i; \mu_k^{s-1},\Sigma_k^{s-1})}{\sum_{k'=1}^K \pi_{k'}^{s-1} \phi(x_i; \mu_k^{s-1}, \Sigma_{k'}^{(s-1)})}$$
+
+$$\pi_k^{(s)} = \frac{1}{n} \sum_{i=1}^n \pi_{ik}^{(s)}$$
+
+$$ \mu_k^{(s)} = \frac{\sum_{i=1}^n \pi_{ik}^{(s)}x_i}{\sum_{i=1}^n \pi_{ik}^{(s)}}$$
+
+$$ \Sigma_{k}^{(s)} = \frac{\sum_{i=1}^n \pi_{ik}^{(s)} (x_i - \mu_k^{(s)})}{\sum_{i=1}^n \pi_{ik}^{(s)}}$$
+
+
+
+
+## Selecting the model with Bayes factors
+
+$$B = \frac{p(X | M_1)}{p(x | M_2)}$$
+
+$$p(X | M_k) = \int p(X | \theta_k, M_k) p(\theta_k | M_k) d\theta_k$$
+
+* $\theta_k$ is the vector of parameters for model $M_k$
+* $p(\theta_k | M_k)$ is the prior distribution for $M_k$. 
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/bic.png height=250>
+
+
+
+## Implemented in mclust package
+
+```{r}
+library(mclust); data(faithful); faithfulMclust <- Mclust(faithful)
+summary(faithfulMclust,parameters=TRUE)
+```
+
+
+http://www.stat.washington.edu/mclust/
+
+
+
+
+## Pathological example
+
+```{r pathdata,fig.height=4,fig.width=4}
+clust1 = data.frame(x=rnorm(100),y=rnorm(100))
+a = runif(100,0,2*pi)
+clust2 = data.frame(x=8*cos(a) + rnorm(100),y=8*sin(a) + rnorm(100))
+plot(clust2,col='blue',pch=19); points(clust1,col='green',pch=19)
+```
+
+
+
+## Pathological example
+
+```{r,dependson="pathdata",fig.height=4,fig.width=4}
+dat = rbind(clust1,clust2)
+kk = kmeans(dat,centers=2)
+plot(dat,col=(kk$clust+2),pch=19)
+```
+
+
+## Samsung Galaxy S3
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/samsung.png height=450>
+
+[http://www.samsung.com/global/galaxys3/](http://www.samsung.com/global/galaxys3/)
+
+
+
+
+## Samsung Data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/ucisamsung.png height=450>
+
+[http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
+
+
+
+
+## Slightly processed data
+
+[Samsung data file]("https://dl.dropboxusercontent.com/u/7710864/courseraPublic/samsungData.rda")
+
+```{r loaddata,tidy=TRUE}
+load("data/samsungData.rda")
+names(samsungData)[1:12]
+table(samsungData$activity)
+```
+
+
+
+## Plotting average acceleration for first subject
+
+```{r processData,fig.height=4,fig.width=8,tidy=TRUE}
+par(mfrow=c(1, 2), mar = c(5, 4, 1, 1))
+samsungData <- transform(samsungData, activity = factor(activity))
+sub1 <- subset(samsungData, subject == 1)
+plot(sub1[, 1], col = sub1$activity, ylab = names(sub1)[1])
+plot(sub1[, 2], col = sub1$activity, ylab = names(sub1)[2])
+legend("bottomright",legend=unique(sub1$activity),col=unique(sub1$activity), pch = 1)
+```
+
+
+
+## Clustering based just on average acceleration
+
+<!-- ## source("http://dl.dropbox.com/u/7710864/courseraPublic/myplclust.R")  -->
+
+
+```{r dependson="processData",fig.height=4,fig.width=8}
+source("myplclust.R")
+distanceMatrix <- dist(sub1[,1:3])
+hclustering <- hclust(distanceMatrix)
+myplclust(hclustering, lab.col = unclass(sub1$activity))
+```
+
+
+
+
+## Plotting max acceleration for the first subject
+
+```{r ,dependson="processData",fig.height=4.5,fig.width=9}
+par(mfrow=c(1,2))
+plot(sub1[,10],pch=19,col=sub1$activity,ylab=names(sub1)[10])
+plot(sub1[,11],pch=19,col = sub1$activity,ylab=names(sub1)[11])
+```
+
+
+
+## Clustering based on maximum acceleration
+
+```{r dependson="processData",fig.height=4.5,fig.width=9}
+source("myplclust.R")
+distanceMatrix <- dist(sub1[,10:12])
+hclustering <- hclust(distanceMatrix)
+myplclust(hclustering,lab.col=unclass(sub1$activity))
+```
+
+
+
+
+## Singular Value Decomposition
+
+```{r svdChunk,dependson="processData",fig.height=4.5,fig.width=9,cache=TRUE,tidy=TRUE}
+svd1 = svd(scale(sub1[,-c(562,563)]))
+par(mfrow=c(1,2))
+plot(svd1$u[,1],col=sub1$activity,pch=19)
+plot(svd1$u[,2],col=sub1$activity,pch=19)
+```
+
+
+
+## Find maximum contributor
+
+```{r dependson="svdChunk",fig.height=4.5,fig.width=6,cache=TRUE,tidy=TRUE}
+plot(svd1$v[,2],pch=19)
+```
+
+
+
+
+##  New clustering with maximum contributer
+
+```{r dependson="svdChunk",fig.height=4.5,fig.width=8,cache=TRUE,tidy=TRUE}
+maxContrib <- which.max(svd1$v[,2]); distanceMatrix <- dist(sub1[, c(10:12,maxContrib)])
+hclustering <- hclust(distanceMatrix); myplclust(hclustering,lab.col=unclass(sub1$activity))                             
+```
+
+
+
+
+##  New clustering with maximum contributer
+
+```{r dependson="svdChunk",fig.height=4,fig.width=4,cache=TRUE}
+names(samsungData)[maxContrib]                          
+```
+
+
+
+##  K-means clustering (nstart=1, first try)
+
+```{r kmeans1,dependson="processData",fig.height=4,fig.width=4}
+kClust <- kmeans(sub1[,-c(562,563)],centers=6)
+table(kClust$cluster,sub1$activity)
+```
+
+
+
+
+
+##  K-means clustering (nstart=1, second try)
+
+```{r dependson="kmeans1",fig.height=4,fig.width=4,cache=TRUE,tidy=TRUE}
+kClust <- kmeans(sub1[,-c(562,563)],centers=6,nstart=1)
+table(kClust$cluster,sub1$activity)
+```
+
+
+
+
+##  K-means clustering (nstart=100, first try)
+
+```{r dependson="kmeans1",fig.height=4,fig.width=4,cache=TRUE}
+kClust <- kmeans(sub1[,-c(562,563)],centers=6,nstart=100)
+table(kClust$cluster,sub1$activity)
+```
+
+
+
+
+
+##  K-means clustering (nstart=100, second try)
+
+```{r kmeans100,dependson="kmeans1",fig.height=4,fig.width=4,cache=TRUE,tidy=TRUE}
+kClust <- kmeans(sub1[,-c(562,563)],centers=6,nstart=100)
+table(kClust$cluster,sub1$activity)
+```
+
+
+
+##  Cluster 1 Variable Centers (Laying)
+
+```{r dependson="kmeans100",fig.height=4,fig.width=8,cache=FALSE,tidy=TRUE}
+plot(kClust$center[1,1:10],pch=19,ylab="Cluster Center",xlab="")
+```
+
+
+
+
+##  Cluster 2 Variable Centers (Walking)
+
+```{r dependson="kmeans100",fig.height=4,fig.width=8,cache=FALSE}
+plot(kClust$center[4,1:10],pch=19,ylab="Cluster Center",xlab="")
+```
+
+
+## Clustering wrap up
+
+* Useful for exploring multivariate relationships
+* Things that have a bigger than expected impact
+    - Scaling
+    - Outliers
+    - Starting values (k-means)
+* Selecting the number of clusters is an "openish" problem.
+* Usually there is a local maxima/minima in the tuning parameter
+
+## Clustering wrap up
+
+
+* Better to visualize!
+* As always when the model is (approximately) true you get nice properties from model based approaches
+* Clusters must be interpreted and are often very hard to interpret. 
+
+
+
+## Further resources
+
+* Sources of lecture notes
+  * http://stat.ethz.ch/education/semesters/SS_2006/CompStat/sk-ch2.pdf
+  * http://www.cbcb.umd.edu/~hcorrada/PracticalML/
+  *  [Rafa's Distances and Clustering Video](http://www.youtube.com/watch?v=wQhVWUcXM0A)
+  * [Elements of statistical learning](http://www-stat.stanford.edu/~tibs/ElemStatLearn/)
+  * [Vadim's lecture notes](https://dl.dropboxusercontent.com/u/7710864/jhsph753/lectures/vadim.pdf) 
+  * http://www.public.iastate.edu/~maitra/stat501/lectures/ModelBasedClustering.pdf
+  * http://www.ics.uci.edu/~smyth/courses/cs274/readings/fraley_raftery.pdf
