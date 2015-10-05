@@ -134,7 +134,11 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W4 | 2015-09-23 | [Exploratory graphs](http://jtleek.com/advdatasci/lecture_notes/exploratory/#1) ||
 | M5 | 2015-05-28 | [Introduction](https://docs.google.com/presentation/d/1D-olPtQrSWq8TRCaZKLN-YmJSBr1KbjdPyCQ8hioJz0/edit?usp=sharing)||
 | M5 | 2015-09-28 | [Unsupervised analysis I ](http://jtleek.com/advdatasci/lecture_notes/unsupI/#1) ||
+| M6 | 2015-10-05 | [Introduction](https://docs.google.com/presentation/d/1W_wKkSHCeMr0cG_Zff8-DkCTSloOMCobKVx6IxeQ8ok/edit?usp=sharing) ||
+| M6 | 2015-10-05 | [Dimension reduction](http://jtleek.com/advdatasci/lecture_notes/dimensionReduction/#1) ||
 |---|---|---|---|
+
+
 
 
 ### Projects
