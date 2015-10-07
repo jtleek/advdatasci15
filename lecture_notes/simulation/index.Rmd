@@ -1,0 +1,274 @@
+---
+title: "Simulation"
+author: "Jeff Leek"
+date: "October 7, 2015"
+output: ioslides_presentation
+---
+
+## "Monte Carlo"
+
+<img src="montecarlo.jpg" height=450 </img>
+
+
+## What is simulation good for? 
+
+1. To perform inference
+2. To understand methods/algorithms
+3. To create data it would be difficult to sample
+
+
+## An interesting talk
+
+<img src="stathackers.png" height=450 </img>
+
+https://speakerdeck.com/jakevdp/statistics-for-hackers
+
+## Key idea: mimic real data generation
+
+* Can be simple
+    * `rnorm(100)`
+* Can be very complicated
+
+<img src="weather.jpg" height=350 </img>
+
+
+## Important point: setting a seed {.smaller}
+
+No seed 
+```{r}
+rnorm(5); rnorm(5)
+```
+
+Seed
+
+```{r}
+set.seed(1); rnorm(5)
+set.seed(1); rnorm(5)
+```
+
+
+## Some useful functions
+
+* The "r" functions `rbinom`, `rnorm`, `rpois`...
+* `mvrnorm` from the MASS package
+* `sample` 
+* `sample_n` from the dplyr package
+* `sample_frac` from the dplyr package
+
+## Simulation is used for
+
+* Checking methods
+* Confirming results
+* Negative/positive controls
+
+## Simulate the extremes
+
+<img src="simextreme.png" height=450 </img>
+
+http://simplystatistics.org/2013/03/06/the-importance-of-simulating-the-extremes/
+
+## Four approaches to simulating data
+
+* Fully parametric and made up
+    * Every stats theory paper ever
+* Parametric but modeling real data characteristics
+    * Many applied papers
+    * Lots of grey area
+* Non-parametric - resampling real data
+    * Knowing the right signal size is hard 
+* Non-parametric - just real data
+    * Can be best but hardest to do
+    * Hard to know "right answer"
+
+
+## Example RNA-seq
+
+<img src="rnaseq.png" height=450 </img>
+
+
+## Counting RNA-seq
+
+<img src="rnaseq2.png" height=450 </img>
+
+
+
+## Approach 1 - fully parametric
+
+* `rnbinom` 
+
+<img src="negbinom.png" height=350 </img>
+
+http://www.genomebiology.com/2010/11/10/R106
+
+
+## Approach 2 - modeling characteristics
+
+<img src="polyester.png" height=350 </img>
+
+http://bioinformatics.oxfordjournals.org/content/early/2015/04/28/bioinformatics.btv272.abstract
+
+## Approach 3 - non-parametric resampling real data
+
+<img src="nonparam.png" height=450 </img>
+
+http://bioinformatics.oxfordjournals.org/content/early/2015/02/26/bioinformatics.btv124
+
+## Approach 4 -  real data
+
+<img src="ychrom.png" height=450 </img>
+
+http://biostatistics.oxfordjournals.org/content/early/2014/01/06/biostatistics.kxt053.full
+
+
+## Simulation for testing
+
+* Simulation is often used for hypothesis testing
+* It is also used for calculating confidence intervals
+* In some ways it is _much easier_ than working out the math
+* But it is super easy to trick yourself
+    * Correlation
+    * Multiple covariates
+    * Strange sampling distribution
+    * etc., etc. etc. 
+* Key is thinking very carefully about _what_ you are trying to mimic
+
+
+## Testing - fair warning
+
+* In many scientific applications, producing/interpreting estimates and intervals will be your default. But hypothesis testing (for better or worse) plays a major role in the scientific enterprise.
+* There is a huge literature bashing P-values and hypothesis tests. Search "NHST" on Google or read anything by Jim Berger, Andrew Gelman, Steve Goodman, etc. etc. 
+* I personally think the problem is that people don't understand (or willfully misinterpret) the P-value.
+* Doing tests is simple; based on the available data, we make a binary decision. Frequentist calibration of the testing "rule" considers replications of the experiment.
+* Interpretation of testing results is trickier. You may need to
+be flexible about how testing is viewedit may change as you
+work in different areas of science. 
+
+
+## P-values
+
+* If properly credited R.A. Fisher would have at least 3 million citations for p-value paper
+    * Calculated using Google Scholar using the formula: _Number of P-value Citations = # of papers with exact phrase "P < 0.05" + (# of papers with exact phrase "P < 0.01" and not exact phrase "P < 0.05"") + (# of papers with exact phrase "P < 0.001" and not exact phrase "P < 0.05" or "P < 0.01")= 1,320,000 + 1,030,000 + 662,500_
+* This is probably even conservative and is at least 12 times the most cited paper Protein Measurement with the Folin Phenol Reagent
+* Related idea: if you do something important expect major criticism/ripoffs.
+* Related: [Scalability of statistical procedures](http://simplystatistics.org/2014/02/14/on-the-scalability-of-statistical-procedures-why-the-p-value-bashers-just-dont-get-it/)
+
+## P-values
+
+P-values, although not essential for doing tests, are nearly ubiquitous in applied work. They are a very useful "shorthand" and you should understand them.
+
+Under the convention that larger test statistics occur farther from $H_0$, for observed data $Y$ we  define:
+$$p = p(Y) = Pr_{Y'\sim F|H_0}[T(Y') > T(Y)]$$
+i.e. the long-run proportion of datasets, under the null, which are "more extreme" than the observed $Y$.
+
+## P-values: fair warning
+
+* If $p < \alpha$, the result is "significant" otherwise it is "not significant" $p$ is the "largest $\alpha$ at which the result would be significant" - i.e. it summarizes the tests you could do. 
+* If $p$ is small, you could say the data are "inconsistent" with $H_0$ (not the same as an inconsistent estimator). Avoid writing about "evidence" or "support", unless these terms express what you really mean. Writing that the data "suggest" conclusions is safe(r). 
+* Small $p$ occur
+  1. when $H_0$ is true and something unusual happened, 
+  2. when $H_0$ is not true.  
+* On its own, a small $p$ does not distinguish these two things
+*  For discrete $Y$, $T(Y) = T(Y')$ can happen, discreteness of $p$ is only interesting in small samples, and is often ignored
+
+## Distribution of P-values
+
+What's the distribution of a $p$-value? Under the null:
+
+$$Pr_{Y \sim F|H_0}[p(Y) < \alpha] = Pr_{Y \sim F|H_0}\left[Pr_{Y' \sim F|H_0}[T(Y') > T(Y)] \leq \alpha \right]$$
+$$= Pr{Y \sim F|H_0}[ 1 - \mathcal{F}(T(Y)) \leq \alpha]$$
+$$= Pr{Y \sim F|H_0}[T(Y) > \mathcal{F}^{-1}(1-\alpha)]$$
+$$= 1 - \mathcal{F}(\mathcal{F}^{-1}(1-\alpha)) = \alpha$$
+
+where $\mathcal{F}(\cdot)$ denotes the cumulative distribution function of $T(Y)$ under the null. 
+
+## Important properties of p-values
+
+* $p$-values are uniform on $[0,1]$ under the null 
+* $p$-values are given by the "tail area" of the distribution of (replicate) $T(Y')$ beyond observed $T(Y)$ under the null
+*  $p$-values are (complicated) functions of the observed data
+
+## What p-values are not
+
+There is a tremendous confusion over $p$-values. The following hold very generally
+
+* They do not represent $Pr(H_0 {\rm is \; true})$ or $Pr(\theta > 0)$. Statements like this don't even make sense in a frequentist setting - so avoid writing them or something that could be interpreted this way. 
+*  The are not "measures of evidence". They are a summary of the testing decision you could make, a and a potentially useful function of the data. "Evidence" is a loaded word to some statisticians!
+* $p \leq 0.05$ is not "proof" of anything. 
+* $p \neq 0$ (Why?) - don't round $p$ values down. You can write, e.g. $p < 10^{-4}$
+
+
+## Calculating a p-value (permutation)
+
+Suppose we observe survival times on 16 mice in a treatment and a control group: 
+$$X = (94, 197, 16, 38, 99, 141, 23)$$ 
+$$Y = (52, 104, 146, 10, 51, 30, 40, 27, 46)$$ 
+$X \sim F$ and the values $Y \sim G$ and we want to test: $H_0: F = G$. \vsp
+The difference of means is $\hat{\theta} = \bar{x} - \bar{y} = 30.63$. One way to calculate a p-value would be to make a parametric assumption. \vsp 
+
+Another clever way, devised by Fisher is __permutation__. Define the vector $g$ to be the group labels $g_i = 1$ if treatment (X) and $g_i = 0$ if control (Y). Then pool all of the observations together into a vector $v = (94, 197, 16, 38, 99, 141, 23, 52, 104, 146, 10, 51, 30, 40, 27, 46)$
+
+
+## P-value permutations
+
+If there are $n$ samples from $F$ and $m$ samples from $y$ for a total of $N = m + n$ samples, then there are ${N}\choose{n}$ possible ways to assign the group labels. 
+
+Under $F = G$ it is possible to show that - conditional on the observed values - each of these is equally likely. So we can write our statistic $$\hat{\theta} = \bar{x} - \bar{y} = \frac{1}{n} \sum_{g_i = 1} v_i - \frac{1}{m}\sum_{g_i=0} v_i$$
+
+The permutation null distribution of $\hat{\theta}$ is calculated by forming all permutations of $g$ and recalculating the statistic.
+
+
+
+## P-value permutations
+
+* Then a permutation p-value is the permutation probability that $|\hat{\theta}^+|$ exceeds $|\hat{\theta}|$. $Pr(\hat{\theta}^+  \geq \hat{\theta})  = \#\{|\hat{\theta}^+| \geq |\hat{\theta}| \} / {{N}\choose{n}}$. \vsp
+* This is an _exact_ calculation, just like we did before with the exact plug-in estimator. But usually ${N}\choose{n}$ is humongous, so we use Monte Carlo.
+* Sample the labels $g_i$ _with replacement_ to get $B$ permuted sets of group labels $g_i^{'b}$
+* Calculate the permutation p-value:
+$$\hat{p}_{perm} =  \#\{|\hat{\theta}^{b}| \geq |\hat{\theta}| \} /B$$
+
+
+## P-values should never be zero
+
+
+<img src="neverzero.png" height=350 </img>
+
+$$\hat{p}_{perm} =  \left(\#\{|\hat{\theta}^{b}| \geq |\hat{\theta}| \} + 1\right) /(B+1)$$
+
+http://www.statsci.org/webguide/smyth/pubs/permp.pdf
+
+
+## Form a statistic
+
+<img src="stat.png" height=450 </img>
+
+
+## Permute
+
+<img src="permute.png" height=450 </img>
+
+
+## Calculate p-value
+
+<img src="pval.png" height=450 </img>
+
+
+## Permutation notes
+
+* This simple approach works great for 2 sample problems with no covariates
+* This tests whether the whole distributions are the same between classes
+* Permutations can be calculated exactly (but never are)
+* This is primarily a testing approach - some don't like it
+* It is used _all.the.time._
+* A permutation test exploits a special symmetry that exists
+under the null hypothesis to create a permutation distribution.
+
+## An example
+
+* We could studentize the statistic or not
+    * $$\hat{\theta} = \frac{\bar{x} - \bar{y}}{\bar{\sigma} \sqrt{1/n + 1/m}}$$
+    * $$\hat{\theta} =  \bar{x} - \bar{y}$$
+* In the case of the permutation test we would get the same permutation p-value (why?)
+
+
+## The central dogma of statistics
+

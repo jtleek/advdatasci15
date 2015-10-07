@@ -136,6 +136,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M5 | 2015-09-28 | [Unsupervised analysis I ](http://jtleek.com/advdatasci/lecture_notes/unsupI/#1) ||
 | M6 | 2015-10-05 | [Introduction](https://docs.google.com/presentation/d/1W_wKkSHCeMr0cG_Zff8-DkCTSloOMCobKVx6IxeQ8ok/edit?usp=sharing) ||
 | M6 | 2015-10-05 | [Dimension reduction](http://jtleek.com/advdatasci/lecture_notes/dimensionReduction/#1) ||
+| W6 | 2015-10-07 | [Introduction]() || 
 |---|---|---|---|
 
 
@@ -147,7 +148,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 |---|---|---|---|---|
 | Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link, [feedback](http://jtleek.com/advdatasci/code/project1-resources.html) |
 | Project 2 | 2015-09-16 | 2015-09-27 | [Project 2](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1395) | Fitbit activity, email for link|
-| Final Project | 2015-10-07 | 2015-10-16 | [Final project]() | Please submit via Courseplus|
+| Final Project | 2015-10-07 | 2015-10-16 | [Final project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/final.md) | Please submit via Courseplus|
 |---|---|---|---|---|
 
 
