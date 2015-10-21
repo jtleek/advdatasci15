@@ -1,0 +1,332 @@
+---
+title: "Multiple testing"
+author: "Jeff Leek"
+date: "October 21, 2015"
+output: ioslides_presentation
+---
+
+## Three eras of statistics {.smaller}
+
+
+__The age of Quetelet and his successors, in which huge census-level data sets were brought to bear on simple but important questions__: Are there more male than female births? Is the rate of insanity rising?
+
+The classical period of Pearson, Fisher, Neyman, Hotelling, and their successors, intellectual giants who __developed a theory of optimal inference capable of wringing every drop of information out of a scientific experiment__. The questions dealt with still tended to be simple Is treatment A better than treatment B? 
+
+__The era of scientific mass production__, in which new technologies typified by the microarray allow a single team of scientists to produce data sets of a size Quetelet would envy. But now the flood of data is accompanied by a deluge of questions, perhaps thousands of estimates or hypothesis tests that the statistician is charged with answering together; not at all what the classical masters had in mind. Which variables matter among the thousands measured? How do you relate unrelated information?
+
+[http://www-stat.stanford.edu/~ckirby/brad/papers/2010LSIexcerpt.pdf](http://www-stat.stanford.edu/~ckirby/brad/papers/2010LSIexcerpt.pdf)
+
+
+## Why I am the one true heir of multiple testing
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/heritage.png height=450/>
+
+## Reasons for multiple testing
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/datasources.png height='70%'/>
+
+
+## Why correct for multiple tests?
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/jellybeans1.png height='70%'/>
+
+
+[http://xkcd.com/882/](http://xkcd.com/882/)
+
+
+
+## Why correct for multiple tests?
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/jellybeans2.png height='70%'/>
+
+[http://xkcd.com/882/](http://xkcd.com/882/)
+
+
+
+## The most widely used statistic
+
+<img class=center src=haters1.png width='95%'/>
+
+## Haters gonna hate
+
+<img class=center src=haters2.png width='95%'/>
+
+
+## P-values 
+
+<img class=center src=pvals1.png height='80%'/>
+
+http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+## P-values  - signal
+
+<img class=center src=pvals2.png height='80%'/>
+
+http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+
+## P-values  - noise
+
+<img class=center src=pvals3.png height='80%'/>
+
+http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+
+## P-values  - two groups
+
+<img class=center src=twogroups1.png height='80%'/>
+
+http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+## P-values  - two groups
+
+<img class=center src=twogroups2.png height='80%'/>
+
+http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+
+## Types of errors
+
+Suppose you are testing a hypothesis that a parameter $\beta$ equals zero versus the alternative that it does not equal zero. These are the possible outcomes. 
+
+<img class=center src=mttable.png width='95%'/>
+
+
+__Type I error or false positive ($V$)__ Say that the parameter does not equal zero when it does
+
+__Type II error or false negative ($T$)__ Say that the parameter equals zero when it doesn't 
+
+## Error rates
+
+<img class=center src=mt1.png height='80%'/>
+
+
+## Interpretation
+
+<img class=center src=mt2.png height='80%'/>
+
+## Order p-values and draw a cutoff
+
+<img class=center src=cutoff.png width='80%'/>
+
+
+## Bonferroni
+
+<img class=center src=bonferroni.png width='80%'/>
+
+
+## Bonferroni adjusted p-values
+
+
+$$ p^{bon}_i = \inf\{\alpha : p \in S_{\alpha}^{bon}\}$$
+$$ = \inf\{\alpha : p_i \leq \alpha/m\}$$
+$$ = \min\{m p_i,1\}$$
+
+
+The adjusted p-value is no longer uniform under the null, but the adjusted p-value is attractive, because of the interpretation that $p_i^{bon} \leq \alpha$ implies that FWER $\leq \alpha$. See `p.adjust` in R. 
+
+## Bonferroni and dependence 
+
+In the extreme case; all tests have almost the same $p_j$; if one is small, they're all small. so:
+
+$$ P ({\rm any\; null\;} p_i < \alpha/m) \approx m_0/m P(p_1 < \alpha/m)$$
+$$ = (m_0/m) (\alpha/m)$$
+$$ \approx \alpha/m$$
+
+ but using $p_i < \alpha$ would have been better. For positively dependent test statistics increasing correlation $\Rightarrow$ more conservative results  on average. But we can get catastrophic errors. 
+ 
+Suppose $p_i$ are all identical for the null cases and by chance $p_i < \alpha/m$. How many errors? 
+
+
+## The Bonferroni Correction Control the FWER {.smaller}
+
+Suppose there are $m$ tests and the data for the first $m_0$ tests follows the null distribution then: 
+$$ P(\{ {\rm \# \; of \; false \; positives} \geq 1\}) = P\left(\sum_{i=1}^{m_0} I(p_i \leq \alpha/m)  > 0\right)$$
+$$ = P\left(\bigcup_{i=1}^{m_0} \{p_i \leq \alpha/m\}\right)$$
+$$ \leq \sum_{i=1}^{m_0} P(p_i \leq \alpha/m)$$
+$$ \leq \frac{m_0}{m} \alpha \leq \alpha $$
+
+
+## A common application of Bonferroni
+
+"A genome-wide association study identifies three loci associated with susceptibility to uterine fibroids" 
+
+For each of $\sim 1\times10^7$ SNPs with data $X_i$ fit the model:
+$$ {\rm logit}(P(Y_j = 1 | X_ij))  = \beta_{0i} + \beta_{1i} X_{ij}$$
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/manhattan.png height=300/>
+
+## False discovery rates
+
+A less conservative measure of (hypothetical) embarrassment
+$$\frac{V}{R\vee1} = \frac{\#{\rm false \; positives}}{\#{\rm declared \; positives}}$$
+
+* This is the __realized__ False Discovery Rate
+* "Badness" of each Type I error depends on $R$
+*  $R \vee 1$ stops $0/0$, sets embarrassment  = 0 when $R = 0$
+*  For a given decision rule, define its $FDR = E\left[\frac{V}{R\vee 1}\right]$
+
+This is the most popular correction when performing _lots_ of tests say in genomics, imagining, astronomy, or other signal-processing disciplines. 
+
+
+## Benjamini-Hochberg
+
+<img class=center src=bh.png width='80%'/>
+
+
+## An example
+
+<img class=center src=example.png height='70%'/>
+
+
+## Storey's approach - less conservative than BH {.smaller}
+
+$$FDR \approx \frac{E[false \; postives]}{E[total \; positives]}$$
+
+We could estimate these quantites by: 
+
+$$ E[false \; postives] \approx \pi_0 \times m \times t$$
+$$ E[total \; positives] \approx R(t)$$
+
+Then $$FDR \approx \frac{\pi_0 \times m \times t}{R(t)}$$
+
+Leading to a cutoff of $$ \frac{\alpha \times i}{\pi_0 \times m}$$
+
+## Estimating $\pi_0$
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/pi0hat.png height='70%'/>
+
+
+
+## Case study I: no true positives
+
+```{r createPvals,cache=TRUE}
+set.seed(1010093)
+pValues <- rep(NA,1000)
+for(i in 1:1000){
+  y <- rnorm(20)
+  x <- rnorm(20)
+  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+}
+
+# Controls false positive rate
+sum(pValues < 0.05)
+```
+
+
+## Case study I: no true positives
+
+```{r, dependson="createPvals"}
+# Controls FWER 
+sum(p.adjust(pValues,method="bonferroni") < 0.05)
+# Controls FDR 
+sum(p.adjust(pValues,method="BH") < 0.05)
+```
+
+
+## Case study II: 50% true positives
+
+```{r createPvals2,cache=TRUE}
+set.seed(1010093)
+pValues <- rep(NA,1000)
+for(i in 1:1000){
+  x <- rnorm(20)
+  # First 500 beta=0, last 500 beta=2
+  if(i <= 500){y <- rnorm(20)}else{ y <- rnorm(20,mean=2*x)}
+  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+}
+trueStatus <- rep(c("zero","not zero"),each=500)
+table(pValues < 0.05, trueStatus)
+```
+
+
+## Case study II: 50% true positives
+
+```{r, dependson="createPvals2"}
+# Controls FWER 
+table(p.adjust(pValues,method="bonferroni") < 0.05,trueStatus)
+# Controls FDR 
+table(p.adjust(pValues,method="BH") < 0.05,trueStatus)
+```
+
+
+
+
+## Case study II: 50% true positives
+
+__P-values versus adjusted P-values__
+```{r, dependson="createPvals2",fig.height=4,fig.width=8}
+par(mfrow=c(1,2))
+plot(pValues,p.adjust(pValues,method="bonferroni"),pch=19)
+plot(pValues,p.adjust(pValues,method="BH"),pch=19)
+```
+
+
+
+
+
+## Researcher degrees of freedom
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/rdf.png" height=400>
+
+## One of the hottest areas of debate
+
+Fisher (JASA, 1943): "It is not my purpose to make Dr. Berkson
+seem ridiculous, nor, of course, to prevent him from providing innocent
+amusement. Had he looked up Hersh’s original paper he would have
+been spared a blunder,..."
+
+Berkson (Biometrics, 1954): "I consented to comment on the
+remarks of Sir Ronald Fisher only with considerable reluctance. The
+passages of his article that have to do with my work are so far out
+of the bounds of reasonableness or relevancey that on ﬁrst reading
+them I could only believe that he had heen misinformed regarding my
+statement"
+
+http://people.stat.sfu.ca/~lockhart/richard/Talks/UBC_SFU.pdf
+
+
+## One of the hottest areas of debate
+
+Fisher (Biometrics,1954): "It is a great pity that Cochran in this
+paper does not clearly point out that such adjustments have no useful
+function, at least ﬁnally, if it is intended to perform a correct analysis.
+The subsequent papers (5, 6) by Bartlett (1947) and Anscombe
+(1948)) show no such consciousness of the situation as they would
+have obtained had Cochran expressed himself more deﬁnitely."
+
+"It is unfortunate that Bartlett did not restate his own views on
+this topic without making misleading allusions to mine."
+
+Fisher (JRSS-B, 1957): "If Professor Neyman were in the habit of
+learning from others he might proﬁt from..."
+
+
+## One of the hottest areas of debate
+
+Neyman (1951) "In particular, three major concepts were
+introduced by Fisher and consistently propagandized by him in a
+number of publications. These are mathematical likelihood as
+a measure of the conﬁdence in a hypothesis, suﬃcient statistics,
+and ﬁducial probability. Unfortunately, in conceptual mathematical
+statistics Fisher was much less successful than in manipulatory, and
+of the three above concepts only one, that of a suﬃcient statistic,
+continues to be of substantial interest. The other two proved to be
+either futile or self-contradictory and have been more or less generally
+abandoned."
+
+## One of the hottest areas of debate
+
+Pearson in another review: "Most readers will regret the inclusion of the Note on Paper
+(29,1937) which, if nothing more, shows in its last sentences, a
+profound ignorance of Karl Pearson’s character and, indeed, of his
+contemporaries."
+
+
+## More recently
+
+Ioannidis: "A reproducibility check of the raw data shows that much of the data Jager and Leek used are either wrong or make no sense: most of the usable data were missed by their script, 94% of the abstracts that reported ≥2 P-values had high correlation/overlap between reported outcomes, and only a minority of P-values corresponded to relevant primary outcomes. The Jager and Leek paper exemplifies the dreadful combination of using automated scripts with wrong methods and unreliable data. Sadly, this combination is common in the medical literature." 
+
+Gelman and O'Rourke: "We think what Jager and Leek are trying to do is hopeless, at least if applied outside a very narrow range of randomized clinical trials with prechosen endpoints"
+
+Talking about our paper [An estimate of the science-wise false discovery rate and application to the top medical literature](http://biostatistics.oxfordjournals.org/content/15/1/1)
