@@ -54,33 +54,33 @@ __The era of scientific mass production__, in which new technologies typified by
 
 ## P-values 
 
-<img class=center src=pvals1.png height='80%'/>
+<img class=center src=pvals1.png height=400/>
 
 http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
 ## P-values  - signal
 
-<img class=center src=pvals2.png height='80%'/>
+<img class=center src=pvals2.png height=400/>
 
 http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
 
 ## P-values  - noise
 
-<img class=center src=pvals3.png height='80%'/>
+<img class=center src=pvals3.png height=400/>
 
 http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
 
 ## P-values  - two groups
 
-<img class=center src=twogroups1.png height='80%'/>
+<img class=center src=twogroups1.png height=400/>
 
 http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
 ## P-values  - two groups
 
-<img class=center src=twogroups2.png height='80%'/>
+<img class=center src=twogroups2.png height=400/>
 
 http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
@@ -89,7 +89,7 @@ http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 
 Suppose you are testing a hypothesis that a parameter $\beta$ equals zero versus the alternative that it does not equal zero. These are the possible outcomes. 
 
-<img class=center src=mttable.png width='95%'/>
+<img class=center src=mttable.png height=100/>
 
 
 __Type I error or false positive ($V$)__ Say that the parameter does not equal zero when it does
@@ -98,21 +98,21 @@ __Type II error or false negative ($T$)__ Say that the parameter equals zero whe
 
 ## Error rates
 
-<img class=center src=mt1.png height='80%'/>
+<img class=center src=mt1.png height=400/>
 
 
 ## Interpretation
 
-<img class=center src=mt2.png height='80%'/>
+<img class=center src=mt2.png height=400/>
 
 ## Order p-values and draw a cutoff
 
-<img class=center src=cutoff.png width='80%'/>
+<img class=center src=cutoff.png width=400/>
 
 
 ## Bonferroni
 
-<img class=center src=bonferroni.png width='80%'/>
+<img class=center src=bonferroni.png width=400/>
 
 
 ## Bonferroni adjusted p-values
@@ -176,7 +176,7 @@ This is the most popular correction when performing _lots_ of tests say in genom
 
 ## An example
 
-<img class=center src=example.png height='70%'/>
+<img class=center src=example.png height=400/>
 
 
 ## Storey's approach - less conservative than BH {.smaller}
