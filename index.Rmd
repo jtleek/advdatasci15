@@ -142,6 +142,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M8| 2015-10-19 | [Bootstrapping](https://dl.dropboxusercontent.com/u/7710864/courseraPublic/week7/002bootstrap/index.html#1) | [Stamps example](http://biostat.jhsph.edu/~jleek/teaching/2011/754/lecture10.pdf)|
 | W8| 2015-10-21 | [Introduction](https://docs.google.com/presentation/d/19VjV5LDSnpg_Cn_HseGyhfeqFUFEkOcQ0JcIcToPIRU/edit?usp=sharing) | |
 | W8| 2015-10-21 | [Multiple Testing](http://jtleek.com/advdatasci/lecture_notes/multipletesting/#1) | |
+| M9| 2015-10-26 | [Introduction](https://docs.google.com/presentation/d/1PWoZ_Q5UppZyEtByaGtlUBJU_YISxDKxkGDlsmVj6eU/edit?usp=sharing) | |
+| M9| 2015-10-26 | [Multiple Testing](http://jtleek.com/advdatasci/lecture_notes/regularized/#1) | |
 |---|---|---|---|
 
 
