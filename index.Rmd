@@ -144,6 +144,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W8| 2015-10-21 | [Multiple Testing](http://jtleek.com/advdatasci/lecture_notes/multipletesting/#1) | |
 | M9| 2015-10-26 | [Introduction](https://docs.google.com/presentation/d/1PWoZ_Q5UppZyEtByaGtlUBJU_YISxDKxkGDlsmVj6eU/edit?usp=sharing) | |
 | M9| 2015-10-26 | [Multiple Testing](http://jtleek.com/advdatasci/lecture_notes/regularized/#1) | |
+| M10 | 2015-11-2 | [Introduction](https://docs.google.com/presentation/d/1C6jF84J8sbLnCoA7vmQdC4TIVne9N2iM0P5QLJpFmh8/edit?usp=sharing) ||
+| M9| 2015-11-2 | [Prediction](http://jtleek.com/advdatasci/lecture_notes/prediction/#1) | |
 |---|---|---|---|
 
 

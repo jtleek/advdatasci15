@@ -1,0 +1,715 @@
+---
+title: "Prediction"
+author: "Jeff Leek"
+date: "November 2, 2015"
+output: ioslides_presentation
+---
+
+## The central dogma of prediction
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/centraldogma.png height=350>
+
+## Other words for prediction
+
+* Prediction -> statisticians
+* Statistical learning -> statisticians
+* Machine learning -> computer scientists
+* Forecasting -> atmospheric scientists/bankers
+* Artificial intelligence -> the popular press
+
+## Machine learning is everywhere 
+
+<img class="center" src="selfdriving.png" height="350">
+
+https://www.google.com/selfdrivingcar/
+
+## Machine learning can make you rich
+
+<img class="center" src="acquire.png" height="350">
+
+http://venturebeat.com/2015/06/17/twitter-acquires-machine-learning-startup-whetlab-will-kill-the-service-on-july-15/
+
+## Who predicts?
+
+* Local governments -> pension payments
+* Google -> whether you will click on an ad
+* Amazon -> what movies you will watch
+* Insurance companies -> what your risk of death is
+* Johns Hopkins -> who will succeed in their programs
+
+## Why predict? Glory!
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/volinsky.png height=350>
+
+
+[http://www.zimbio.com/photos/Chris+Volinsky](http://www.zimbio.com/photos/Chris+Volinsky)
+
+## Why predict? For sport!
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/kaggle.png height=350>
+
+
+[http://www.kaggle.com/](http://www.kaggle.com/)
+
+## Why predict? To save lives!
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/oncotype.png height=350>
+
+[http://www.oncotypedx.com/en-US/Home](http://www.oncotypedx.com/en-US/Home)
+
+
+
+## A useful (if a bit advanced) book
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/elemlearn.png height=350>
+
+
+[The elements of statistical learning](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
+
+## A useful package
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/caret.png height=350>
+
+
+[http://caret.r-forge.r-project.org/](http://caret.r-forge.r-project.org/)
+
+## Components of a predictor
+
+</br>
+
+<center> question -> input data -> features -> algorithm -> parameters -> evaluation  </center>
+
+
+## SPAM Example
+
+</br>
+
+<center> <span style="color:red">question</span>  -> input data -> features -> algorithm -> parameters -> evaluation  </center>
+
+</br>
+
+__Start with a general question__
+
+Can I automatically detect emails that are SPAM that are not?
+
+__Make it concrete__
+
+Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?
+
+## SPAM Example
+
+</br>
+
+<center> question -> <span style="color:red">input data</span> -> features -> algorithm -> parameters -> evaluation  </center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/spamR.png height='250' />
+
+[http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html](http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html)
+
+## SPAM Example
+
+</br>
+
+<center> question -> input data  -> <span style="color:red">features</span> -> algorithm -> parameters -> evaluation  </center>
+
+</br>
+
+
+
+<b>
+Dear Jeff, 
+
+Can you send me your address so I can send you the invitation? 
+
+Thanks,
+
+Ben
+</b>
+
+## Spam example {.smaller}
+
+</br>
+
+<center> question -> input data  -> <span style="color:red">features</span> -> algorithm -> parameters -> evaluation  </center>
+
+</br>
+
+<b> 
+
+Dear Jeff, 
+
+Can <span style="color:red">you</span> send me your address so I can send <span style="color:red">you</span> the invitation? 
+
+Thanks,
+
+Ben
+</b>
+
+</br>
+
+Frequency of you $= 2/17 = 0.118$
+
+## Spam example {.smaller}
+
+</br>
+
+<center> question -> input data  -> <span style="color:red">features</span> -> algorithm -> parameters -> evaluation  </center>
+
+
+```{r loadDataIII}
+library(kernlab)
+data(spam)
+head(spam)
+
+```
+
+## Spam example
+
+```{r,dependson="loadDataIII",fig.height=3.5,fig.width=3.5}
+plot(density(spam$your[spam$type=="nonspam"]),
+     col="blue",main="",xlab="Frequency of 'your'")
+lines(density(spam$your[spam$type=="spam"]),col="red")
+```
+
+## SPAM Example {.smaller}
+
+
+<center> question -> input data  -> features -> <span style="color:red">algorithm</span> -> parameters -> evaluation  </center>
+
+</br></br>
+
+__Our algorithm__
+
+* Find a value $C$. 
+* __frequency of 'your' $>$ C__ predict "spam"
+
+## SPAM Example {.smaller}
+
+
+<center> question -> input data  -> features -> algorithm -> <span style="color:red">parameters</span> -> evaluation  </center>
+
+```{r,dependson="loadDataIII",fig.height=3.5,fig.width=3.5}
+plot(density(spam$your[spam$type=="nonspam"]),
+     col="blue",main="",xlab="Frequency of 'your'")
+lines(density(spam$your[spam$type=="spam"]),col="red")
+abline(v=0.5,col="black")
+```
+
+## SPAM Example {.smaller}
+
+
+<center> question -> input data  -> features -> algorithm -> parameters -> <span style="color:red">evaluation</span> </center>
+
+```{r,dependson="loadDataIII",fig.height=3.5,fig.width=3.5}
+prediction <- ifelse(spam$your > 0.5,"spam","nonspam")
+table(prediction,spam$type)/length(spam$type)
+```
+
+Accuracy $\approx 0.459 + 0.292 = 0.751$
+
+## An important point
+
+_The combination of some data and an aching desire for an answer does not ensure that a reasonable answer can be extracted from a given body of data._
+
+
+<br>
+- John Tukey
+
+
+## Garbage in = Garbage out {.smaller}
+
+<center> question -><span style="color:red">input data</span> -> features -> algorithm -> parameters -> evaluation  </center>
+
+1. May be easy (movie ratings -> new movie ratings)
+2. May be harder (gene expression data -> disease)
+3. Depends on what is a "good prediction".
+4. Often [more data > better models](http://www.youtube.com/watch?v=yvDCzhbjYWs)
+5. The most important step!
+
+
+## Features matter! {.smaller}
+
+<center> question -> input data -> <span style="color:red">features</span> -> algorithm -> parameters -> evaluation  </center>
+
+__Properties of good features__
+
+* Lead to data compression
+* Retain relevant information
+* Are created based on expert application knowledge
+
+__Common mistakes__
+
+* Trying to automate feature selection
+* Not paying attention to data-specific quirks
+* Throwing away information unnecessarily
+
+## Automating feature selection {.smaller}
+
+<center> question -> input data -> <span style="color:red">features</span> -> algorithm -> parameters -> evaluation  </center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/autofeatures.jpeg height=300>
+
+[http://arxiv.org/pdf/1112.6209v5.pdf](http://arxiv.org/pdf/1112.6209v5.pdf)
+
+
+## Issues to consider
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/mlconsiderations.jpg height=350>
+
+[http://strata.oreilly.com/2013/09/gaining-access-to-the-best-machine-learning-methods.html](http://strata.oreilly.com/2013/09/gaining-access-to-the-best-machine-learning-methods.html)
+
+## Prediction is about accuracy tradeoffs
+
+
+* Interpretability versus accuracy
+* Speed versus accuracy
+* Simplicity versus accuracy
+* Scalability versus accuracy
+
+## Interpretability matters
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/interpretable.png height=150>
+
+</br></br></br>
+
+[http://www.cs.cornell.edu/~chenhao/pub/mldg-0815.pdf](http://www.cs.cornell.edu/~chenhao/pub/mldg-0815.pdf)
+
+## Scalability matters
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/netflixno.png height=250>
+</br></br></br>
+
+[http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/](http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/)
+
+[http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html](http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html)
+
+## In sample versus out of sample {.smaller}
+
+__In Sample Error__: The error rate you get on the same
+data set you used to build your predictor. Sometimes
+called resubstitution error.
+
+__Out of Sample Error__: The error rate you get on a new
+data set. Sometimes called generalization error. 
+
+__Key ideas__
+
+1. Out of sample error is what you care about
+2. In sample error $<$ out of sample error
+3. The reason is overfitting
+    * Matching your algorithm to the data you have
+  
+
+## In sample versus out of sample errors
+
+```{r loadDataII, fig.height=3.5,fig.width=3.5}
+library(kernlab); data(spam); set.seed(333)
+smallSpam <- spam[sample(dim(spam)[1],size=10),]
+spamLabel <- (smallSpam$type=="spam")*1 + 1
+plot(smallSpam$capitalAve,col=spamLabel)
+```
+
+## Prediction rule 1
+
+* capitalAve $>$ 2.7 = "spam"
+* capitalAve $<$ 2.40 = "nonspam"
+* capitalAve between 2.40 and 2.45 = "spam"
+* capitalAve between 2.45 and 2.7 = "nonspam"
+
+
+## Apply Rule 1 to smallSpam
+
+```{r, dependson="loadDataII"}
+rule1 <- function(x){
+  prediction <- rep(NA,length(x))
+  prediction[x > 2.7] <- "spam"
+  prediction[x < 2.40] <- "nonspam"
+  prediction[(x >= 2.40 & x <= 2.45)] <- "spam"
+  prediction[(x > 2.45 & x <= 2.70)] <- "nonspam"
+  return(prediction)
+}
+table(rule1(smallSpam$capitalAve),smallSpam$type)
+```
+
+
+
+## Prediction rule 2
+
+* capitalAve $>$ 2.40 = "spam"
+* capitalAve $\leq$ 2.40 = "nonspam"
+
+
+## Apply Rule 2 to smallSpam
+
+
+```{r, dependson="loadDataII"}
+rule2 <- function(x){
+  prediction <- rep(NA,length(x))
+  prediction[x > 2.8] <- "spam"
+  prediction[x <= 2.8] <- "nonspam"
+  return(prediction)
+}
+table(rule2(smallSpam$capitalAve),smallSpam$type)
+```
+
+## Apply to complete spam data{.smaller}
+
+```{r, dependson="loadDataII"}
+table(rule1(spam$capitalAve),spam$type)
+table(rule2(spam$capitalAve),spam$type)
+```
+
+
+## Apply to complete spam data{.smaller}
+
+```{r, dependson="loadDataII"}
+mean(rule1(spam$capitalAve)==spam$type)
+mean(rule2(spam$capitalAve)==spam$type)
+```
+
+## Look at accuracy
+
+```{r, dependson="loadDataII"}
+sum(rule1(spam$capitalAve)==spam$type)
+sum(rule2(spam$capitalAve)==spam$type)
+```
+
+## Basic terms {.smaller}
+
+In general, __Positive__ = identified and __negative__ = rejected. Therefore:
+
+__True positive__ = correctly identified
+
+__False positive__ = incorrectly identified
+
+__True negative__ = correctly rejected
+
+__False negative__ = incorrectly rejected
+
+_Medical testing example_:
+
+__True positive__ = Sick people correctly diagnosed as sick
+
+__False positive__= Healthy people incorrectly identified as sick
+
+__True negative__ = Healthy people correctly identified as healthy
+
+__False negative__ = Sick people incorrectly identified as healthy.
+
+[http://en.wikipedia.org/wiki/Sensitivity_and_specificity](http://en.wikipedia.org/wiki/Sensitivity_and_specificity)
+
+
+
+## Define your error rate
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/sensspec.png height=350>
+
+
+[http://en.wikipedia.org/wiki/Sensitivity_and_specificity](http://en.wikipedia.org/wiki/Sensitivity_and_specificity)
+
+
+
+
+
+## Key quantities
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/keyquantities.png height=500>
+
+
+
+
+## Key quantities as fractions
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/keyquantfrac.png height=500>
+
+
+
+
+
+## Screening tests
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predpos1.png height=400>
+
+
+
+
+## General population
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predpos2.png height=500>
+
+
+
+
+## General population as fractions
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predpos3.png height=500>
+
+
+
+## At risk subpopulation
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predpos4.png height=500>
+
+
+
+
+## At risk subpopulation as fraction
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predpos5.png height=500>
+
+
+
+
+
+## Key public health issue 
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/mammograms.png height=500>
+
+
+
+
+## Key public health issue 
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/prostatescreen.png height=500>
+
+
+
+
+
+
+
+## For continuous data
+
+__Mean squared error (MSE)__:
+
+$$\frac{1}{n} \sum_{i=1}^n (Prediction_i - Truth_i)^2$$
+
+__Root mean squared error (RMSE)__:
+
+$$\sqrt{\frac{1}{n} \sum_{i=1}^n(Prediction_i - Truth_i)^2}$$
+
+
+
+## Common error measures {.smaller}
+
+1. Mean squared error (or root mean squared error)
+    * Continuous data, sensitive to outliers
+2. Median absolute deviation 
+    * Continuous data, often more robust
+3. Sensitivity (recall)
+    * If you want few missed positives
+4. Specificity
+    * If you want few negatives called positives
+5. Accuracy
+    * Weights false positives/negatives equally
+6. Concordance
+    * One example is [kappa](http://en.wikipedia.org/wiki/Cohen%27s_kappa)
+5. Predictive value of a positive (precision)
+    * When you are screeing and prevelance is low
+  
+
+## ROC curves
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/roc1.png height=350>
+
+[http://en.wikipedia.org/wiki/Receiver_operating_characteristic](http://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+
+
+## ROC Curve example
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/roc2.png height=350>
+
+[http://en.wikipedia.org/wiki/Receiver_operating_characteristic](http://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+
+
+## Area under the curve
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/roc1.png height=200>
+
+* AUC = 0.5: random guessing
+* AUC = 1: perfect classifer
+* In general AUC of above 0.8 considered "good"
+
+[http://en.wikipedia.org/wiki/Receiver_operating_characteristic](http://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+
+
+
+## Prediction and association
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/predandassoc.png height=350>
+
+
+
+
+## What is good?
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/roc3.png height=350>
+
+[http://en.wikipedia.org/wiki/Receiver_operating_characteristic](http://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+
+
+## Study design
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/studyDesign.png height=350>
+
+
+[http://www2.research.att.com/~volinsky/papers/ASAStatComp.pdf](http://www2.research.att.com/~volinsky/papers/ASAStatComp.pdf)
+
+
+
+## Key idea
+
+1. Accuracy on the training set (resubstitution accuracy) is optimistic
+2. A better estimate comes from an independent set (test set accuracy)
+3. But we can't use the test set when building the model or it becomes part of the training set
+4. So we estimate the test set accuracy with the training set. 
+
+
+
+
+## Cross-validation {.smaller}
+
+_Approach_:
+
+1. Use the training set
+
+2. Split it into training/test sets 
+
+3. Build a model on the training set
+
+4. Evaluate on the test set
+
+5. Repeat and average the estimated errors
+
+_Used for_:
+
+1. Picking variables to include in a model
+
+2. Picking the type of prediction function to use
+
+3. Picking the parameters in the prediction function
+
+4. Comparing different predictors
+
+
+
+## Random subsampling
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/random.png height=350>
+
+
+
+
+## K-fold
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/kfold.png height=350>
+
+
+
+## Leave one out
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/loocv.png height=350>
+
+
+
+## Considerations
+
+* For time series data data must be used in "chunks"
+* For k-fold cross validation
+    * Larger k = less bias, more variance
+    * Smaller k = more bias, less variance
+* Random sampling must be done _without replacement_
+* Random sampling with replacement is the _bootstrap_
+    * Underestimates of the error
+    * Can be corrected, but it is complicated ([0.632 Bootstrap](http://www.jstor.org/discover/10.2307/2965703?uid=2&uid=4&sid=21103054448997))
+* If you cross-validate to pick predictors estimate you must estimate errors on independent data. 
+
+
+
+## A succcessful predictor
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/fivethirtyeight.png height=350>
+
+[fivethirtyeight.com](fivethirtyeight.com)
+
+
+
+## Polling data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/gallup.png height=350>
+
+[http://www.gallup.com/](http://www.gallup.com/)
+
+
+
+## Weighting the data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/538.png height=350>
+
+[http://www.fivethirtyeight.com/2010/06/pollster-ratings-v40-methodology.html](http://www.fivethirtyeight.com/2010/06/pollster-ratings-v40-methodology.html)
+
+
+
+## Key idea
+
+<center>To predict X use data related to X</center>
+
+
+
+
+## Key idea
+
+<center>To predict player performance use data about player performance</center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/moneyball.jpg height=350>
+
+
+
+## Key idea
+
+<center>To predict movie preferences use data about movie preferences</center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/netflix.png height=350>
+
+## Not a hard rule
+
+<center>To predict flu outbreaks use Google searches</center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/flutrends.png height=350>
+
+[http://www.google.org/flutrends/](http://www.google.org/flutrends/)
+
+
+## But be careful
+
+
+<img class=center src=parable.png height=350>
+
+http://gking.harvard.edu/files/gking/files/0314policyforumff.pdf
+
+## Looser connection = harder prediction
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/oncotype.png height=300>
+
+
+## Data properties matter
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/fluproblems.jpg height=350>
+
+
+## Unrelated data is the most common mistake
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/choc.png height=350>
+
+[http://www.nejm.org/doi/full/10.1056/NEJMon1211064](http://www.nejm.org/doi/full/10.1056/NEJMon1211064)
