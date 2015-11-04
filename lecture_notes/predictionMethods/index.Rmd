@@ -4,3 +4,948 @@ author: "Jeff Leek"
 date: "November 2, 2015"
 output: ioslides_presentation
 ---
+
+
+
+
+## Keep in mind
+
+Classifier Technology and the Illusion of Progress
+
+"A large number of comparative studies have been conducted in attempts to establish the relative superiority of these methods. This paper argues that these comparisons often fail to take into account important aspects of real problems, so that the apparent superiority of more sophisticated methods may be something of an illusion. In particular, simple methods typically yield performance almost as good as more sophisticated methods, to the extent that the difference in performance may be swamped by other sources of uncertainty that generally are not considered in the classical supervised classification paradigm."
+
+http://arxiv.org/pdf/math/0606441.pdf
+
+
+
+
+## The caret R package
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/caret.png height=400>
+
+[http://caret.r-forge.r-project.org/](http://caret.r-forge.r-project.org/)
+
+
+
+## Caret functionality
+
+* Some preprocessing (cleaning)
+  * preProcess
+* Data splitting
+  * createDataPartition
+  * createResample
+  * createTimeSlices
+* Training/testing functions
+  * train
+  * predict
+* Model comparison
+  * confusionMatrix
+
+
+
+## Machine learning algorithms in R
+
+* Linear discriminant analysis
+* Regression
+* Naive Bayes
+* Support vector machines
+* Classification and regression trees
+* Random forests
+* Boosting
+* etc. 
+
+
+
+## Why caret? 
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/predicttable.png height=250>
+
+
+ 
+
+## SPAM Example: Data splitting
+
+```{r loadPackageIV,warning=FALSE,message=FALSE}
+library(caret); library(kernlab); data(spam)
+inTrain <- createDataPartition(y=spam$type,
+                              p=0.75, list=FALSE)
+training <- spam[inTrain,]
+testing <- spam[-inTrain,]
+dim(training)
+```
+
+
+ 
+
+## SPAM Example: Fit a model
+
+```{r training, dependson="loadPackageIV",cache=TRUE, warning=FALSE, message=FALSE}
+set.seed(32343)
+modelFit <- train(type ~.,data=training, method="glm")
+modelFit
+```
+
+
+ 
+
+## SPAM Example: Final model
+
+```{r finalModel, dependson="training",cache=TRUE, warning=FALSE, message=FALSE}
+modelFit <- train(type ~.,data=training, method="glm")
+modelFit$finalModel
+```
+
+
+ 
+
+## SPAM Example: Prediction
+
+```{r predictions, dependson="training",cache=TRUE}
+predictions <- predict(modelFit,newdata=testing)
+predictions
+```
+
+ 
+
+## SPAM Example: Confusion Matrix
+
+```{r confusion, dependson="predictions",cache=TRUE}
+confusionMatrix(predictions,testing$type)
+```
+
+
+
+
+## SPAM Example: Data splitting
+
+```{r loadPackageV}
+library(caret); library(kernlab); data(spam)
+inTrain <- createDataPartition(y=spam$type,
+                              p=0.75, list=FALSE)
+training <- spam[inTrain,]
+testing <- spam[-inTrain,]
+dim(training)
+```
+
+
+
+## SPAM Example: K-fold
+
+```{r kfold,dependson="loadPackageV"}
+set.seed(32323)
+folds <- createFolds(y=spam$type,k=10,
+                             list=TRUE,returnTrain=TRUE)
+sapply(folds,length)
+folds[[1]][1:10]
+```
+
+
+
+## SPAM Example: Return test
+
+```{r kfoldtest,dependson="loadPackageV"}
+set.seed(32323)
+folds <- createFolds(y=spam$type,k=10,
+                             list=TRUE,returnTrain=FALSE)
+sapply(folds,length)
+folds[[1]][1:10]
+```
+
+
+
+## SPAM Example: Resampling
+
+```{r resample,dependson="loadPackageV"}
+set.seed(32323)
+folds <- createResample(y=spam$type,times=10,
+                             list=TRUE)
+sapply(folds,length)
+folds[[1]][1:10]
+```
+
+
+
+## SPAM Example: Time Slices {.smaller}
+
+```{r time,dependson="loadPackageV"}
+set.seed(32323)
+tme <- 1:1000
+folds <- createTimeSlices(y=tme,initialWindow=20,
+                          horizon=10)
+names(folds)
+folds$train[[1]]
+folds$test[[1]]
+```
+
+
+
+```{r loadPackage,cache=TRUE,fig.height=3.5,fig.width=3.5}
+library(caret); library(kernlab); data(spam)
+inTrain <- createDataPartition(y=spam$type,
+                              p=0.75, list=FALSE)
+training <- spam[inTrain,]
+testing <- spam[-inTrain,]
+hist(training$capitalAve,main="",xlab="ave. capital run length")
+```
+
+
+
+## Why preprocess?
+
+```{r ,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=3.5}
+mean(training$capitalAve)
+sd(training$capitalAve)
+```
+
+
+
+## Standardizing
+
+```{r ,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=3.5}
+trainCapAve <- training$capitalAve
+trainCapAveS <- (trainCapAve  - mean(trainCapAve))/sd(trainCapAve) 
+mean(trainCapAveS)
+sd(trainCapAveS)
+```
+
+
+
+## Standardizing - test set
+
+```{r ,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=3.5}
+testCapAve <- testing$capitalAve
+testCapAveS <- (testCapAve  - mean(trainCapAve))/sd(trainCapAve) 
+mean(testCapAveS)
+sd(testCapAveS)
+```
+
+
+
+
+## Standardizing - _preProcess_ function
+
+```{r preprocess,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=3.5}
+preObj <- preProcess(training[,-58],method=c("center","scale"))
+trainCapAveS <- predict(preObj,training[,-58])$capitalAve
+mean(trainCapAveS)
+sd(trainCapAveS)
+```
+
+
+
+
+## Standardizing - _preProcess_ function
+
+```{r ,dependson="preprocess",cache=TRUE,fig.height=3.5,fig.width=3.5}
+testCapAveS <- predict(preObj,testing[,-58])$capitalAve
+mean(testCapAveS)
+sd(testCapAveS)
+```
+
+
+
+## Standardizing - _preProcess_ argument
+
+```{r trainingII, dependson="loadPackage",cache=TRUE, warning=FALSE, message=FALSE}
+set.seed(32343)
+modelFit <- train(type ~.,data=training,
+                  preProcess=c("center","scale"),method="glm")
+modelFit
+```
+
+
+
+
+## Standardizing - Box-Cox transforms
+
+```{r ,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=7}
+preObj <- preProcess(training[,-58],method=c("BoxCox"))
+trainCapAveS <- predict(preObj,training[,-58])$capitalAve
+par(mfrow=c(1,2)); hist(trainCapAveS); qqnorm(trainCapAveS)
+```
+
+
+
+
+## Standardizing - Imputing data
+
+```{r knn,dependson="loadPackage",cache=TRUE,fig.height=3.5,fig.width=7}
+set.seed(13343)
+
+# Make some values NA
+training$capAve <- training$capitalAve
+selectNA <- rbinom(dim(training)[1],size=1,prob=0.05)==1
+training$capAve[selectNA] <- NA
+
+# Impute and standardize
+preObj <- preProcess(training[,-58],method="knnImpute")
+capAve <- predict(preObj,training[,-58])$capAve
+
+# Standardize true values
+capAveTruth <- training$capitalAve
+capAveTruth <- (capAveTruth-mean(capAveTruth))/sd(capAveTruth)
+```
+
+
+
+
+## Standardizing - Imputing data
+
+```{r ,dependson="knn",cache=TRUE,fig.height=3.5,fig.width=7}
+quantile(capAve - capAveTruth)
+quantile((capAve - capAveTruth)[selectNA])
+quantile((capAve - capAveTruth)[!selectNA])
+```
+
+
+
+## Correlated predictors
+
+```{r loadPackageII,cache=TRUE,fig.height=3.5,fig.width=3.5}
+library(caret); library(kernlab); data(spam)
+inTrain <- createDataPartition(y=spam$type,
+                              p=0.75, list=FALSE)
+training <- spam[inTrain,]
+testing <- spam[-inTrain,]
+
+M <- abs(cor(training[,-58]))
+diag(M) <- 0
+which(M > 0.8,arr.ind=T)
+```
+
+
+
+## Correlated predictors
+
+```{r,dependson="loadPackageII",cache=TRUE,fig.height=3.5,fig.width=3.5}
+names(spam)[c(34,32)]
+plot(spam[,34],spam[,32])
+```
+
+
+
+
+## Basic PCA idea
+
+* We might not need every predictor
+* A weighted combination of predictors might be better
+* We should pick this combination to capture the "most information" possible
+* Benefits
+  * Reduced number of predictors
+  * Reduced noise (due to averaging)
+
+
+
+
+## We could rotate the plot
+
+$$ X = 0.71 \times {\rm num 415} + 0.71 \times {\rm num857}$$
+
+$$ Y = 0.71 \times {\rm num 415} - 0.71 \times {\rm num857}$$
+
+```{r,dependson="loadPackageII",cache=TRUE,fig.height=3.5,fig.width=3.5}
+X <- 0.71*training$num415 + 0.71*training$num857
+Y <- 0.71*training$num415 - 0.71*training$num857
+plot(X,Y)
+```
+
+
+
+## Related problems
+
+You have multivariate variables $X_1,\ldots,X_n$ so $X_1 = (X_{11},\ldots,X_{1m})$
+
+* Find a new set of multivariate variables that are uncorrelated and explain as much variance as possible.
+* If you put all the variables together in one matrix, find the best matrix created with fewer variables (lower rank) that explains the original data.
+
+
+The first goal is <font color="#330066">statistical</font> and the second goal is <font color="#993300">data compression</font>.
+
+
+
+## Related solutions - PCA/SVD
+
+__SVD__
+
+If $X$ is a matrix with each variable in a column and each observation in a row then the SVD is a "matrix decomposition"
+
+$$ X = UDV^T$$
+
+where the columns of $U$ are orthogonal (left singular vectors), the columns of $V$ are orthogonal (right singluar vectors) and $D$ is a diagonal matrix (singular values). 
+
+__PCA__
+
+The principal components are equal to the right singular values if you first scale (subtract the mean, divide by the standard deviation) the variables.
+
+
+
+## Principal components in R - prcomp
+
+```{r prcomp,dependson="loadPackageII",cache=TRUE,fig.height=3.5,fig.width=3.5}
+smallSpam <- spam[,c(34,32)]
+prComp <- prcomp(smallSpam)
+plot(prComp$x[,1],prComp$x[,2])
+```
+
+
+
+## Principal components in R - prcomp
+
+```{r ,dependson="prcomp",cache=TRUE,fig.height=3.5,fig.width=3.5}
+prComp$rotation
+```
+
+
+
+
+## PCA on SPAM data
+
+```{r spamPC,dependson="loadPackageII",cache=TRUE,fig.height=3.5,fig.width=3.5}
+typeColor <- ((spam$type=="spam")*1 + 1)
+prComp <- prcomp(log10(spam[,-58]+1))
+plot(prComp$x[,1],prComp$x[,2],col=typeColor,xlab="PC1",ylab="PC2")
+```
+
+
+
+
+## PCA with caret
+
+```{r ,dependson="spamPC",cache=TRUE,fig.height=3.5,fig.width=3.5}
+preProc <- preProcess(log10(spam[,-58]+1),method="pca",pcaComp=2)
+spamPC <- predict(preProc,log10(spam[,-58]+1))
+plot(spamPC[,1],spamPC[,2],col=typeColor)
+```
+
+
+
+
+## Preprocessing with PCA
+
+```{r pcaCaret,dependson="spamPC",cache=TRUE,fig.height=3.5,fig.width=3.5, warning=FALSE, message=FALSE}
+preProc <- preProcess(log10(training[,-58]+1),method="pca",pcaComp=2)
+trainPC <- predict(preProc,log10(training[,-58]+1))
+modelFit <- train(training$type ~ .,method="glm",data=trainPC)
+```
+
+
+
+## Preprocessing with PCA
+
+```{r ,dependson="pcaCaret",cache=TRUE,fig.height=3.5,fig.width=3.5}
+testPC <- predict(preProc,log10(testing[,-58]+1))
+confusionMatrix(testing$type,predict(modelFit,testPC))
+```
+
+
+
+## Alternative (sets # of PCs)
+
+```{r ,dependson="pcaCaret",cache=TRUE,fig.height=3.5,fig.width=3.5, warning=FALSE, message=FALSE}
+modelFit <- train(training$type ~ .,method="glm",preProcess="pca",data=training)
+confusionMatrix(testing$type,predict(modelFit,testing))
+```
+
+
+## Predicting with trees
+
+* Iteratively split variables into groups
+* Split where maximally predictive
+* Evaluate "homogeneity" within each branch
+* Fitting multiple trees often works better (forests)
+
+__Pros__:
+* Easy to implement
+* Easy to interpret
+* Better performance in nonlinear settings
+
+__Cons__:
+* Without pruning/cross-validation can lead to overfitting
+* Harder to estimate uncertainty
+* Results may be variable
+
+
+
+
+## Example Tree
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/obamaTree.png height=450>
+
+[http://graphics8.nytimes.com/images/2008/04/16/us/0416-nat-subOBAMA.jpg](http://graphics8.nytimes.com/images/2008/04/16/us/0416-nat-subOBAMA.jpg)
+
+
+
+## Basic algorithm
+
+1. Start with all variables in one group
+2. Find the variable/split that best separates the outcomes
+3. Divide the data into two groups ("leaves") on that split ("node")
+4. Within each split, find the best variable/split that separates the outcomes
+5. Continue until the groups are too small or sufficiently "pure"
+
+
+
+## Measures of impurity
+
+$$\hat{p}_{mk} = \frac{1}{N_m}\sum_{x_i\; in \; Leaf \; m}\mathbb{1}(y_i = k)$$
+
+__Misclassification Error__: 
+$$ 1 - \hat{p}_{mk(m)}$$
+
+__Gini index__:
+$$ \sum_{k \neq k'} \hat{p}_{mk} \times \hat{p}_{mk'} = \sum_{k=1}^K \hat{p}_{mk}(1-\hat{p}_{mk}) $$
+
+__Cross-entropy or deviance__:
+
+$$ -\sum_{k=1}^K \hat{p}_{mk} \ln\hat{p}_{mk} $$
+
+
+
+
+## Example: Iris Data
+
+```{r iris, cache=TRUE}
+data(iris); library(ggplot2)
+names(iris)
+table(iris$Species)
+```
+
+
+
+
+## Create training and test sets
+
+```{r trainingTest, dependson="iris",cache=TRUE}
+inTrain <- createDataPartition(y=iris$Species,
+                              p=0.7, list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+dim(training); dim(testing)
+```
+
+
+
+
+## Iris petal widths/sepal width
+
+```{r, dependson="trainingTest",fig.height=4,fig.width=6}
+qplot(Petal.Width,Sepal.Width,colour=Species,data=training)
+```
+
+
+
+
+## Iris petal widths/sepal width
+
+```{r createTree, dependson="trainingTest", cache=TRUE}
+library(caret)
+modFit <- train(Species ~ .,method="rpart",data=training)
+print(modFit$finalModel)
+```
+
+
+
+## Plot tree
+
+```{r, dependson="createTree", fig.height=4.5, fig.width=4.5}
+plot(modFit$finalModel, uniform=TRUE, 
+      main="Classification Tree")
+text(modFit$finalModel, use.n=TRUE, all=TRUE, cex=.8)
+```
+
+
+
+
+## Prettier plots
+
+```{r, dependson="createTree", fig.height=4.5, fig.width=4.5}
+library(rattle)
+fancyRpartPlot(modFit$finalModel)
+```
+
+
+
+## Predicting new values
+
+```{r newdata, dependson="createTree", fig.height=4.5, fig.width=4.5, cache=TRUE}
+predict(modFit,newdata=testing)
+```
+
+
+-
+## Bootstrap aggregating (bagging)
+
+__Basic idea__: 
+
+1. Resample cases and recalculate predictions
+2. Average or majority vote
+
+__Notes__:
+
+* Similar bias 
+* Reduced variance
+* More useful for non-linear functions
+
+
+
+
+## Ozone data
+
+```{r ozoneData, cache=TRUE,warning=FALSE, message=FALSE}
+library(ElemStatLearn); data(ozone,package="ElemStatLearn")
+ozone <- ozone[order(ozone$ozone),]
+head(ozone)
+```
+[http://en.wikipedia.org/wiki/Bootstrap_aggregating](http://en.wikipedia.org/wiki/Bootstrap_aggregating)
+
+
+
+
+## Bagged loess
+
+```{r baggedOzone, dependson="ozoneData",cache=TRUE, warning=FALSE, message=FALSE}
+ll <- matrix(NA,nrow=10,ncol=155)
+for(i in 1:10){
+  ss <- sample(1:dim(ozone)[1],replace=T)
+  ozone0 <- ozone[ss,]; ozone0 <- ozone0[order(ozone0$ozone),]
+  loess0 <- loess(temperature ~ ozone,data=ozone0,span=0.2)
+  ll[i,] <- predict(loess0,newdata=data.frame(ozone=1:155))
+}
+```
+
+
+
+## Bagged loess
+
+```{r, dependson="baggedOzone",fig.height=4.5,fig.width=4.5}
+plot(ozone$ozone,ozone$temperature,pch=19,cex=0.5)
+for(i in 1:10){lines(1:155,ll[i,],col="grey",lwd=2)}
+lines(1:155,apply(ll,2,mean),col="red",lwd=2)
+```
+
+
+
+
+## Random forests
+
+1. Bootstrap samples
+2. At each split, bootstrap variables
+3. Grow multiple trees and vote
+
+__Pros__:
+
+1. Accuracy
+
+__Cons__:
+
+1. Speed
+2. Interpretability
+3. Overfitting
+
+
+
+
+## Random forests
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/forests.png height=400>
+
+[http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf](http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf)
+
+
+
+
+## Iris data
+
+```{r irisII, cache=TRUE}
+data(iris); library(ggplot2)
+inTrain <- createDataPartition(y=iris$Species,
+                              p=0.7, list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+```
+
+
+
+
+## Random forests
+
+```{r forestIris, dependson="irisData",fig.height=4,fig.width=4,cache=TRUE, warning=FALSE, message=FALSE}
+library(caret)
+modFit <- train(Species~ .,data=training,method="rf",prox=TRUE)
+modFit
+```
+
+
+
+## Getting a single tree
+
+```{r , dependson="forestIris",fig.height=4,fig.width=4}
+library(randomForest)
+getTree(modFit$finalModel,k=2)
+```
+
+
+
+## Class "centers"
+
+```{r centers, dependson="forestIris",fig.height=4,fig.width=4}
+irisP <- classCenter(training[,c(3,4)], training$Species, modFit$finalModel$prox)
+irisP <- as.data.frame(irisP); irisP$Species <- rownames(irisP)
+p <- qplot(Petal.Width, Petal.Length, col=Species,data=training)
+p + geom_point(aes(x=Petal.Width,y=Petal.Length,col=Species),size=5,shape=4,data=irisP)
+```
+
+
+
+## Predicting new values
+
+```{r predForest, dependson="centers",fig.height=4,fig.width=4,cache=TRUE}
+pred <- predict(modFit,testing); testing$predRight <- pred==testing$Species
+table(pred,testing$Species)
+```
+
+
+
+## Predicting new values
+
+```{r, dependson="predForest",fig.height=4,fig.width=4}
+qplot(Petal.Width,Petal.Length,colour=predRight,data=testing,main="newdata Predictions")
+```
+
+
+
+## Notes and further resources
+
+__Notes__:
+
+* Random forests are usually one of the two top
+performing algorithms along with boosting in prediction contests.
+* Random forests are difficult to interpret but often very accurate. 
+* Care should be taken to avoid overfitting (see [rfcv](http://cran.r-project.org/web/packages/randomForest/randomForest.pdf) funtion)
+
+
+__Further resources__:
+
+* [Random forests](http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm)
+* [Random forest Wikipedia](http://en.wikipedia.org/wiki/Random_forest)
+* [Elements of Statistical Learning](http://www-stat.stanford.edu/~tibs/ElemStatLearn/)
+
+
+
+
+## Boosting: averaging weak models
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/boosting.png height=450>
+
+
+
+## In R gradiant boosting
+
+```{r boosting, dependson="irisData",fig.height=4,fig.width=4}
+modFit <- train(Species~ .,data=training,method="gbm",verbose=FALSE)
+modFit
+```
+
+
+
+## Naive Bayes
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/naiveBayes.png height=450>
+
+
+
+
+## Naive Bayes in R
+
+
+```{r nb, dependson="irisData",fig.height=4,fig.width=4, warning=FALSE, message=FALSE}
+
+modFit <- train(Species~ .,data=training,method="nb",verbose=FALSE)
+modFit
+```
+
+
+
+
+## Strongest approach: averaging methods
+
+* You can combine classifiers by averaging/voting
+* Combining classifiers improves accuracy
+* Combining classifiers reduces interpretability
+* Boosting, bagging, and random forests are variants on this theme
+
+
+
+## Netflix prize
+
+BellKor = Combination of 107 predictors 
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/netflix.png height=450>
+
+[http://www.netflixprize.com//leaderboard](http://www.netflixprize.com//leaderboard)
+
+
+
+## Heritage health prize - Progress Prize 1
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/makers.png height=200>
+[Market Makers](https://kaggle2.blob.core.windows.net/wiki-files/327/e4cd1d25-eca9-49ca-9593-b254a773fe03/Market%20Makers%20-%20Milestone%201%20Description%20V2%201.pdf)
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/mestrom.png height=200>
+
+[Mestrom](https://kaggle2.blob.core.windows.net/wiki-files/327/09ccf652-8c1c-4a3d-b979-ce2369c985e4/Willem%20Mestrom%20-%20Milestone%201%20Description%20V2%202.pdf)
+
+
+
+
+## Basic intuition - majority vote
+
+Suppose we have 5 completely independent classifiers
+
+If accuracy is 70% for each:
+  * $10\times(0.7)^3(0.3)^2 + 5\times(0.7)^4(0.3)^2 + (0.7)^5$
+  * 83.7% majority vote accuracy
+
+With 101 independent classifiers
+  * 99.9% majority vote accuracy
+  
+
+
+
+## Approaches for combining classifiers
+
+1. Bagging, boosting, random forests
+  * Usually combine similar classifiers
+2. Combining different classifiers
+  * Model stacking
+  * Model ensembling
+
+
+
+## Example with Wage data
+
+__Create training, test and validation sets__
+
+```{r wage}
+library(ISLR); data(Wage); library(ggplot2); library(caret);
+Wage <- subset(Wage,select=-c(logwage)); set.seed(132434)
+
+# Create a building data set and validation set
+inBuild <- createDataPartition(y=Wage$wage,
+                              p=0.7, list=FALSE)
+validation <- Wage[-inBuild,]; buildData <- Wage[inBuild,]
+
+inTrain <- createDataPartition(y=buildData$wage,
+                              p=0.7, list=FALSE)
+training <- buildData[inTrain,]; testing <- buildData[-inTrain,]
+```
+
+
+
+
+## Wage data sets
+
+__Create training, test and validation sets__
+
+```{r, dependson="wage"}
+dim(training)
+dim(testing)
+dim(validation)
+```
+
+
+
+
+## Build two different models
+
+```{r modFit,dependson="wage", cache=TRUE,, warning=FALSE, message=FALSE}
+mod1 <- train(wage ~.,method="glm",data=training)
+mod2 <- train(wage ~.,method="rf",
+              data=training, 
+              trControl = trainControl(method="cv"),number=3)
+```
+
+
+## Predict on the testing set 
+
+```{r predict,dependson="modFit",fig.height=4,fig.width=6, warning=FALSE, message=FALSE}
+pred1 <- predict(mod1,testing); pred2 <- predict(mod2,testing)
+qplot(pred1,pred2,colour=wage,data=testing)
+```
+
+
+
+
+## Fit a model that combines predictors
+
+```{r combine,dependson="predict", warning=FALSE, message=FALSE}
+predDF <- data.frame(pred1,pred2,wage=testing$wage)
+combModFit <- train(wage ~.,method="gam",data=predDF)
+combPred <- predict(combModFit,predDF)
+```
+
+
+## Testing errors
+
+```{r ,dependson="combine"}
+sqrt(sum((pred1-testing$wage)^2))
+sqrt(sum((pred2-testing$wage)^2))
+sqrt(sum((combPred-testing$wage)^2))
+```
+
+
+## Predict on validation data set
+
+```{r validation,dependson="combine", warning=FALSE, message=FALSE}
+pred1V <- predict(mod1,validation); pred2V <- predict(mod2,validation)
+predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
+combPredV <- predict(combModFit,predVDF)
+```
+
+
+
+## Evaluate on validation
+
+```{r ,dependson="validation"}
+sqrt(sum((pred1V-validation$wage)^2))
+sqrt(sum((pred2V-validation$wage)^2))
+sqrt(sum((combPredV-validation$wage)^2))
+```
+
+
+
+
+
+## Notes and further resources
+
+* Even simple blending can be useful
+* Typical model for binary/multiclass data
+  * Build an odd number of models
+  * Predict with each model
+  * Predict the class by majority vote
+* This can get dramatically more complicated
+  * Simple blending in caret: [caretEnsemble](https://github.com/zachmayer/caretEnsemble) (use at your own risk!)
+
+
+
+## Recall - scalability matters
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/netflixno.png height=250>
+</br></br></br>
+
+[http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/](http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/)
+
+[http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html](http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html)
+
+
+
+
+## Further information
+
+* Caret tutorials:
+  * [http://www.edii.uclm.es/~useR-2013/Tutorials/kuhn/user_caret_2up.pdf](http://www.edii.uclm.es/~useR-2013/Tutorials/kuhn/user_caret_2up.pdf)
+  * [http://cran.r-project.org/web/packages/caret/vignettes/caret.pdf](http://cran.r-project.org/web/packages/caret/vignettes/caret.pdf)
+* A paper introducing the caret package
+  * [http://www.jstatsoft.org/v28/i05/paper](http://www.jstatsoft.org/v28/i05/paper)
+
+

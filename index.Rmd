@@ -145,7 +145,9 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M9| 2015-10-26 | [Introduction](https://docs.google.com/presentation/d/1PWoZ_Q5UppZyEtByaGtlUBJU_YISxDKxkGDlsmVj6eU/edit?usp=sharing) | |
 | M9| 2015-10-26 | [Multiple Testing](http://jtleek.com/advdatasci/lecture_notes/regularized/#1) | |
 | M10 | 2015-11-2 | [Introduction](https://docs.google.com/presentation/d/1C6jF84J8sbLnCoA7vmQdC4TIVne9N2iM0P5QLJpFmh8/edit?usp=sharing) ||
-| M9| 2015-11-2 | [Prediction](http://jtleek.com/advdatasci/lecture_notes/prediction/#1) | |
+| M10| 2015-11-4 | [Prediction](http://jtleek.com/advdatasci/lecture_notes/prediction/#1) | |
+| W10 | 2015-11-4 | [Introduction](https://docs.google.com/presentation/d/1IY0lJtq-BV8vk0Av2Iu9yviVKttopmVhbVVbdo_NfdI/edit?usp=sharing) ||
+| W10| 2015-11-4 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) | |
 |---|---|---|---|
 
 
@@ -155,12 +157,11 @@ Class will consist of both lectures on statistical methdology and practice, as w
 
 | Project  |  Assigned Date  |  Due Date | Link  |  Description |
 |---|---|---|---|---|
-| Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link, [feedback](http://jtleek.com/advdatasci/code/project1-resources.html) |
+| Project 1 | 2015-09-02  | 2015-09-14 | [Project 1](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1329) | Guns and homicide, email for link| [feedback](http://jtleek.com/advdatasci/code/project1-resources.html) |
 | Project 2 | 2015-09-16 | 2015-09-27 | [Project 2](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1395) | Fitbit activity, email for link|
 | Final Project | 2015-10-07 | 2015-10-16 | [Final project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/final.md) |
 Please submit via Courseplus|
-| 712 Project 1| 2015-11-04 | 2015-11-18 (poster)/ 2015-11-18(app) | [Final project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/project1-712.md) |
-Please submit via Courseplus/Github|
+| 712 Project 1 | 2015-11-04 | 2015-11-18 (poster)/ 2015-11-18(app) | [Project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/project1-712.md) | Please submit via Courseplus/Github|
 |---|---|---|---|---|
 
 

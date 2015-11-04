@@ -1,0 +1,16 @@
+base
+lattice
+ggplot2
+caret
+kernlab
+rpart
+RGtk2
+rattle
+ElemStatLearn
+randomForest
+survival
+gbm
+plyr
+MASS
+klaR
+ISLR
