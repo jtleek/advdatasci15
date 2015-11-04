@@ -1,0 +1,6 @@
+---
+title: "Prediction methods"
+author: "Jeff Leek"
+date: "November 2, 2015"
+output: ioslides_presentation
+---
