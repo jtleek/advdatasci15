@@ -537,7 +537,7 @@ qplot(Petal.Width,Sepal.Width,colour=Species,data=training)
 
 ## Iris petal widths/sepal width
 
-```{r createTree, dependson="trainingTest", cache=TRUE}
+```{r createTree, dependson="trainingTest", cache=TRUE,warning=FALSE,message=FALSE}
 library(caret)
 modFit <- train(Species ~ .,method="rpart",data=training)
 print(modFit$finalModel)
@@ -936,6 +936,509 @@ sqrt(sum((combPredV-validation$wage)^2))
 [http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/](http://www.techdirt.com/blog/innovation/articles/20120409/03412518422/)
 
 [http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html](http://techblog.netflix.com/2012/04/netflix-recommendations-beyond-5-stars.html)
+
+
+
+## An example of least parametric to most
+
+<center> KNN -> Logistic Regression -> LDA -> Fully Bayesian model </center>
+
+* K nearest neighbors
+* Logistic regression
+* Linear discriminant analysis
+* Fully Bayesian model
+
+
+
+## KNN neighbors 
+
+
+Basic idea
+
+$$\hat{Y}(x) = \frac{1}{k}\sum_{x_i \in N_k(x)} y_i$$
+
+$$\hat{f}(x) = {\rm Ave}(y_i | x_i \in N_k(x))$$
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/knn.png" height=300>
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+## 1 nearest neighbor
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/1nn.png" height=400>
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+## KNN for binary problem
+
+$$\hat{Pr}(Y=k) = {\rm Ave}(1(y_i == k) | x_i \in N_k(x))$$
+
+
+* Advantages
+  * Fully non-parametric
+  * Flexible
+* Disadvantages
+  * Prone to overfitting
+  * Curse of dimensionality
+
+
+
+## Logistic regression
+
+<center> Assume a model for $Pr(Y=k | X=x)$ </center>
+
+$$ \rm{logit}Pr(Y = k |X = x) == x\beta$$
+
+* Advantages
+  * Still doesn't assume model for $x$
+  * Can be more easily explained
+* Disadvantages
+  * Lose flexibility
+  * Accuracy decreases when linear assumption isn't true
+  
+
+
+
+## Linear discriminant analysis
+
+
+<center> Build parametric model for conditional distribution $P(Y = k | X = x)$ </center>
+
+$$Pr(Y = k | X=x) = \frac{f_k(x) \pi_k}{\sum_{\ell = 1}^K f_{\ell}(x) \pi_{\ell}}$$
+  
+* Classify to class with highest estimated probability
+* Linear discriminant analysis assumes $f_k(x)$ is multivariate Gaussian with same covariances
+* Quadratic discrimant analysis assumes $f_k(x)$ is multivariate Gaussian with different covariances
+* You can assume more complicated distributions to get more complicated boundaries
+* Naive Bayes would be assuming independence between features 
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+## Why "linear" discriminant analysis?
+
+$$log \frac{Pr(Y = k | X=x)}{Pr(Y = j | X=x)}$$
+$$ = log \frac{f_k(x)}{f_j(x)} + log \frac{\pi_k}{\pi_j}$$
+$$ = log \frac{\pi_k}{\pi_j} - \frac{1}{2}(\mu_k + \mu_j)^T \Sigma^{-1}(\mu_k + \mu_j)$$
+$$ + x^T \Sigma^{-1} (\mu_k - \mu_j)$$
+
+
+
+## Decision boundaries
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/ldaboundary.png" height=300>
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+## Discriminant function
+
+$$\delta_k(x) = x^T \Sigma^{-1} \mu_k - \frac{1}{2}\mu_k \Sigma^{-1}\mu_k + log(\mu_k)$$
+
+
+* Decide on class based on $\hat{Y}(x) = argmax_k \delta_k(x)$
+* We usually estimate parameters with maximum likelihood
+
+
+
+## Logistic regression versus LDA
+
+$$log \frac{Pr(Y = k | X=x)}{Pr(Y = j | X=x)}$$
+$$ = log \frac{\pi_k}{\pi_j} - \frac{1}{2}(\mu_k + \mu_j)^T \Sigma^{-1}(\mu_k + \mu_j)$$
+$$ + x^T \Sigma^{-1} (\mu_k - \mu_j)$$
+$$ = \alpha_{k0} + \alpha_k^Tx$$
+
+Similarly from logistic regression
+
+
+$$log \frac{Pr(Y = k | X=x)}{Pr(Y = j | X=x)} = \beta_{k0} + \beta_k^Tx$$
+
+Both have same form for second term in this equation, but LDA assumes form for first term as well
+
+$$Pr(X,Y=k) = Pr(X)Pr(Y=k|X)$$
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+## Model based prediction approach
+
+* Assume that prior probability for a cluster is $\pi_k$
+* Assume multivariate density for $f(x | Y=k)$, usually normal
+* Build a general model for $\Sigma_k$ the conditional covariance
+* Estimate the model with the EM approach
+
+
+
+
+## Choices for covariance
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/mclustcov.png" height=350>
+
+
+
+
+## Bayes factors
+
+$$B_{12} = \frac{Pr(X|M_1)}{Pr(X|M_2)}$$
+
+where
+
+$$Pr(X | M_k) = \int Pr(X | \theta_k M_k)Pr(\theta_k | M_k)d\theta_k$$
+
+* Variables are then selected based on which model is "best" by this metric
+
+
+
+## mclust package in R is where this is done
+
+```{r faithful,message=FALSE,warning=FALSE,fig.height=3.5,fig.width=3.5}
+library(mclust); data(faithful)
+plot(faithful)
+```
+
+http://www.stat.washington.edu/mclust/
+
+
+
+
+## mclust package in R is where this is done
+
+```{r mclust,dependson="faithful",fig.height=4,fig.width=4}
+faithfulMclust <- Mclust(faithful)
+summary(faithfulMclust)
+```
+
+http://www.stat.washington.edu/mclust/
+
+
+
+
+
+## mclust package in R is where this is done
+
+```{r,dependson="mclust",fig.height=4.5,fig.width=4.5}
+par(mfrow=c(2,2))
+plot(faithfulMclust)
+```
+
+http://www.stat.washington.edu/mclust/
+
+
+
+
+## Model based clustering advantages and disadvantages
+
+* Advantages
+  * Fully parametric so can compute all posterior quantities
+  * Can be a little more interpretable
+* Disadvantages
+  * Much less flexible
+  * If your assumptions are wrong can be pretty far off
+
+
+## Basic idea
+
+1. Assume the data follow a probabilistic model
+2. Use Bayes' theorem to identify optimal classifiers
+
+__Pros:__
+
+* Can take advantage of structure of the data
+* May be computationally convenient
+* Are reasonably accurate on real problems
+
+__Cons:__
+
+* Make additional assumptions about the data
+* When the model is incorrect you may get reduced accuracy
+
+
+
+## Model based approach {.smaller}
+
+
+1. Our goal is to build parametric model for conditional distribution $P(Y = k | X = x)$
+
+2. A typical approach is to apply [Bayes theorem](http://en.wikipedia.org/wiki/Bayes'_theorem):
+$$ Pr(Y = k | X=x) = \frac{Pr(X=x|Y=k)Pr(Y=k)}{\sum_{\ell=1}^K Pr(X=x |Y = \ell) Pr(Y=\ell)}$$
+$$Pr(Y = k | X=x) = \frac{f_k(x) \pi_k}{\sum_{\ell = 1}^K f_{\ell}(x) \pi_{\ell}}$$
+
+3. Typically prior probabilities $\pi_k$ are set in advance.
+
+4. A common choice for $f_k(x) = \frac{1}{\sigma_k \sqrt{2 \pi}}e^{-\frac{(x-\mu_k)^2}{\sigma_k^2}}$, a Gaussian distribution
+
+5. Estimate the parameters ($\mu_k$,$\sigma_k^2$) from the data.
+
+6. Classify to the class with the highest value of $P(Y = k | X = x)$
+
+
+
+## Classifying using the model
+
+A range of models use this approach
+
+* Linear discriminant analysis assumes $f_k(x)$ is multivariate Gaussian with same covariances
+* Quadratic discrimant analysis assumes $f_k(x)$ is multivariate Gaussian with different covariances
+* [Model based prediction](http://www.stat.washington.edu/mclust/) assumes more complicated versions for the covariance matrix 
+* Naive Bayes assumes independence between features for model building
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+
+## Why linear discriminant analysis?
+
+$$log \frac{Pr(Y = k | X=x)}{Pr(Y = j | X=x)}$$
+$$ = log \frac{f_k(x)}{f_j(x)} + log \frac{\pi_k}{\pi_j}$$
+$$ = log \frac{\pi_k}{\pi_j} - \frac{1}{2}(\mu_k + \mu_j)^T \Sigma^{-1}(\mu_k + \mu_j)$$
+$$ + x^T \Sigma^{-1} (\mu_k - \mu_j)$$
+
+http://statweb.stanford.edu/~tibs/ElemStatLearn/
+
+
+
+
+## Decision boundaries
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/ldaboundary.png" height=500>
+
+
+
+## Discriminant function
+
+$$\delta_k(x) = x^T \Sigma^{-1} \mu_k - \frac{1}{2}\mu_k \Sigma^{-1}\mu_k + log(\mu_k)$$
+
+
+* Decide on class based on $\hat{Y}(x) = argmax_k \delta_k(x)$
+* We usually estimate parameters with maximum likelihood
+
+
+
+
+## Naive Bayes
+
+Suppose we have many predictors, we would want to model: $P(Y = k | X_1,\ldots,X_m)$
+
+We could use Bayes Theorem to get:
+
+$$P(Y = k | X_1,\ldots,X_m) = \frac{\pi_k P(X_1,\ldots,X_m| Y=k)}{\sum_{\ell = 1}^K P(X_1,\ldots,X_m | Y=k) \pi_{\ell}}$$
+$$ \propto \pi_k P(X_1,\ldots,X_m| Y=k)$$
+
+This can be written:
+
+$$P(X_1,\ldots,X_m, Y=k) = \pi_k P(X_1 | Y = k)P(X_2,\ldots,X_m | X_1,Y=k)$$
+$$ = \pi_k P(X_1 | Y = k) P(X_2 | X_1, Y=k) P(X_3,\ldots,X_m | X_1,X_2, Y=k)$$
+$$ = \pi_k P(X_1 | Y = k) P(X_2 | X_1, Y=k)\ldots P(X_m|X_1\ldots,X_{m-1},Y=k)$$
+
+We could make an assumption to write this:
+
+$$ \approx \pi_k P(X_1 | Y = k) P(X_2 | Y = k)\ldots P(X_m |,Y=k)$$
+
+
+
+
+
+## Create training and test sets
+
+```{r trainingTest2, dependson="iris",cache=TRUE}
+inTrain <- createDataPartition(y=iris$Species,
+                              p=0.7, list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+dim(training); dim(testing)
+```
+
+
+
+## Build predictions
+
+```{r fit,dependson="trainingTest2"}
+modlda = train(Species ~ .,data=training,method="lda")
+modnb = train(Species ~ ., data=training,method="nb")
+plda = predict(modlda,testing); pnb = predict(modnb,testing)
+table(plda,pnb)
+```
+
+
+
+
+## Comparison of results
+
+```{r,dependson="fit",fig.height=4,fig.width=4}
+equalPredictions = (plda==pnb)
+qplot(Petal.Width,Sepal.Width,colour=equalPredictions,data=testing)
+```
+
+## Time series data
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/GOOG.png height=450>
+
+[https://www.google.com/finance](https://www.google.com/finance)
+
+
+
+## What is different?
+
+* Data are dependent over time
+* Specific pattern types
+  * Trends - long term increase or decrease
+  * Seasonal patterns - patterns related to time of week, month, year, etc.
+  * Cycles - patterns that rise and fall periodically
+* Subsampling into training/test is more complicated
+* Similar issues arise in spatial data 
+  * Dependency between nearby observations
+  * Location specific effects
+* Typically goal is to predict one or more observations into the future. 
+* All standard predictions can be used (with caution!)
+
+
+
+## Beware spurious correlations!
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/spurious.jpg height=450>
+
+[http://www.google.com/trends/correlate](http://www.google.com/trends/correlate)
+
+[http://www.newscientist.com/blogs/onepercent/2011/05/google-correlate-passes-our-we.html](http://www.newscientist.com/blogs/onepercent/2011/05/google-correlate-passes-our-we.html)
+
+
+
+## Also common in geographic analyses
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/heatmap.png height=450>
+
+[http://xkcd.com/1138/](http://xkcd.com/1138/)
+
+
+
+
+## Beware extrapolation!
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/extrapolation.jpg height=450>
+
+[http://www.nature.com/nature/journal/v431/n7008/full/431525a.html](http://www.nature.com/nature/journal/v431/n7008/full/431525a.html)
+
+
+
+## Google data
+
+
+```{r loadGOOG}
+library(quantmod)
+from.dat <- as.Date("01/01/08", format="%m/%d/%y")
+to.dat <- as.Date("12/31/13", format="%m/%d/%y")
+getSymbols("GOOG", src="google", from = from.dat, to = to.dat)
+head(GOOG)
+```
+
+
+
+## Summarize monthly and store as time series
+
+```{r tseries,dependson="loadGOOG",fig.height=4,fig.width=4}
+googOpen <- Op(GOOG)
+googOpen <- as.ts(Op(to.monthly(googOpen))[,1])
+ts1 <- ts(googOpen,frequency=12)
+plot(ts1,xlab="Years+1", ylab="GOOG")
+```
+
+
+
+
+## Example time series decomposition
+
+* __Trend__  - Consistently increasing pattern over time 
+* __Seasonal__ -  When there is a pattern over a fixed period of time that recurs.
+* __Cyclic__ -  When data rises and falls over non fixed periods
+
+[https://www.otexts.org/fpp/6/1](https://www.otexts.org/fpp/6/1)
+
+
+
+
+## Decompose a time series into parts
+
+```{r ,dependson="tseries",fig.height=4.5,fig.width=4.5}
+plot(decompose(ts1),xlab="Years+1",plot.type="single")
+```
+
+
+
+## Training and test sets
+
+```{r trainingTest3,dependson="tseries",fig.height=4.5,fig.width=4.5}
+ts1Train <- window(ts1,start=1,end=5)
+ts1Test <- window(ts1,start=5,end=(7-0.01))
+ts1Train
+```
+
+
+
+## Simple moving average
+
+$$ Y_{t}=\frac{1}{2*k+1}\sum_{j=-k}^k {y_{t+j}}$$
+
+```{r ,dependson="trainingTest3",fig.height=4.5,fig.width=4.5}
+library(forecast); plot(ts1Train)
+#lines(ma(ts1Train,order=3),col="red")
+```
+
+
+
+
+
+## Exponential smoothing
+
+__Example - simple exponential smoothing__
+$$\hat{y}_{t+1} = \alpha y_t + (1-\alpha)\hat{y}_{t-1}$$
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/expsmooth.png height=300>
+
+[https://www.otexts.org/fpp/7/6](https://www.otexts.org/fpp/7/6)
+
+
+
+## Exponential smoothing
+
+```{r ets,dependson="trainingTest3",fig.height=4.5,fig.width=4.5}
+ets1 <- ets(ts1Train,model="MMM")
+fcast <- forecast(ets1)
+plot(fcast); lines(ts1Test,col="red")
+```
+
+
+
+
+## Get the accuracy
+
+```{r ,dependson="ets",fig.height=4.5,fig.width=4.5}
+accuracy(fcast,ts1Test)
+```
+
+
+
+## Notes and further resources
+
+* [Forecasting and timeseries prediction](http://en.wikipedia.org/wiki/Forecasting) is an entire field
+* Rob Hyndman's [Forecasting: principles and practice](https://www.otexts.org/fpp/) is a good place to start
+* Cautions
+  * Be wary of spurious correlations
+  * Be careful how far you predict (extrapolation)
+  * Be wary of dependencies over time
+* See [quantmod](http://cran.r-project.org/web/packages/quantmod/quantmod.pdf) or [quandl](http://www.quandl.com/help/packages/r) packages for finance-related problems.
+
+
+
+
 
 
 

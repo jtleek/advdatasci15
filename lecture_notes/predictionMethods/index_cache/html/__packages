@@ -14,3 +14,6 @@ plyr
 MASS
 klaR
 ISLR
+nlme
+mgcv
+mclust
