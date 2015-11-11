@@ -8,11 +8,8 @@ This project doesn't seem relevant to public health but certain companies have t
 
 ### Your Project:
 
-Your project is to participate in this Kaggle contest:
+Your project is to use the `quantmod` package to download historical data (and any other data you want) on the S & P 500. You are then to build a forecasting/predictive model to predict what is the best stock to buy for the maximum return 1 and 5 days later along with the uncertainty in your prediction. 
 
-https://www.kaggle.com/c/the-winton-stock-market-challenge
-
-Then create an academic poster presenting your work. As a third component to the project you will build a Shiny App to predict the price of the S & P 500 for the next 5 days with uncertainty estimates. 
 
 ### Submission requirements
 
@@ -31,9 +28,9 @@ The Shiny App must have a date input and must provide a graph with the predictio
 ### Dates
 
 
-* Assignment open: Nov 4th
-* Poster due: 8pm November 18th
-* App due: 8pm November 25th
+* Assignment open: Nov 11th
+* Poster due: 8pm November 25th
+* App due: 8pm December 2nd
 
 
 
