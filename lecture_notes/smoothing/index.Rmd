@@ -1,0 +1,415 @@
+---
+title: "Smoothing"
+author: "Jeff Leek"
+date: "November 16, 2015"
+output: ioslides_presentation
+---
+
+## A simple example
+
+```{r,message=FALSE}
+library(Biobase)
+library(SpikeIn)
+library(hgu95acdf)
+data(SpikeIn95)
+```
+
+http://genomicsclass.github.io/book/
+
+```{r, cache=TRUE,echo=FALSE}
+##Example with two columns
+i=10;j=9
+
+##remove the spiked in genes and take random sample
+siNames<-colnames(pData(SpikeIn95))
+ind <- which(!probeNames(SpikeIn95)%in%siNames)
+pms <- pm(SpikeIn95)[ ind ,c(i,j)]
+
+##pick a representative sample for A and order A
+Y=log2(pms[,1])-log2(pms[,2])
+X=(log2(pms[,1])+log2(pms[,2]))/2
+set.seed(4)
+ind <- tapply(seq(along=X),round(X*5),function(i)
+  if(length(i)>20) return(sample(i,20)) else return(NULL))
+ind <- unlist(ind)
+X <- X[ind]
+Y <- Y[ind]
+o <-order(X)
+X <- X[o]
+Y <- Y[o]
+```
+
+
+## Scatterplot
+
+```{r,warning=FALSE,fig.height=3,fig.width=5}
+library(rafalib)
+mypar()
+plot(X,Y)
+```
+
+http://genomicsclass.github.io/book/
+
+## Fit a line {.smaller}
+
+```{r,warning=FALSE,fig.height=3,fig.width=5}
+mypar()
+plot(X,Y)
+fit <- lm(Y~X)
+points(X,Y,pch=21,bg=ifelse(Y>fit$fitted,1,3))
+abline(fit,col=2,lwd=4,lty=2)
+```
+http://genomicsclass.github.io/book/
+
+## Bin smoothing
+
+```{r,warning=FALSE,fig.height=3,fig.width=5,echo=FALSE}
+mypar()
+centers <- seq(min(X),max(X),0.1)
+plot(X,Y,col="grey",pch=16)
+windowSize <- .5
+i <- 25
+center<-centers[i]
+ind=which(X>center-windowSize & X<center+windowSize)
+fit<-mean(Y)
+points(X[ind],Y[ind],bg=3,pch=21)
+lines(c(min(X[ind]),max(X[ind])),c(fit,fit),col=2,lty=2,lwd=4)
+i <- 60
+center<-centers[i]
+ind=which(X>center-windowSize & X<center+windowSize)
+fit<-mean(Y[ind])
+points(X[ind],Y[ind],bg=3,pch=21)
+lines(c(min(X[ind]),max(X[ind])),c(fit,fit),col=2,lty=2,lwd=4)
+```
+
+http://genomicsclass.github.io/book/
+## Lots of bins
+
+```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}
+windowSize<-0.5
+smooth<-rep(NA,length(centers))
+mypar (4,3)
+for(i in seq(along=centers)){
+  center<-centers[i]
+  ind=which(X>center-windowSize & X<center+windowSize)
+  smooth[i]<-mean(Y[ind])
+  if(i%%round(length(centers)/12)==1){ ##we show 12
+    plot(X,Y,col="grey",pch=16)
+    points(X[ind],Y[ind],bg=3,pch=21)
+    lines(c(min(X[ind]),max(X[ind])),c(smooth[i],smooth[i]),col=2,lwd=2)
+    lines(centers[1:i],smooth[1:i],col="black")
+    points(centers[i],smooth[i],col="black",pch=16,cex=1.5)
+  }
+}
+```
+
+http://genomicsclass.github.io/book/
+
+## Final result
+
+```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}
+mypar (1,1)
+plot(X,Y,col="darkgrey",pch=16)
+lines(centers,smooth,col="black",lwd=3)
+```
+http://genomicsclass.github.io/book/
+
+## Loess
+
+```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}
+centers <- seq(min(X),max(X),0.1)
+mypar (1,1)
+plot(X,Y,col="darkgrey",pch=16)
+windowSize <- 1.25
+
+i <- 25
+center<-centers[i]
+ind=which(X>center-windowSize & X<center+windowSize)
+fit<-lm(Y~X,subset=ind)
+points(X[ind],Y[ind],bg=3,pch=21)
+a <- min(X[ind]);b <- max(X[ind])
+lines(c(a,b),fit$coef[1]+fit$coef[2]*c(a,b),col=2,lty=2,lwd=3)
+
+i <- 60
+center<-centers[i]
+ind=which(X>center-windowSize & X<center+windowSize)
+fit<-lm(Y~X,subset=ind)
+points(X[ind],Y[ind],bg=3,pch=21)
+a <- min(X[ind]);b <- max(X[ind])
+lines(c(a,b),fit$coef[1]+fit$coef[2]*c(a,b),col=2,lty=2,lwd=3)
+```
+
+http://genomicsclass.github.io/book/
+
+## Lots of bins
+
+```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}
+mypar (4,3)
+windowSize<-1.25
+smooth<-rep(NA,length(centers))
+for(i in seq(along=centers)){
+  center<-centers[i]
+  ind=which(X>center-windowSize & X<center+windowSize)
+  fit<-lm(Y~X,subset=ind)
+  smooth[i]<-fit$coef[1]+fit$coef[2]*center
+
+  if(i%%round(length(centers)/12)==1){ ##we show 12
+    plot(X,Y,col="grey",pch=16)
+    points(X[ind],Y[ind],bg=3,pch=21)
+    a <- min(X[ind]);b <- max(X[ind])
+    lines(c(a,b),fit$coef[1]+fit$coef[2]*c(a,b),col=2,lwd=2)
+  
+    lines(centers[1:i],smooth[1:i],col="black")
+    points(centers[i],smooth[i],col="black",pch=16,cex=1.5)
+  }
+}
+```
+
+http://genomicsclass.github.io/book/
+
+## Final result
+
+```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}
+mypar (1,1)
+plot(X,Y,col="darkgrey",pch=16)
+lines(centers,smooth,col="black",lwd=3)
+```
+
+http://genomicsclass.github.io/book/
+
+## Loess function {.smaller}
+
+```{r,warning=FALSE,fig.height=3,fig.width=3}
+fit <- loess(Y~X, degree=1, span=1/3)
+newx <- seq(min(X),max(X),len=100) 
+smooth <- predict(fit,newdata=data.frame(X=newx))
+mypar ()
+plot(X,Y,col="darkgrey",pch=16)
+lines(newx,smooth,col="black",lwd=3)
+```
+http://genomicsclass.github.io/book/
+
+## Data are rarely linear
+
+* It is rare for the exact regression function $f$ to fall into space spanned by linear combinations of covariates
+* So $$g(x;\theta) = \theta_1 + \theta_2 x, x \in I$$ may miss important features. 
+
+
+
+## Example data
+
+Earth scientists believe that there might have been a major climate change that caused a mass extinction between the Cretacious and Tertiary periods. This is called the [KTB boundary](http://www.princeton.edu/geosciences/people/keller/publications/pdf/2011_Keller_SEPM_100_KTB_def.pdf) and was $\approx 66$ million years ago. The ratio of isotopes of Strontium in fossils tells us about the chemical composition in the atmosphere during different geological periods. 
+
+$$^{87}\delta \mbox{Sr} = \left( \frac{ ^{87}\mbox{Sr}/^{86}\mbox{Sr sample}}{^{87}\mbox{Sr}/^{86}\mbox{Sr sea water}} - 1\right) \times 10^5.$$
+
+
+
+## Strontium data 
+
+```{r strontium, fig.height=4,fig.width=4}
+dat = read.table("http://www.biostat.jhsph.edu/~ririzarr/Teaching/754/Data/Sr.dat")
+plot(dat,xlab="time (mya)",ylab="ratio",pch=19)
+
+```
+
+
+
+
+## Polynomial model
+
+The polynomial might fit better here:  
+
+$$g(x;\theta) = \theta_1 + \theta_2 x + \dots + \theta_k x^{k-1}, x\in I$$
+
+* Note that the space $\cal G = {\cal P}_k$ consists of polynomials having degree at most $k-1$.
+* In exceptional cases, we have reasons to believe that the regression function $f$ is in fact a high-order polynomial. 
+* For historical values of $^{87}\delta Sr$ we consider polynomials simply because our scientific
+intuition tells us that $f$ should be smooth. 
+
+
+
+
+## Computational issue
+
+The basis of monomials
+
+$B_j(x) = x^{j-1} \mbox{ for } j=1,\dots,k$
+
+is not well suited for numerical calculations. 
+
+* This basis is ill conditioned for $k$ larger than $8$ or $9$
+* R uses orthogonal [Chebyshev polynomials](http://en.wikipedia.org/wiki/Chebyshev_polynomials) intead `?poly` (e.g. $T_0(x)=1$, $T_1(x) = x$, $T_{n+1}(x) = 2xT_n(x) - T_{n-1}(x)$)
+
+
+
+## Alternative set of polynomials you could use {.smaller}
+
+
+An alternative to polynomials is to consider the space ${\cal PP}_k(t)$ of piecewise polynomials with break points $t=(t_0,\dots,t_{m+1})'$. Given a sequence $a = t_0 < t_1 < \dots < t_m < t_{m+1} = b$, construct $m+1$ (disjoint) intervals 
+$$I_l = [t_{l-1},t_l), 1 \leq l \leq m \mbox{ and } I_{m+1} =
+[t_m,t_{m+1}]$$ 
+whose union is $I=[a,b]$. 
+
+Define the piecewise polynomials of order $k$ as 
+
+$$g(x) = \left\{   \begin{array}{cc}
+    g_1(x) = \theta_{1,1} + \theta_{1,2} x + \dots + \theta_{1,k}
+    x^{k-1},&x \in I_1\\
+    \vdots&\vdots\\
+    g_{m+1}(x) = \theta_{m+1,1} + \theta_{m+1,2} x + \dots + \theta_{m+1,k}
+    x^{k-1},&x \in I_{k+1}.
+\end{array}
+\right.$$
+
+* But it can be hard to justify the breaks
+
+
+
+
+## Continuous first derivatives {.smaller}
+
+* Basic idea - make the piecewise polynomials have continuous first derivative
+* Start with space of piecewise polynomials $${\cal PP}_k(t)$ with $t = (t_1,\dots,t_m)'$$
+* We can put constrains on the behavior of the functions $g$ at the break points.
+* A trick is to write $g \in {\cal PP}_k(t)$ in _the truncated basis power_:
+$$g(x) = \theta_{0,1} + \theta_{0,2} x + \dots + \theta_{0,k} x^{k-1} +$$
+$$,  \theta_{1,1}(x-t_1)^0_+ + \theta_{1,2} (x-t_1)^1_+ + \dots + \theta_{1,k} (x-t_1)^{k-1}_+ +$$
+$$ \vdots$$
+$$ \theta_{m,1}(x-t_m)^0_+ + \theta_{m,2} (x-t_m)^1_+ + \dots + \theta_{m,k} (x-t_m)^{k-1}_+$$
+where $(\cdot)_+ = \max(\cdot,0)$. 
+
+
+
+## Continuous first derivatves continued 
+
+* Written in this way the coefficients $\theta_{1,1},\dots,\theta_{1,k}$ record the jumps in the
+different derivative from the first piece to the second. 
+
+* Now we can force constrains, such as continuity, by putting constrains like $\theta_{1,1}=0$ etc... 
+
+* Notice that the constrains reduce the number of parameters. This is in agreement with the fact that we are forcing more smoothness.
+
+
+
+## Cubic splines
+
+$$g(x) = \theta_{0,1} + \theta_{0,2} x + \dots + \theta_{0,4} x^3 + \theta_{1,k} (x-t_1)^{3}+ \dots + \theta_{m,k} (x-t_m)^{3}$$
+
+* Note: It is always possible to have less restrictions at knots where we
+believe the behavior is "less smooth", e.g for the Sr ratios, we may have "unsmoothness" around KTB. 
+* We can write this as a linear space, but it isn't convenient for computations `bs()` creates this basis but computationally convenient
+* There is asymptotic theory for all this but we are going to do usual hand waving. Note $$E[ f(x) - g(x) ] = O(h_l^{2k} + 1/n_l)$$ where $h_l$ is the size of the interval for $x$ and $n_l$ is the number of points. 
+
+
+
+
+
+## `bs()` for strontium data
+
+```{r,dependson="strontium", fig.height=4,fig.width=4}
+library(splines)
+basis1 = bs(dat[,1],df=3)
+matplot(basis1,type="l")
+```
+
+
+
+## `bs()` and regression
+
+```{r,dependson="strontium", fig.height=4,fig.width=4}
+basis1 = bs(dat[,1],df=3)
+lm1 = lm(dat[,2] ~ basis1)
+plot(dat,pch=19); lines(dat[,1],lm1$fitted,col="red")
+```
+
+
+
+## Splines in terms of spaces and sub-spaces
+
+The$p$-dimensional spaces described in Section 4.1 were defined through basis function
+$B_j(x), j=1,\dots,p$. So  in general we defined for a given range $I \subset {\mathbb R}^k$
+
+$$ {\cal G} =\{ g: g(x) = \sum_{j=1}^p \theta_j \beta_j(x), x \in I, (\theta_1,\dots,\theta_p) \in {\mathbb R}^p \} $$
+
+
+
+
+
+## Natural splines
+
+* Natural splines add the constraint that the function must be linear after the knots at the end points
+* This forces 2 more restrictions since $f''$ must be 0 at the end points, i.e the space has $k + 4 - 2$ parameters because of these 2 constraints. 
+
+
+
+## Natural smoothing splines {.smaller}
+
+* What happens if the knots coincide with the dependent variables $\{X_i\}$. Then there is a function $g \in \cal G$, the space of cubic splines with knots at $(x_1,\dots,x_n)$, with
+$g(x_i) = y_i, i,\dots,n$, i.e. we haven't smoothed at all.
+*  Among all functions $g$ with two continuous first derivatives, find the one that minimizes the penalized residual sum of squares $$\sum_{i=1}^n \{ y_i - g(x_i) \}^2 + \lambda \int_a^b \{g''(t)\}^2 dt$$ where $\lambda$ is a fixed constant, and $a \leq x_1 \leq \dots \leq
+x_n \leq b$. 
+*  It can be shown (Reinsch 1967) that the solution to this
+problem is a natural cubic spline with knots at the values of $x_i$ (so there are $n-2$ interior knots and $n-1$ intervals). Here $a$ and $b$ are arbitrary as long as they contain the data.
+* It seems that this procedure is over-parameterized since a natural cubic spline as this one will have $n$ degrees of freedom. However we will see that the penalty makes this go down.
+
+
+
+## Computational aspects {.smaller}
+
+* We use the fact that the solution is a natural cubic spline and write the possible answers as: $$g(x) = \sum_{j=1}^{n} \theta_j B_j(x)$$ where $\theta_j$ are the coefficients and $B_j(x)$ are the basis functions. 
+* Notice that if these were cubic splines the functions lie
+in a $n+2$ dimensional space, but the natural splines are an $n$
+dimensional subspace. 
+* Let $B$ be the $n \times n$ matrix defined by
+$$ B_{ij} = B_j(x_i)$$
+and a penalty matrix $\Omega$ by $$ \Omega_{ij} = \int_a^b B_i''(t)B_j''(t) \, dt$$
+
+
+
+## Computational aspects continued
+
+Now we can write the penalized criterion as
+
+$$(y - B\theta)'(y - B\theta) +\lambda\theta'\Omega\theta$$
+
+* It seems there are no boundary derivatives constraints but they are
+implicitly imposed by the penalty term.
+
+* Setting derivatives with respect to $\theta$ equal to 0 gives
+the estimating equation:$$(B'B + \lambda\Omega)\theta = B'y.$$
+
+* The $\hat{\theta}$ that solves this equation will give us the estimate $\hat{g} = B \hat{\theta}$.
+
+
+
+## Is this a linear smoother?
+
+$$\hat{g} = B \theta = B(B'B + \lambda \Omega)^{-1}
+B'y =  ({\mathbf I} + \lambda {\mathbf K})^{-1}y$$
+
+where ${\mathbf K} = B -1 ' \Omega B^{-1}$. Notice we can write the criterion as
+
+$$(y - g)'(y - g) + \lambda g' {\mathbf K} g$$
+
+If we look at the "kernel" of this linear smoother it is similar to the other smoothers in this class. 
+
+
+
+
+## `ns()` for strontium data
+
+```{r,dependson="strontium", fig.height=4,fig.width=4}
+basis2 = ns(dat[,1],df=3)
+matplot(basis2,type="l")
+```
+
+
+
+## `ns()` and regression
+
+```{r,dependson="strontium", fig.height=4,fig.width=4}
+basis2 = ns(dat[,1],df=3)
+lm2 = lm(dat[,2] ~ basis2)
+plot(dat,pch=19); lines(dat[,1],lm2$fitted,col="red")
+```
+

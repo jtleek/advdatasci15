@@ -8,7 +8,7 @@ This project doesn't seem relevant to public health but certain companies have t
 
 ### Your Project:
 
-Your project is to use the `quantmod` package to download historical data (and any other data you want) on the S & P 500. You are then to build a forecasting/predictive model to predict what is the best stock to buy for the maximum return 1 and 5 days later along with the uncertainty in your prediction. 
+Your project is to use the `quantmod` package to download historical data (and any other data you want) on the S & P 500 (list of companies here: https://en.wikipedia.org/wiki/List_of_S%26P_500_companies). You are then to build a forecasting/predictive model to predict what is the best stock to buy for the maximum return 1 and 5 days later along with the uncertainty in your prediction. For the one day return, assume that the stock is purchased at opening and sold at closing. For the five day return, assume that the stock is purchased on open on day one and sold at close 4 business days later. The goal is to rank the stocks by expected percent increase. 
 
 
 ### Submission requirements
