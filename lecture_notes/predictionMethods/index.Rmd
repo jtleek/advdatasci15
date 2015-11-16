@@ -1008,7 +1008,7 @@ print(modFit)
 
 ## Plot the results
 
-```{r, dependson="wage2", fig.height=4,fig.width=4}
+```{r, dependson="wage2", fig.height=4,fig.width=4,warning=FALSE,message=FALSE}
 qplot(predict(modFit,testing),wage,data=testing)
 ```
 
@@ -1371,9 +1371,9 @@ ts1Train
 
 $$ Y_{t}=\frac{1}{2*k+1}\sum_{j=-k}^k {y_{t+j}}$$
 
-```{r ,dependson="trainingTest3",fig.height=4.5,fig.width=4.5}
+```{r ,dependson="trainingTest3",fig.height=4.5,fig.width=4.5,warning=FALSE,message=FALSE}
 library(forecast); plot(ts1Train)
-#lines(ma(ts1Train,order=3),col="red")
+lines(ma(ts1Train,order=3),col="red")
 ```
 
 
@@ -1419,10 +1419,6 @@ accuracy(fcast,ts1Test)
   * Be careful how far you predict (extrapolation)
   * Be wary of dependencies over time
 * See [quantmod](http://cran.r-project.org/web/packages/quantmod/quantmod.pdf) or [quandl](http://www.quandl.com/help/packages/r) packages for finance-related problems.
-
-
-
-
 
 
 
