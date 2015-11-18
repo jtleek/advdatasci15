@@ -154,6 +154,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W11 | 2015-11-11 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) | |
 | M12 | 2015-11-16 | [Introduction](https://docs.google.com/presentation/d/1KPzJbLIW3cb1cxt5TQvclHDifcapdYLdHPwY8ve0bAA/edit?usp=sharing) ||
 | M12 | 2015-11-16 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) [Smoothing](http://jtleek.com/advdatasci/lecture_notes/smoothing/#1)| |
+| W12 | 2015-11-18 | [Introduction](https://docs.google.com/presentation/d/1R2ZgO7JwZvgn_VKc7_xQAF1S6QINAtpxgUlEBWHDMQo/edit?usp=sharing) ||
+| W12 | 2015-11-18 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) [Smoothing](http://jtleek.com/advdatasci/lecture_notes/smoothing/#1)| |
 |---|---|---|---|
 
 

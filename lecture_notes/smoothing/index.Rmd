@@ -83,6 +83,7 @@ lines(c(min(X[ind]),max(X[ind])),c(fit,fit),col=2,lty=2,lwd=4)
 ```
 
 http://genomicsclass.github.io/book/
+
 ## Lots of bins
 
 ```{r,warning=FALSE,fig.height=5,fig.width=5,echo=FALSE}

@@ -21,6 +21,8 @@ _Reproducibility_
 
 You must still submit code to reproduce the figures/numbers in your assignment and make predictions. Your reproducibility score will be determined by whether your code can be run without error and produces all numbers/figures in your main text. Please include library requirements at the beginning of your script and an estimate of the approximate runtime. Please also submit the compiled HTML from knitting your Rmd file. Comments are not required, but I will only try to fix code that is liberally and accurately commented.
 
+Please submit a function that makes the two predictions described above. This is a loose framework for what your function should do: https://gist.github.com/jtleek/ea12b5f3cd81e97aed60. 
+
 _Shiny App_
 
 The Shiny App must have a date input and must provide a graph with the predictions along with a downloadable csv file of the predictions for a given day. You should submit the app as a link to a Github repo with the code to run your app. 

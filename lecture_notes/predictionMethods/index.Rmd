@@ -7,7 +7,6 @@ output: ioslides_presentation
 
 
 
-
 ## Keep in mind
 
 Classifier Technology and the Illusion of Progress
@@ -1388,6 +1387,16 @@ $$\hat{y}_{t+1} = \alpha y_t + (1-\alpha)\hat{y}_{t-1}$$
 <img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/08_PredictionAndMachineLearning/expsmooth.png height=150>
 
 [https://www.otexts.org/fpp/7/6](https://www.otexts.org/fpp/7/6)
+
+
+## A taxonomy of exponential smoothing methods
+
+<img class=center src=taxonomy.png height=350>
+
+
+[https://www.otexts.org/fpp/7/6](https://www.otexts.org/fpp/7/6)
+
+
 
 
 
