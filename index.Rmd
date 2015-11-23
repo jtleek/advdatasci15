@@ -156,6 +156,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M12 | 2015-11-16 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) [Smoothing](http://jtleek.com/advdatasci/lecture_notes/smoothing/#1)| |
 | W12 | 2015-11-18 | [Introduction](https://docs.google.com/presentation/d/1R2ZgO7JwZvgn_VKc7_xQAF1S6QINAtpxgUlEBWHDMQo/edit?usp=sharing) ||
 | W12 | 2015-11-18 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) [Smoothing](http://jtleek.com/advdatasci/lecture_notes/smoothing/#1)| |
+| M13 | 2015-11-23 | [Introduction](https://docs.google.com/presentation/d/1Clx-BrkKNyBgux9R8Up88juJIH4fpAu7MNvGGvKDWEM/edit?usp=sharing) ||
+| M13 | 2015-11-23 | [GAMs](http://jtleek.com/advdatasci/lecture_notes/gams/#1) [EM algorithm](https://docs.google.com/presentation/d/1mG3TtancqNFy0Pt7o2LkLBoB9X7auQjrZKn-sZ2KixU/edit?usp=sharing) | [EM algorithm R example -html](http://jtleek.com/advdatasci/lecture_notes/em_example.html) [EM algorithm R example -Rmd](http://jtleek.com/advdatasci/lecture_notes/em_example.Rmd) |
 |---|---|---|---|
 
 

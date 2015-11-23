@@ -1,0 +1,261 @@
+---
+title: "gams"
+author: "Jeff Leek"
+date: "November 23, 2015"
+output: ioslides_presentation
+---
+
+## Today's slide credits
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/rafa.png height=500>
+
+
+http://www.biostat.jhsph.edu/~ririzarr/Teaching/754/
+
+
+## Recall the goal
+
+
+$$Y_i = f(x_i) + \varepsilon_i$$
+
+* $f(x)$ is an unknown function and $\varepsilon_i$ is an error term,
+representing random errors in the observations or variability from
+sources not included in the $x_i$.
+* We assume the errors $\varepsilon_i$ are IID with mean 0 and finite
+variance $Var(\varepsilon_i) = \sigma^2$. 
+
+
+
+## Additive models
+
+* Assume that the response is linear in the
+predictors effects and that there is an additive error.
+* This allows us to study the effect of each predictor separately. 
+$$f(X_1,\dots,X_p) = \sum_{j=1}^p f_j(X_j).$$
+* This is a simplification of projection pursuit:
+$$f(X_1,\dots,X_p) = \sum_{j=1}^p f_j(\alpha X).$$
+with $\alpha X = X_j$. 
+
+
+
+## Conditional expectation 
+
+Our model assumes: 
+
+$$ E(Y | X_1=x_1, X_2) = f_1(x_1) + f_2(X_2) $$
+
+and
+
+$$E(Y | X_1=x_1', X_2) = f_1(x_1') + f_2(X_2).$$
+
+* It is not easy to disregard the possibility that this dependence changes.
+
+
+
+## But sometimes this works ok
+
+Example: modeling c-peptide as function of age and base deficit. 
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/addcompare.png" height=400>
+
+
+
+## Marginal surfaces
+
+An advantage of additive model is that no matter the dimension of the covariates we know what the surface $f(X_1,\dots,X_p)$ is like by drawing each $f_j(X_j)$ separately.
+
+<img class="center" src="https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/margsurf.png" height=500>
+
+
+
+## Fitting additive models: backfitting
+
+If the model is correct then:
+
+$$E\left(\left. Y - \alpha - \sum_{j\neq k} f_j(X_j) \, \right| \,X_k \right) = f_k(X_k) $$
+
+* This suggests an iterative algorithm for computing all the $f_j$.
+* Suppose we have estimates $\hat{f}_1,\dots,\hat{f}_{p-1}$
+* Then 
+
+$$\left(\left.Y - \hat{\alpha} - \sum_{j=1}^{p-1} \hat{f}_j(X_j) \,\right| \, X_p \right)  \approx f_p(X_p).$$
+
+
+
+## More backfitting
+
+The partial residuals are  
+$$\hat{\epsilon} = Y -\hat{\alpha} - \sum_{j=1}^{p-1} \hat{f}_j(X_j)$$
+and
+$$\hat{\epsilon}_i \approx f_p(X_{ip}) + \delta_i$$
+
+where $\delta_i$ is approximately IID with mean 0. 
+
+_This is back to our original smoothing framework so these can be fit by smoothing._
+
+
+
+
+## The complete algorithm 
+ 
+
+1. Define $f_j = \{f_j(x_{1j}),\dots,f_j(x_{nj})\}'$ for all $j$.
+2. Initialize: $\alpha^{(0)} = \mbox{ave}(y_i)$, $\f_j^{(0)} = $ linear estimate. 
+3. Cycle over $j=1,\dots,p$
+$$f_j^{(1)} = S_j\left(\left. y - \alpha^{(0)} - \sum_{k\neq j} \mathbf{f}^{(0)}_k\, \right| x_j \right)$$
+3. Continue previous step until functions "don't change", for example until 
+$$\max_{j} \left|\left| f_j^{(n)} - f_j^{(n-1)} \right|\right| < \delta$$
+with $\delta$ is the smallest number recognized by your computer.
+
+
+
+
+## Justifying backfitting
+
+* The backfitting algorithm seems to make sense. We can say that we have
+given an intuitive justification.
+* Statisticians don't like that as a justification. 
+* In [ESL](http://statweb.stanford.edu/~tibs/ElemStatLearn/),they justify it in three ways: (1) projections in $L^2$ function spaces, (2) minimizing certain criterion with solutions from reproducing-kernel Hilbert spaces, and (3) as
+the solution to penalized least squares.
+
+
+
+## Backfitting as penalized least squares {.smaller}
+
+Consider the criterion: 
+$$\sum_{i=1}^n \left\{ y_i - \sum_{j=1}^p f_j(x_{ij}) \right\}^2 + \sum_{j=1}^p \lambda_j \int \{f_j''(t)\}^2 \, dt$$
+over all "p-tuples" of functions $f_1,\ldots,f_p$ that are 2x differentiable. 
+
+We can again show the solution is a set of $p$ natural cubic splines and rewrite the criteria (using the buildup we did for a single variable):
+
+$$\left(y - \sum_{j=1}^p f_j \right)'\left(y - \sum_{j=1}^p f_j \right) + \sum_{j=1}^p \lambda_j f_j K_j f_j$$
+
+where the $K_j$s are penalty matrices for each predictor defined
+analogously to the $K$ in a single dimension. 
+
+
+
+
+## Standard errors
+
+* Notice that our estimates  $\hat{f}_j$ are no longer of the form $S_j y$ since we have used a complicated backfitting algorithm. 
+* At convergence we can express $\hat{f}_j$ as $R_j y$ for some $n \times n$ matrix $R_j$.
+* In practice this $R_j$ is obtained from the last calculation of the $\hat{f}_j$'s but finding a closed form is rarely possible. 
+
+
+
+## Generalized additive models
+
+Say $Y$ has conditional distribution from an exponential family and the
+conditional mean of the response $E(Y|X_1,\dots,X_p) = \mu(X_1,\dots,X_p)$ is related to an additive  model through some link functions
+
+$$g\{\mu_i\} = \eta_i = \alpha + \sum_{j=1}^p f_j(x_{ij})$$
+
+with $\mu_i$ the conditional expectation of $Y_i$ given $x_{i1},\dots,x_{ip}$. 
+
+So we can use IRWLS + backfitting.
+
+
+
+## Algorithm convergence 
+
+* Compute the convergence criteria
+    $$\Delta(\eta^{(1)},\eta^{(0)}) = \frac{\sum_{j=1}^p || f_j^{(1)} -
+    f_j^{(0)} ||} {\sum_{j=1}^p ||f^{(0)}_j||}$$
+* A natural candidate for $||f||$ is $||\mathbf{f}||$, the length of the vector of evaluations of $f$ at the $n$ sample points.
+* Repeat previous step replacing $\eta^{(0)}$ by $\eta^{(1)}$ until
+  $\Delta(\eta^{(1)},\eta^{(0)})$ is below some small threshold.
+
+
+
+
+## Inference with deviance
+
+The deviance or likelihood-ratio statistic, for a fitted model $\hat{\bg{\mu}}$ is defined by 
+
+$$ D(y;\hat{g{\mu}}) = 2\{l(g{\mu}_{max}; y) - l(\hat{g{\mu}})\}$$
+where $g{\mu}_{max}$ is the parameter value that maximizes $l(\hat{g{\mu}})$ over all $g{\mu}$ (the saturated model). 
+* We sometimes unambiguously use $\hat{g{\eta}}$ as the argument of the deviance rather than $\hat{g{\mu}}$. 
+* For GLM if we have two linear models defined by $\eta_1$ nested within $\eta_2$, then under appropriate regularity conditions, and assuming $\eta_1$ is correct, $D(\hat{\eta}_2;\hat{\eta}_1) =D(y;\hat{\eta}_1) - D(y;\hat{\eta}_2)$ has asymptotic $\chi^2$ istribution with degrees of freedom equal to the difference in
+degrees of freedom of the two models. 
+* There is a heuristic version of this for GAMs (not a big fan)
+
+
+## Quick aside on penalized optimization
+
+Among all functions $g$ with two continuous first derivatives, find the one that minimizes the penalized residual sum of squares $$\sum_{i=1}^n \{ y_i - g(x_i) \}^2 + \lambda \int_a^b \{g''(t)\}^2 dt$$ where $\lambda$ is a fixed constant, and $a \leq x_1 \leq \dots \leq
+x_n \leq b$. 
+
+
+
+## Changing the tuning parameter {.smaller}
+
+```{r,fig.height=5,fig.width=5,warning=F,message=F}
+library(mgcv)
+set.seed(1324); x = rnorm(100); y = x^3 + rnorm(100)
+plot(x,y,pch=19)
+```
+
+
+## Changing the tuning parameter {.smaller}
+
+```{r,fig.height=5,fig.width=5}
+g1 = gam(y ~ s(x))
+plot(x,y,pch=19); points(x,g1$fitted,col="blue",pch=19)
+```
+
+## Changing the tuning parameter {.smaller}
+
+```{r,fig.height=5,fig.width=5}
+g2 = gam(y ~ s(x),sp=0); g3 = gam(y ~ s(x),sp=15)
+plot(x,y,pch=19); points(x,g1$fitted,col="blue",pch=19);
+points(x,g2$fitted,col="red",pch=19); points(x,g3$fitted,col="green",pch=19)
+```
+
+
+## An example {.smaller}
+
+* The data frame has 81 rows representing  data on 81  children  who have had corrective spinal surgery.  The binary outcome Kyphosis indicates the presence or absence of a postoperative
+ deformity (called Kyphosis). 
+ * The other threevariables are _Age_ in months, _Number_ of vertebra involved in the
+ operation, and  the beginning of the range of vertebrae involved _Start_. 
+ 
+ 
+```{r kyph}
+library(rpart); data(kyphosis); kyphosis$present = (kyphosis$Kyphosis == "present")
+head(kyphosis)
+```
+
+
+
+
+## An example
+
+```{r glmk,dependson="kyph"}
+glm1 = glm(present ~ Age + Number + Start, data = kyphosis,family="binomial")
+summary(glm1)
+```
+
+
+
+
+## Residuals don't look great
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/gamres.png height=500>
+
+
+
+## Fit it with GAM
+
+```{r gamk,dependson="kyph"}
+library(mgcv)
+gam1 = gam(present~s(Age)  + s(Number,k=3) +  s(Start), data = kyphosis,family="binomial")
+summary(gam1)
+```
+
+
+
+## Example resids (from slightly different model)
+
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/gamresid.png height=500>

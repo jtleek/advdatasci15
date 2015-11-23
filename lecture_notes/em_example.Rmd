@@ -1,0 +1,151 @@
+---
+title: "EM example in R"
+author: "Jeff Leek"
+date: "November 23, 2015"
+output: html_document
+---
+
+Set up some colors
+
+```{r global_palette, results = 'asis'}
+rm(list=ls())
+tropical=  c('darkorange', 'dodgerblue', 'hotpink', 'limegreen', 'yellow')
+palette(tropical)
+```
+
+
+```{r global_options,warning=FALSE,message=FALSE}
+## see ch. 10 Hooks of Xie's knitr book
+library(knitr)
+knit_hooks$set(setPch = function(before, options, envir) {
+  if(before) par(pch = 19)
+})
+opts_chunk$set(setPch = TRUE)
+```
+
+
+
+```{r global_plot,warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(fig.width=5, fig.height=5, size="footnotesize",
+                      warning=FALSE, message=FALSE)
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+  if (before) graphics::par(mar = c(5,5,1.5,1))
+})
+```
+
+
+Assume that we have a mixture of two normals:
+
+```{r}
+set.seed(1235)
+realz = rep(c(0,3),each=500)
+x = rnorm(1000,mean=realz)
+hist(x,col=1,breaks=100)
+```
+
+
+## Initialize the estimates
+```{r}
+mu0 = 0
+mu1 = 10
+p0mean = 0.5
+m = length(x)
+```
+
+
+## First we do the E-step
+
+Bayes' rule ya'll!
+
+```{r}
+p0i = p0mean*dnorm(x,mean=mu0)/(p0mean*dnorm(x,mean=mu0) + (1-p0mean)*dnorm(x,mean=mu1))
+plot(x,p0i)
+```
+
+
+## Now do the M step
+
+```{r}
+p0mean = mean(p0i)
+p0mean
+mu0 = sum(x*p0i)/sum(p0i)
+mu0
+mu1 = sum(x*(1-p0i))/(m-sum(p0i))
+mu1
+```
+
+
+## Repeat this a few times
+
+Once
+
+```{r}
+
+# estep
+p0i = p0mean*dnorm(x,mean=mu0)/(p0mean*dnorm(x,mean=mu0) + (1-p0mean)*dnorm(x,mean=mu1))
+plot(x,p0i)
+
+# mstep
+p0mean = mean(p0i)
+p0mean
+mu0 = sum(x*p0i)/sum(p0i)
+mu0
+mu1 = sum(x*(1-p0i))/(m-sum(p0i))
+mu1
+```
+
+
+Twice
+
+```{r}
+
+# estep
+p0i = p0mean*dnorm(x,mean=mu0)/(p0mean*dnorm(x,mean=mu0) + (1-p0mean)*dnorm(x,mean=mu1))
+plot(x,p0i)
+
+# mstep
+p0mean = mean(p0i)
+p0mean
+mu0 = sum(x*p0i)/sum(p0i)
+mu0
+mu1 = sum(x*(1-p0i))/(m-sum(p0i))
+mu1
+```
+
+
+Three times
+
+```{r}
+
+# estep
+p0i = p0mean*dnorm(x,mean=mu0)/(p0mean*dnorm(x,mean=mu0) + (1-p0mean)*dnorm(x,mean=mu1))
+plot(x,p0i)
+
+# mstep
+p0mean = mean(p0i)
+p0mean
+mu0 = sum(x*p0i)/sum(p0i)
+mu0
+mu1 = sum(x*(1-p0i))/(m-sum(p0i))
+mu1
+```
+
+
+A ton of times
+
+```{r}
+for(i in 1:10){
+  # estep
+p0i = p0mean*dnorm(x,mean=mu0)/(p0mean*dnorm(x,mean=mu0) + (1-p0mean)*dnorm(x,mean=mu1))
+# mstep
+p0mean = mean(p0i)
+mu0 = sum(x*p0i)/sum(p0i)
+mu1 = sum(x*(1-p0i))/(m-sum(p0i))
+}
+
+plot(x,p0i)
+mu0
+mu1
+p0mean
+```
+
