@@ -158,8 +158,10 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W12 | 2015-11-18 | [Prediction methods](http://jtleek.com/advdatasci/lecture_notes/predictionMethods/#1) [Smoothing](http://jtleek.com/advdatasci/lecture_notes/smoothing/#1)| |
 | M13 | 2015-11-23 | [Introduction](https://docs.google.com/presentation/d/1Clx-BrkKNyBgux9R8Up88juJIH4fpAu7MNvGGvKDWEM/edit?usp=sharing) ||
 | M13 | 2015-11-23 | [GAMs](http://jtleek.com/advdatasci/lecture_notes/gams/#1) [EM algorithm](https://docs.google.com/presentation/d/1mG3TtancqNFy0Pt7o2LkLBoB9X7auQjrZKn-sZ2KixU/edit?usp=sharing) | [EM algorithm R example -html](http://jtleek.com/advdatasci/lecture_notes/em_example.html) [EM algorithm R example -Rmd](https://github.com/jtleek/advdatasci/blob/gh-pages/lecture_notes/em_example.Rmd) |
-| M14 | 2015-11-23 | [Introduction](https://docs.google.com/presentation/d/1BaqdRY4gU9Hog0D5orHBE_7vHe_Oe0MGRc2j9ks43tU/edit?usp=sharing) ||
-| M13 | 2015-11-23 |  [EM algorithm](https://docs.google.com/presentation/d/1mG3TtancqNFy0Pt7o2LkLBoB9X7auQjrZKn-sZ2KixU/edit?usp=sharing) [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) |  |
+| M14 | 2015-12-1 | [Introduction](https://docs.google.com/presentation/d/1BaqdRY4gU9Hog0D5orHBE_7vHe_Oe0MGRc2j9ks43tU/edit?usp=sharing) ||
+| M14 | 2015-12-1 |  [EM algorithm](https://docs.google.com/presentation/d/1mG3TtancqNFy0Pt7o2LkLBoB9X7auQjrZKn-sZ2KixU/edit?usp=sharing) [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) |  |
+| M15 | 2015-12-7 | [Introduction](https://docs.google.com/presentation/d/1BTRlVH0CnrXPBotTCd88b5S1qAcz3g0m2-xa16kO51s/edit?usp=sharing) ||
+| M15 | 2015-12-7 |  [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) |  |
 |---|---|---|---|
 
 
@@ -171,6 +173,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | Project 2 | 2015-09-16 | 2015-09-27 | [Project 2](https://www.crowdgrader.org/crowdgrader/venues/view_venue/1395) | Fitbit activity, email for link|
 | Final Project | 2015-10-07 | 2015-10-16 | [Final project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/final.md) | Please submit via Courseplus|
 | 712 Project 1 | 2015-11-04 | 2015-11-25 (poster)/ 2015-12-2 (app) | [Project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/project1-712.md) | Please submit via Courseplus/Github|
+| 712 Project 1 | 2015-12-07 | 2015-12-18 | [Project](https://github.com/jtleek/advdatasci/blob/gh-pages/projects/project2-712.md) | Please submit via Courseplus|
 |---|---|---|---|---|
 
 
