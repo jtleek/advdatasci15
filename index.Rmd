@@ -162,6 +162,8 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | M14 | 2015-12-1 |  [EM algorithm](https://docs.google.com/presentation/d/1mG3TtancqNFy0Pt7o2LkLBoB9X7auQjrZKn-sZ2KixU/edit?usp=sharing) [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) |  |
 | M15 | 2015-12-7 | [Introduction](https://docs.google.com/presentation/d/1BTRlVH0CnrXPBotTCd88b5S1qAcz3g0m2-xa16kO51s/edit?usp=sharing) ||
 | M15 | 2015-12-7 |  [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) |  |
+| W15 | 2015-12-9 | [Introduction](https://docs.google.com/presentation/d/138VGH6DdwYD9MOCkb0obg1JJMQMcRJN2YgPlnJTBEbI/edit?usp=sharing) ||
+| W15 | 2015-12-9 |  [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) | [em algorithm (swirl)](https://github.com/jtleek/advdatasci-swirl)  |
 |---|---|---|---|
 
 
