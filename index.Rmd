@@ -165,7 +165,7 @@ Class will consist of both lectures on statistical methdology and practice, as w
 | W15 | 2015-12-9 | [Introduction](https://docs.google.com/presentation/d/138VGH6DdwYD9MOCkb0obg1JJMQMcRJN2YgPlnJTBEbI/edit?usp=sharing) ||
 | W15 | 2015-12-9 |  [Causality](http://jtleek.com/advdatasci/lecture_notes/causality/#1) | [em algorithm (swirl)](https://github.com/jtleek/advdatasci-swirl)  |
 | M16 | 2015-12-14 | [Introduction](https://docs.google.com/presentation/d/1YDeXaz3uxXJOEFGWOh1e6j8TQ8Q-f8ec_GdauvUuOFc/edit?usp=sharing) ||
-| M16 | 2015-12-14 |  [R packages](http://jtleek.com/advdatasci/lecture_notes/rpackages/#1) | [r package creation](https://github.com/jtleek/advdatasci/code/rpackage-creation.R)  |
+| M16 | 2015-12-14 |  [R packages](http://jtleek.com/advdatasci/lecture_notes/rpackages/#1) | [r package creation](https://github.com/jtleek/advdatasci/blob/gh-pages/code/rpackage-creation.R)  |
 |---|---|---|---|
 
 
