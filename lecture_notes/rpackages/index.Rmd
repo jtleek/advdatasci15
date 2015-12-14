@@ -1,0 +1,295 @@
+---
+title: "R packages"
+author: "Jeff Leek"
+date: "December 14, 2015"
+output: ioslides_presentation
+---
+
+
+## Writing R packages
+
+* Here are some links from people who are pros
+  * [Hadley's master class](http://courses.had.co.nz/12-devtools/)
+  * [Creating R packages tutorial](http://cran.r-project.org/doc/contrib/Leisch-CreatingPackages.pdf)
+  * [Writing R extensions](http://cran.r-project.org/doc/manuals/R-exts.html)
+* Coding style
+  * [Bioconductor](http://www.bioconductor.org/developers/package-guidelines/)
+  * [Hadley Wickham's version](https://github.com/hadley/devtools/wiki/Style)
+  * [Google's R style guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html)
+  * [Roger's checklist](http://simplystatistics.org/2015/10/14/minimal-r-package-check-list/)
+  * [Jeff's guide](https://github.com/jtleek/rpackages)
+
+
+
+## Why write an R package? {.smaller}
+
+* [If there is no code, there is no paper](http://simplystatistics.org/2013/01/23/statisticians-and-computer-scientists-if-there-is-no-code-there-is-no-paper/)
+* Getting noticed (see e.g. [Yihui](http://yihui.name/))
+* Getting cited (see e.g. [RMA](http://www.ncbi.nlm.nih.gov/pubmed/12925520), [sva](http://www.plosgenetics.org/article/info:doi/10.1371/journal.pgen.0030161) )
+* To avoid the [statistics boogeyman](http://odin.mdacc.tmc.edu/~kabaggerly/)
+* Because it is when you really learn how/why your method works
+* To put together a set of functions that implement a method, or [are useful to you](http://hilaryparker.com/2013/04/03/personal-r-packages/), or summarize a body of work (like a dissertation)
+
+
+
+## First step: naming
+
+* Make it googleable 
+* Be a little cute, but not too much
+* Avoid caps 
+* Package name must start with a letter
+* r"method" or r"technology" is a good place to start, see e.g. [rOpenSci](http://ropensci.org/packages/index.html)
+* Never let Rafa name your method ("Succs", "BumpHunter", "DER Finder")
+
+
+
+## If you want your software to be used
+
+<center> Documentation > Usability > Speed > Statistical superiority</center>
+
+<img class=center src=https://raw.githubusercontent.com/jtleek/jhsph753and4/master/assets/img/homer.jpg height=350/>
+
+
+
+
+## Preliminaries: Version control
+
+[What is version control](http://git-scm.com/video/what-is-version-control)
+
+* [Github](https://github.com/) - where the cool nerds are
+* [Bitbucket](https://bitbucket.org/) - where the real nerds are
+* [svn](http://subversion.tigris.org/) - where the old nerds are
+* Files on your desktop - where the frustrated nerds are
+
+
+## How you do this
+
+* Step 1: Create repo on computer
+* Step 2: Create repo with same name on Github
+* Step 3: Follow [these instructions](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
+
+## Preliminaries: repositories
+
+* [CRAN](http://cran.us.r-project.org/)
+    * All types of packages
+    * Minimal QC
+* [Bioconductor](http://www.bioconductor.org/)
+    * Mostly genomics packages
+    * Peer review/high QC
+* [Github](https://github.com/)
+    * Any type 
+    * No QC
+
+## An important point
+
+
+<img class=center src=http://simplystatistics.org/wp-content/uploads/2015/11/Screen-Shot-2015-11-06-at-1.25.01-PM.png height=250/>
+
+
+http://simplystatistics.org/2015/11/06/how-i-decide-when-to-trust-an-r-package/
+
+
+## Getting started - load packages
+
+
+```{r , eval=FALSE}
+install.packages("devtools")
+install.packages("rogxygen2")
+install.packages("textthat")
+```
+
+```{r load, warning=F, message=F}
+library(devtools); library(roxygen2);library(testthat)
+```
+
+
+## Create a package
+
+```{r ,eval=FALSE}
+# Set working directory
+setwd("~/Desktop")
+
+# Create a new package
+create("fdrreg")
+```
+
+<center> Add stuff to package now</center>
+
+
+
+## R code
+
+* Just like you would usually write
+* Goes in the R/ directory
+* Should be multiple files - one per major "method" at minimum
+* Documentation included in files makes it easier
+
+
+
+## Documenting R code with roxygen2
+
+
+@param - Inputs
+
+@examples - examples
+
+@author - who wrote the function
+
+@seealso - refers to other packages
+
+@return - what it returns
+
+[Here it is in practice](https://github.com/jtleek/sva-devel/blob/master/R/sva.R)
+
+See more [here](http://courses.had.co.nz/12-devtools/slides/8-documentation.pdf)
+
+
+
+
+## How to use this
+
+```{r,eval=FALSE}
+document("pkg")
+check_doc("pkg")
+dev_help("function")
+```
+
+
+
+## Testing R code with testthat {.smaller}
+
+`devtools::use_testthat("mypkg")`
+
+__Use expect_that to define subtests__
+
+expect_that(1,equals(1))
+
+__Example tests__
+
+is_truth
+
+is_false
+
+equals
+
+matches
+
+prints_text
+
+__Then arrange together__
+
+test_that("test name", {
+ expect_that(1,equals(1))
+})
+
+See more [here](http://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf)
+
+
+
+## How to use it
+
+* Create tests in inst/tests
+* Each file can test one component
+* Start file with _context("Name for set of tests")_
+* To test run:
+  * test_file()
+  * test_dir()
+* Or you can do it when running R CMD CHECK with a file tests/run_all.R with
+```{r,eval=FALSE}
+library(testthat)
+library(mypackage)
+test_package("mypackage")
+```
+
+
+
+## Vignettes versus README files
+
+* Vignettes 
+    * Go in vignettes
+    * Are written in knitr
+    * Are required for Bioconductor
+* README
+    * Can be written in markdown
+    * Often useful if Github is where you will put your documentation
+* [Markdown vignettes](http://yihui.name/en/2012/09/r-package-markdown-vignettes/)
+
+[Here] is an example of some vignettes
+
+
+## To use markdown vignettes
+
+* `devtools::use_vignette("my-vignette")`
+* Put them in the vignettes folder
+* Add knitr to "Suggests" in DESCRIPTION
+* Add line "VignetteBuilder: knitr" to DESCRIPTION 
+
+## Releasing package
+
+* On Github you can just post the package then tell users to do
+
+```{r,eval=FALSE}
+library(devtools)
+install_github("username/package")
+```
+
+* Or for CRAN use 
+```{r,eval=FALSE}
+release()
+```
+
+* Or for BioC see [here](http://www.bioconductor.org/developers/)
+
+More on this [here](http://courses.had.co.nz/12-devtools/slides/10-release.pdf)
+
+## Adding data
+
+* Processed data in rdas goes in _/data_
+    * If you are in the working directory you can do `devtools::use_data(dataset)`
+* Raw data goes in _inst/extdata_
+    * You can load this with e.g. `system.file("extdata", "2012.csv", package = "testdat")`
+* CRAN/Bioc have limits on data sizes. You need to look them up before submitting
+
+[You can find more here](http://r-pkgs.had.co.nz/data.html)
+
+
+## Documenting a data set
+
+
+<img class=center src=dataset.png height=350/>
+
+
+## Loading code to play with it
+
+* You don't have to recomplie the package every time
+* Instead use `load_all("mypkg")`
+* You can also use `build("mypkg")` to build the package
+
+## Adding rcpp code
+
+`devtools::use_rcpp()`
+
+<img class=center src=cpp.png height=350/>
+
+http://r-pkgs.had.co.nz/src.html
+
+## Adding citations
+
+Add this to `inst/CITATION`
+
+
+<img class=center src=citations.png height=350/>
+
+
+
+## Documenting an analysis as an R package
+
+* Put data in _data_ or _inst/extdata_
+* Put analysis code in _vignettes_
+* Put any R functions for helping in _R_
+* Set dependencies in _DESCRIPTION_
+* Post to Github
+* [Read this](https://github.com/ropensci/unconf/issues/31) [and this](https://github.com/ropensci/rrrpkg) for more discussion 
+* make might be better? 
+
+
